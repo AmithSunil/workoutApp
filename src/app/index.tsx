@@ -1,98 +1,168 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+/**
+ * Tab 1: Home – The Daily Dashboard
+ * Answers: "What do I have left to do today?"
+ */
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { CalorieRing } from '@/components/home/CalorieRing';
+import { DailyChecklist } from '@/components/home/DailyChecklist';
+import { MacroBar } from '@/components/home/MacroBar';
+import { TrainerPin } from '@/components/home/TrainerPin';
+import {
+  BottomTabInset,
+  Colors,
+  FontSizes,
+  MaxContentWidth,
+  Radius,
+  Spacing,
+} from '@/constants/theme';
+import { useApp } from '@/context/AppContext';
+import { useTheme } from '@/hooks/use-theme';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function formatDate() {
+  return new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
 }
 
 export default function HomeScreen() {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const { state } = useApp();
+  const { macroLog, macroTarget } = state;
+
+  const platformPadding = Platform.select({
+    android: { paddingTop: insets.top },
+    web: { paddingTop: Spacing.six },
+    default: {},
+  });
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <ScrollView
+      style={[styles.scrollView, { backgroundColor: theme.background }]}
+      contentInset={{
+        top: 0,
+        bottom: insets.bottom + BottomTabInset + Spacing.six,
+      }}
+      contentContainerStyle={[styles.contentContainer, platformPadding]}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.inner}>
+        {/* ── Header ── */}
+        <View style={styles.header}>
+          <View>
+            <Text style={[styles.dateText, { color: theme.textSecondary }]}>{formatDate()}</Text>
+            <Text style={[styles.greetingText, { color: theme.text }]}>
+              {getGreeting()} 👋
+            </Text>
+          </View>
+          {/* Avatar */}
+          <View style={[styles.avatarContainer, { backgroundColor: Colors.light.accent + '1A' }]}>
+            <Text style={styles.avatarEmoji}>🏆</Text>
+          </View>
+        </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
+        {/* ── Calorie Ring ── */}
+        <View style={styles.ringSection}>
+          <CalorieRing
+            consumed={macroLog.calories}
+            target={macroTarget.calories}
           />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+        </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        {/* ── Macro Bars ── */}
+        <View style={[styles.macroCard, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+          <MacroBar
+            label="Protein"
+            consumed={macroLog.protein}
+            target={macroTarget.protein}
+            color={theme.protein}
+          />
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <MacroBar
+            label="Carbs"
+            consumed={macroLog.carbs}
+            target={macroTarget.carbs}
+            color={theme.carbs}
+          />
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <MacroBar
+            label="Fat"
+            consumed={macroLog.fat}
+            target={macroTarget.fat}
+            color={theme.fat}
+          />
+        </View>
+
+        {/* ── Daily Checklist ── */}
+        <DailyChecklist />
+
+        {/* ── Trainer Pin ── */}
+        <TrainerPin />
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    justifyContent: 'center',
+  },
+  contentContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
   },
-  safeArea: {
+  inner: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
     maxWidth: MaxContentWidth,
+    paddingHorizontal: Spacing.five,
+    paddingTop: Spacing.five,
+    gap: Spacing.six,
   },
-  heroSection: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateText: {
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+  },
+  greetingText: {
+    fontSize: FontSizes.xl,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  avatarContainer: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
+  },
+  avatarEmoji: {
+    fontSize: 22,
+  },
+  ringSection: {
+    alignItems: 'center',
+    paddingVertical: Spacing.two,
+  },
+  macroCard: {
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    padding: Spacing.five,
     gap: Spacing.four,
   },
-  title: {
-    textAlign: 'center',
-  },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  divider: {
+    height: 1,
   },
 });

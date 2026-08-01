@@ -1,9 +1,7 @@
 import { Image } from 'expo-image';
 import * as SplashScreen from 'expo-splash-screen';
-import { useState } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import Animated, { Easing, Keyframe } from 'react-native-reanimated';
-import { scheduleOnRN } from 'react-native-worklets';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, StyleSheet, View, Animated, Easing } from 'react-native';
 
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
@@ -12,38 +10,34 @@ export function AnimatedSplashOverlay() {
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
-  if (!visible) return null;
+  const opacity = useRef(new Animated.Value(1)).current;
+  const scale = useRef(new Animated.Value(1)).current;
 
-  const splashKeyframe = new Keyframe({
-    0: {
-      transform: [{ scale: 1 }],
-      opacity: 1,
-    },
-    20: {
-      opacity: 1,
-    },
-    70: {
-      opacity: 0,
-      easing: Easing.elastic(0.7),
-    },
-    100: {
-      opacity: 0,
-      transform: [{ scale: 1 }],
-      easing: Easing.elastic(0.7),
-    },
-  });
+  useEffect(() => {
+    if (animate) {
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: DURATION * 0.2,
+          useNativeDriver: true,
+        }),
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: DURATION * 0.5,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start(() => setVisible(false));
+    }
+  }, [animate]);
+
+  if (!visible) return null;
 
   const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
 
   return animate ? (
-    <Animated.View
-      entering={splashKeyframe.duration(DURATION).withCallback((finished) => {
-        'worklet';
-        if (finished) {
-          scheduleOnRN(setVisible, false);
-        }
-      })}
-      style={styles.splashOverlay}>
+    <Animated.View style={[styles.splashOverlay, { opacity, transform: [{ scale }] }]}>
       {image}
     </Animated.View>
   ) : (
@@ -59,51 +53,65 @@ export function AnimatedSplashOverlay() {
   );
 }
 
-const keyframe = new Keyframe({
-  0: {
-    transform: [{ scale: INITIAL_SCALE_FACTOR }],
-  },
-  100: {
-    transform: [{ scale: 1 }],
-    easing: Easing.elastic(0.7),
-  },
-});
-
-const logoKeyframe = new Keyframe({
-  0: {
-    transform: [{ scale: 1.3 }],
-    opacity: 0,
-  },
-  40: {
-    transform: [{ scale: 1.3 }],
-    opacity: 0,
-    easing: Easing.elastic(0.7),
-  },
-  100: {
-    opacity: 1,
-    transform: [{ scale: 1 }],
-    easing: Easing.elastic(0.7),
-  },
-});
-
-const glowKeyframe = new Keyframe({
-  0: {
-    transform: [{ rotateZ: '0deg' }],
-  },
-  100: {
-    transform: [{ rotateZ: '7200deg' }],
-  },
-});
-
 export function AnimatedIcon() {
+  const backgroundScale = useRef(new Animated.Value(INITIAL_SCALE_FACTOR)).current;
+  const logoScale = useRef(new Animated.Value(1.3)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const glowRotation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(backgroundScale, {
+        toValue: 1,
+        duration: DURATION,
+        easing: Easing.out(Easing.back(1.5)),
+        useNativeDriver: true,
+      }),
+      Animated.sequence([
+        Animated.timing(logoOpacity, {
+          toValue: 0,
+          duration: DURATION * 0.4,
+          useNativeDriver: true,
+        }),
+        Animated.parallel([
+          Animated.timing(logoScale, {
+            toValue: 1,
+            duration: DURATION * 0.6,
+            easing: Easing.out(Easing.back(1.5)),
+            useNativeDriver: true,
+          }),
+          Animated.timing(logoOpacity, {
+            toValue: 1,
+            duration: DURATION * 0.6,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]),
+    ]).start();
+
+    Animated.loop(
+      Animated.timing(glowRotation, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, []);
+
+  const spin = glowRotation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
   return (
     <View style={styles.iconContainer}>
-      <Animated.View entering={glowKeyframe.duration(60 * 1000 * 4)} style={styles.glow}>
+      <Animated.View style={[styles.glow, { transform: [{ rotateZ: spin }] }]}>
         <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
       </Animated.View>
 
-      <Animated.View entering={keyframe.duration(DURATION)} style={styles.background} />
-      <Animated.View style={styles.imageContainer} entering={logoKeyframe.duration(DURATION)}>
+      <Animated.View style={[styles.background, { transform: [{ scale: backgroundScale }] }]} />
+      
+      <Animated.View style={[styles.imageContainer, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
         <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />
       </Animated.View>
     </View>
@@ -133,13 +141,13 @@ const styles = StyleSheet.create({
   },
   background: {
     borderRadius: 40,
-    experimental_backgroundImage: `linear-gradient(180deg, #3C9FFE, #0274DF)`,
+    backgroundColor: '#208AEF',
     width: 128,
     height: 128,
     position: 'absolute',
   },
   splashOverlay: {
-    ...StyleSheet.absoluteFill,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: '#208AEF',
     alignItems: 'center',
     justifyContent: 'center',
