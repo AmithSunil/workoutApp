@@ -1,15 +1,16 @@
 /**
- * CalorieRing – large SVG circular progress ring showing remaining calories.
+ * CalorieRing – massive SVG circular progress gauge.
+ * Flat stroke caps, thick track, instrument-grade precision aesthetic.
  */
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Animated, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
-import { Brand, Colors, FontSizes, Spacing } from '@/constants/theme';
+import { Brand, FontSizes, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-const SIZE = 240;
-const STROKE_WIDTH = 20;
+const SIZE = 280;
+const STROKE_WIDTH = 24;
 const RADIUS = (SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -41,7 +42,7 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
     outputRange: [CIRCUMFERENCE, 0],
   });
 
-  const ringColor = isOver ? Colors.light.danger : Brand.primary;
+  const ringColor = isOver ? theme.danger : theme.accent;
 
   return (
     <View style={styles.container}>
@@ -55,7 +56,7 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
           strokeWidth={STROKE_WIDTH}
           fill="none"
         />
-        {/* Progress arc */}
+        {/* Progress arc — flat butt caps, not rounded */}
         <AnimatedCircle
           cx={SIZE / 2}
           cy={SIZE / 2}
@@ -65,21 +66,20 @@ export function CalorieRing({ consumed, target }: CalorieRingProps) {
           fill="none"
           strokeDasharray={CIRCUMFERENCE}
           strokeDashoffset={strokeOffset}
-          strokeLinecap="round"
+          strokeLinecap="butt"
         />
       </Svg>
 
       {/* Center content */}
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
         <View style={styles.center}>
-          <Text style={[styles.remainingLabel, { color: theme.textSecondary }]}>
-            {isOver ? 'Over by' : 'Remaining'}
+          <Text style={[styles.remainingLabel, { color: theme.textTertiary }]}>
+            {isOver ? 'OVER BY' : 'REMAINING'}
           </Text>
           <Text style={[styles.remainingValue, { color: isOver ? theme.danger : theme.text }]}>
             {isOver ? consumed - target : remaining}
           </Text>
-          <Text style={[styles.remainingUnit, { color: theme.textSecondary }]}>kcal</Text>
-          <Text style={[styles.consumedText, { color: theme.textTertiary }]}>
+          <Text style={[styles.consumedText, { color: theme.textSecondary }]}>
             {consumed} / {target}
           </Text>
         </View>
@@ -94,9 +94,6 @@ const styles = StyleSheet.create({
     height: SIZE,
     alignSelf: 'center',
   },
-  svg: {
-    position: 'absolute',
-  },
   center: {
     flex: 1,
     alignItems: 'center',
@@ -105,22 +102,20 @@ const styles = StyleSheet.create({
   },
   remainingLabel: {
     fontSize: FontSizes.xs,
-    fontWeight: '600',
+    fontWeight: '700',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 2.5,
   },
   remainingValue: {
-    fontSize: FontSizes['4xl'],
-    fontWeight: '700',
-    lineHeight: FontSizes['4xl'] * 1.1,
-  },
-  remainingUnit: {
-    fontSize: FontSizes.sm,
-    fontWeight: '500',
-    marginTop: -Spacing.one,
+    fontSize: FontSizes['5xl'],
+    fontWeight: '800',
+    lineHeight: FontSizes['5xl'] * 1.05,
+    marginTop: Spacing.one,
   },
   consumedText: {
-    fontSize: FontSizes.xs,
-    marginTop: Spacing.one,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    marginTop: Spacing.half,
+    letterSpacing: 0.5,
   },
 });

@@ -1,6 +1,9 @@
 /**
  * Tab 1: Home – The Daily Dashboard
  * Answers: "What do I have left to do today?"
+ *
+ * Editorial aesthetic: massive day name header, dominant calorie ring,
+ * flat macro bars, ruled checklist rows, blockquote trainer note.
  */
 import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,27 +14,22 @@ import { MacroBar } from '@/components/home/MacroBar';
 import { TrainerPin } from '@/components/home/TrainerPin';
 import {
   BottomTabInset,
-  Colors,
   FontSizes,
   MaxContentWidth,
-  Radius,
   Spacing,
 } from '@/constants/theme';
 import { useApp } from '@/context/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+function getDayName() {
+  return new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
 }
 
-function formatDate() {
+function getDateLine() {
   return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
     month: 'long',
     day: 'numeric',
+    year: 'numeric',
   });
 }
 
@@ -57,18 +55,10 @@ export default function HomeScreen() {
       contentContainerStyle={[styles.contentContainer, platformPadding]}
       showsVerticalScrollIndicator={false}>
       <View style={styles.inner}>
-        {/* ── Header ── */}
+        {/* ── Header — Editorial masthead ── */}
         <View style={styles.header}>
-          <View>
-            <Text style={[styles.dateText, { color: theme.textSecondary }]}>{formatDate()}</Text>
-            <Text style={[styles.greetingText, { color: theme.text }]}>
-              {getGreeting()} 👋
-            </Text>
-          </View>
-          {/* Avatar */}
-          <View style={[styles.avatarContainer, { backgroundColor: Colors.light.accent + '1A' }]}>
-            <Text style={styles.avatarEmoji}>🏆</Text>
-          </View>
+          <Text style={[styles.dayName, { color: theme.text }]}>{getDayName()}</Text>
+          <Text style={[styles.dateLine, { color: theme.textSecondary }]}>{getDateLine()}</Text>
         </View>
 
         {/* ── Calorie Ring ── */}
@@ -79,8 +69,8 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* ── Macro Bars ── */}
-        <View style={[styles.macroCard, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+        {/* ── Macro Bars — flat section, 1px dividers ── */}
+        <View style={styles.macroSection}>
           <MacroBar
             label="Protein"
             consumed={macroLog.protein}
@@ -126,40 +116,27 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth,
     paddingHorizontal: Spacing.five,
     paddingTop: Spacing.five,
-    gap: Spacing.six,
+    gap: Spacing.seven,
+    paddingBottom: Spacing.nine,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    gap: Spacing.one,
   },
-  dateText: {
+  dayName: {
+    fontSize: FontSizes['4xl'],
+    fontWeight: '900',
+    letterSpacing: -1,
+  },
+  dateLine: {
     fontSize: FontSizes.sm,
     fontWeight: '500',
-  },
-  greetingText: {
-    fontSize: FontSizes.xl,
-    fontWeight: '700',
-    marginTop: 2,
-  },
-  avatarContainer: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarEmoji: {
-    fontSize: 22,
+    letterSpacing: 0.5,
   },
   ringSection: {
     alignItems: 'center',
-    paddingVertical: Spacing.two,
+    paddingVertical: Spacing.four,
   },
-  macroCard: {
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    padding: Spacing.five,
+  macroSection: {
     gap: Spacing.four,
   },
   divider: {

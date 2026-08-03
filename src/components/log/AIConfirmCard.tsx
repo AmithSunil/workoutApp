@@ -1,25 +1,26 @@
 /**
- * AIConfirmCard – bottom-sheet card that shows AI-identified food with portion adjusters.
- * Simulates AI analysis with a loading shimmer, then shows the result card.
+ * AIConfirmCard – bottom-sheet that shows AI-identified food with portion adjusters.
+ * Sharp radii, no shadows, monochromatic macros.
  */
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, TextInput, View, Animated } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View, Animated } from 'react-native';
 
-import { Brand, FontSizes, MIN_TOUCH, Radius, Shadow, Spacing } from '@/constants/theme';
+import { Brand, FontSizes, MIN_TOUCH, Radius, Spacing } from '@/constants/theme';
 import { useApp, type LoggedMeal } from '@/context/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 
 // Mock AI results pool
 const MOCK_RESULTS = [
-  { name: 'Grilled Chicken Breast + Rice', calories: 510, protein: 46, carbs: 54, fat: 11, emoji: '🍗' },
-  { name: 'Avocado Toast + Eggs', calories: 420, protein: 22, carbs: 32, fat: 24, emoji: '🥑' },
-  { name: 'Mixed Salad with Salmon', calories: 380, protein: 34, carbs: 12, fat: 18, emoji: '🥗' },
-  { name: 'Pasta Bolognese', calories: 620, protein: 36, carbs: 68, fat: 16, emoji: '🍝' },
-  { name: 'Greek Yogurt Bowl', calories: 310, protein: 28, carbs: 36, fat: 6, emoji: '🫙' },
+  { name: 'Grilled Chicken Breast + Rice', calories: 510, protein: 46, carbs: 54, fat: 11 },
+  { name: 'Avocado Toast + Eggs', calories: 420, protein: 22, carbs: 32, fat: 24 },
+  { name: 'Mixed Salad with Salmon', calories: 380, protein: 34, carbs: 12, fat: 18 },
+  { name: 'Pasta Bolognese', calories: 620, protein: 36, carbs: 68, fat: 16 },
+  { name: 'Greek Yogurt Bowl', calories: 310, protein: 28, carbs: 36, fat: 6 },
 ];
 
 function ShimmerBar({ width }: { width: string | number }) {
+  const theme = useTheme();
   const opacity = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
@@ -35,7 +36,12 @@ function ShimmerBar({ width }: { width: string | number }) {
 
   return (
     <View style={{ width: width as any }}>
-      <Animated.View style={[styles.shimmerBar, { width: '100%', opacity }]} />
+      <Animated.View
+        style={[
+          styles.shimmerBar,
+          { width: '100%', opacity, backgroundColor: theme.backgroundElement },
+        ]}
+      />
     </View>
   );
 }
@@ -85,16 +91,16 @@ export function AIConfirmCard({ visible, inputText, onClose }: AIConfirmCardProp
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <View style={[styles.card, { backgroundColor: theme.backgroundCard }]}>
+        <View style={[styles.card, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
           <Pressable>
             {/* Handle */}
-            <View style={[styles.handle, { backgroundColor: theme.border }]} />
+            <View style={[styles.handle, { backgroundColor: theme.borderStrong }]} />
 
             {loading ? (
               /* ── Loading Shimmer ── */
               <View style={styles.loadingContent}>
                 <Text style={[styles.loadingLabel, { color: theme.textSecondary }]}>
-                  🤖 Analysing your meal...
+                  Analysing your meal...
                 </Text>
                 <View style={styles.shimmerGroup}>
                   <ShimmerBar width="70%" />
@@ -107,28 +113,31 @@ export function AIConfirmCard({ visible, inputText, onClose }: AIConfirmCardProp
               /* ── Result ── */
               <View style={styles.resultContent}>
                 <View style={styles.resultHeader}>
-                  <Text style={styles.resultEmoji}>{result.emoji}</Text>
                   <View style={styles.resultTitleBlock}>
-                    <Text style={[styles.resultTitle, { color: theme.text }]}>{result.name}</Text>
-                    <View style={[styles.aiBadge, { backgroundColor: Brand.primary + '1A' }]}>
-                      <Text style={[styles.aiBadgeText, { color: Brand.primary }]}>AI Identified</Text>
-                    </View>
+                    <Text style={[styles.aiLabel, { color: theme.textTertiary }]}>
+                      AI IDENTIFIED
+                    </Text>
+                    <Text style={[styles.resultTitle, { color: theme.text }]}>
+                      {result.name}
+                    </Text>
                   </View>
                 </View>
 
                 {/* Servings stepper */}
                 <View style={[styles.servingsRow, { borderColor: theme.border }]}>
-                  <Text style={[styles.servingsLabel, { color: theme.textSecondary }]}>Servings</Text>
+                  <Text style={[styles.servingsLabel, { color: theme.textSecondary }]}>
+                    SERVINGS
+                  </Text>
                   <View style={styles.stepper}>
                     <Pressable
                       onPress={() => handleServingsChange(-0.5)}
-                      style={[styles.stepBtn, { backgroundColor: theme.backgroundElement }]}>
+                      style={[styles.stepBtn, { borderColor: theme.border }]}>
                       <Text style={[styles.stepBtnText, { color: theme.text }]}>−</Text>
                     </Pressable>
                     <Text style={[styles.servingsValue, { color: theme.text }]}>{servings}</Text>
                     <Pressable
                       onPress={() => handleServingsChange(0.5)}
-                      style={[styles.stepBtn, { backgroundColor: theme.backgroundElement }]}>
+                      style={[styles.stepBtn, { borderColor: theme.border }]}>
                       <Text style={[styles.stepBtnText, { color: theme.text }]}>+</Text>
                     </Pressable>
                   </View>
@@ -137,13 +146,13 @@ export function AIConfirmCard({ visible, inputText, onClose }: AIConfirmCardProp
                 {/* Macros row */}
                 <View style={styles.macrosRow}>
                   {[
-                    { label: 'Calories', value: adjustedMacros.calories, unit: 'kcal', color: Brand.primary },
-                    { label: 'Protein', value: adjustedMacros.protein, unit: 'g', color: theme.protein },
-                    { label: 'Carbs', value: adjustedMacros.carbs, unit: 'g', color: theme.carbs },
-                    { label: 'Fat', value: adjustedMacros.fat, unit: 'g', color: theme.fat },
+                    { label: 'CALORIES', value: adjustedMacros.calories, unit: 'kcal' },
+                    { label: 'PROTEIN', value: adjustedMacros.protein, unit: 'g' },
+                    { label: 'CARBS', value: adjustedMacros.carbs, unit: 'g' },
+                    { label: 'FAT', value: adjustedMacros.fat, unit: 'g' },
                   ].map(m => (
                     <View key={m.label} style={styles.macroCell}>
-                      <Text style={[styles.macroValue, { color: m.color }]}>{m.value}</Text>
+                      <Text style={[styles.macroValue, { color: theme.text }]}>{m.value}</Text>
                       <Text style={[styles.macroUnit, { color: theme.textTertiary }]}>{m.unit}</Text>
                       <Text style={[styles.macroLabel, { color: theme.textSecondary }]}>{m.label}</Text>
                     </View>
@@ -157,7 +166,7 @@ export function AIConfirmCard({ visible, inputText, onClose }: AIConfirmCardProp
                     styles.confirmButton,
                     { backgroundColor: Brand.primary, opacity: pressed ? 0.85 : 1 },
                   ]}>
-                  <Text style={styles.confirmText}>Confirm & Log</Text>
+                  <Text style={styles.confirmText}>CONFIRM & LOG</Text>
                 </Pressable>
 
                 <Pressable onPress={onClose} style={styles.cancelLink}>
@@ -179,15 +188,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   card: {
-    borderTopLeftRadius: Radius['2xl'],
-    borderTopRightRadius: Radius['2xl'],
+    borderTopLeftRadius: Radius.lg,
+    borderTopRightRadius: Radius.lg,
+    borderTopWidth: 1,
     paddingBottom: Spacing.nine,
-    ...Shadow.lg,
   },
   handle: {
     width: 40,
     height: 4,
-    borderRadius: Radius.full,
+    borderRadius: 2,
     alignSelf: 'center',
     marginTop: Spacing.three,
     marginBottom: Spacing.two,
@@ -205,39 +214,28 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
   },
   shimmerBar: {
-    height: 16,
+    height: 14,
     borderRadius: Radius.sm,
-    backgroundColor: '#E5E7EB',
   },
   resultContent: {
     padding: Spacing.six,
     gap: Spacing.five,
   },
   resultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
-  },
-  resultEmoji: {
-    fontSize: 36,
-  },
-  resultTitleBlock: {
-    flex: 1,
     gap: Spacing.one,
   },
+  resultTitleBlock: {
+    gap: Spacing.one,
+  },
+  aiLabel: {
+    fontSize: FontSizes.xs,
+    fontWeight: '700',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
   resultTitle: {
-    fontSize: FontSizes.md,
-    fontWeight: '700',
-  },
-  aiBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: Spacing.two,
-    paddingVertical: 2,
-    borderRadius: Radius.full,
-  },
-  aiBadgeText: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: FontSizes.lg,
+    fontWeight: '800',
   },
   servingsRow: {
     flexDirection: 'row',
@@ -248,8 +246,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   servingsLabel: {
-    fontSize: FontSizes.base,
-    fontWeight: '500',
+    fontSize: FontSizes.xs,
+    fontWeight: '700',
+    letterSpacing: 1.5,
   },
   stepper: {
     flexDirection: 'row',
@@ -259,7 +258,8 @@ const styles = StyleSheet.create({
   stepBtn: {
     width: MIN_TOUCH,
     height: MIN_TOUCH,
-    borderRadius: Radius.md,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -284,26 +284,28 @@ const styles = StyleSheet.create({
   },
   macroValue: {
     fontSize: FontSizes.xl,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   macroUnit: {
     fontSize: FontSizes.xs,
     marginTop: -2,
   },
   macroLabel: {
-    fontSize: FontSizes.xs,
-    fontWeight: '500',
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   confirmButton: {
     height: MIN_TOUCH + 8,
-    borderRadius: Radius.xl,
+    borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
   confirmText: {
     color: '#FFFFFF',
-    fontSize: FontSizes.base,
-    fontWeight: '700',
+    fontSize: FontSizes.sm,
+    fontWeight: '800',
+    letterSpacing: 1.5,
   },
   cancelLink: {
     alignItems: 'center',

@@ -1,3 +1,6 @@
+/**
+ * MacroBar – flat rectangular progress bar with monochromatic brand-accent fills.
+ */
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, Animated } from 'react-native';
 
@@ -36,10 +39,12 @@ export function MacroBar({ label, consumed, target, color, unit = 'g' }: MacroBa
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
+        <Text style={[styles.label, { color: theme.text }]}>
+          {label.toUpperCase()}
+        </Text>
         <Text style={[styles.values, { color: theme.textSecondary }]}>
-          <Text style={{ color: color, fontWeight: '700' }}>{remaining}{unit}</Text>
-          {' left · '}{consumed}/{target}{unit}
+          <Text style={{ color: theme.text, fontWeight: '700' }}>{consumed}</Text>
+          {'/'}{target}{unit}
         </Text>
       </View>
       <View style={[styles.track, { backgroundColor: theme.backgroundElement }]}>
@@ -59,19 +64,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontSize: FontSizes.sm,
-    fontWeight: '600',
+    fontSize: FontSizes.xs,
+    fontWeight: '700',
+    letterSpacing: 1.5,
   },
   values: {
-    fontSize: FontSizes.xs,
+    fontSize: FontSizes.sm,
   },
   track: {
-    height: 8,
-    borderRadius: Radius.full,
+    height: 6,
+    borderRadius: Radius.sm,
     overflow: 'hidden',
   },
   fill: {
     height: '100%',
-    borderRadius: Radius.full,
+    borderRadius: Radius.sm,
   },
 });

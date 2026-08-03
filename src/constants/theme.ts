@@ -1,7 +1,8 @@
 /**
- * WorkoutApp Design Token System
- * Supports seamless light/dark theme switching with semantic tokens.
- * All UI components should reference these tokens, never raw color values.
+ * WorkoutApp Design Token System — "Tactile Utility & Editorial"
+ *
+ * Fully Monochromatic interface: Pure white backgrounds, harsh black contrast, crisp greys.
+ * Zero accent color — hyper-functional blueprint aesthetic.
  */
 
 import '@/global.css';
@@ -10,23 +11,20 @@ import { Platform } from 'react-native';
 
 // ─── Brand / Accent ─────────────────────────────────────────────────────────
 export const Brand = {
-  /** Electric blue – primary CTA, progress rings, active states */
-  primary: '#2563EB',
-  primaryLight: '#3B82F6',
-  primaryDark: '#1D4ED8',
-  /** Success green */
-  success: '#16A34A',
-  successLight: '#22C55E',
-  /** Warning amber */
-  warning: '#D97706',
-  /** Danger red */
+  /** Pure Black CTA & Ring Fill */
+  primary: '#000000',
+  primaryLight: '#222222',
+  primaryDark: '#000000',
+  /** Functional Status Colors - subtle/monochrome styled if needed */
+  success: '#111111',
+  successLight: '#333333',
+  warning: '#555555',
   danger: '#DC2626',
-  /** Protein – purple tint */
-  protein: '#8B5CF6',
-  /** Carbs – amber tint */
-  carbs: '#F59E0B',
-  /** Fat – coral tint */
-  fat: '#F97316',
+  /** Macro colors — pure monochromatic grayscale gradient.
+   *  Protein 100% black, Carbs 65% black, Fat 35% black */
+  protein: '#000000',
+  carbs: '#000000A6',
+  fat: '#00000059',
 } as const;
 
 // ─── Semantic Color Tokens ───────────────────────────────────────────────────
@@ -34,24 +32,24 @@ export const Colors = {
   light: {
     // Backgrounds
     background: '#FFFFFF',
-    backgroundSecondary: '#F8F9FA',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
+    backgroundSecondary: '#FAFAFA',
+    backgroundElement: '#F0F0F0',
+    backgroundSelected: '#E5E5E5',
     backgroundCard: '#FFFFFF',
 
-    // Text
-    text: '#1A1A1A',
-    textSecondary: '#60646C',
-    textTertiary: '#9CA3AF',
+    // Text — high-contrast monochromatic
+    text: '#000000',
+    textSecondary: '#555555',
+    textTertiary: '#888888',
     textOnAccent: '#FFFFFF',
 
-    // Border
-    border: '#E5E7EB',
-    borderStrong: '#D1D5DB',
+    // Border — harsh 1px black/grey lines
+    border: '#E0E0E0',
+    borderStrong: '#000000',
 
     // Interactive
-    accent: Brand.primary,
-    accentLight: Brand.primaryLight,
+    accent: '#000000',
+    accentLight: '#333333',
 
     // Status
     success: Brand.success,
@@ -65,43 +63,43 @@ export const Colors = {
 
     // Tab bar
     tabBarBackground: '#FFFFFF',
-    tabBarBorder: '#E5E7EB',
+    tabBarBorder: '#E0E0E0',
   },
   dark: {
-    // Backgrounds
+    // Backgrounds — True OLED black if user is in dark mode
     background: '#000000',
     backgroundSecondary: '#0A0A0A',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    backgroundCard: '#121212',
+    backgroundElement: '#1A1A1A',
+    backgroundSelected: '#2A2A2A',
+    backgroundCard: '#0A0A0A',
 
     // Text
-    text: '#F9FAFB',
-    textSecondary: '#B0B4BA',
-    textTertiary: '#6B7280',
-    textOnAccent: '#FFFFFF',
+    text: '#FFFFFF',
+    textSecondary: '#AAAAAA',
+    textTertiary: '#666666',
+    textOnAccent: '#000000',
 
     // Border
-    border: '#2E3135',
-    borderStrong: '#3F444D',
+    border: '#2A2A2A',
+    borderStrong: '#FFFFFF',
 
     // Interactive
-    accent: Brand.primaryLight,
-    accentLight: Brand.primaryLight,
+    accent: '#FFFFFF',
+    accentLight: '#CCCCCC',
 
     // Status
-    success: Brand.successLight,
-    warning: Brand.warning,
-    danger: Brand.danger,
+    success: '#FFFFFF',
+    warning: '#CCCCCC',
+    danger: '#FF4D4D',
 
     // Macro colors
-    protein: Brand.protein,
-    carbs: Brand.carbs,
-    fat: Brand.fat,
+    protein: '#FFFFFF',
+    carbs: '#FFFFFFB3',
+    fat: '#FFFFFF66',
 
     // Tab bar
     tabBarBackground: '#000000',
-    tabBarBorder: '#2E3135',
+    tabBarBorder: '#2A2A2A',
   },
 } as const;
 
@@ -140,7 +138,7 @@ export const FontSizes = {
   '2xl': 28,
   '3xl': 32,
   '4xl': 40,
-  '5xl': 48,
+  '5xl': 56,
 } as const;
 
 // ─── Spacing ────────────────────────────────────────────────────────────────
@@ -158,37 +156,39 @@ export const Spacing = {
 } as const;
 
 // ─── Border Radius ───────────────────────────────────────────────────────────
+/** Sharp, architectural radii. No pills. No bubbles. */
 export const Radius = {
-  sm: 6,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  '2xl': 24,
+  sm: 4,
+  md: 6,
+  lg: 8,
+  xl: 8,
+  '2xl': 8,
   full: 9999,
 } as const;
 
-// ─── Shadows (Light mode) ────────────────────────────────────────────────────
+// ─── Shadows ─────────────────────────────────────────────────────────────────
+/** Shadows are intentionally zeroed. We use 1px borders for separation. */
 export const Shadow = {
   sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
-    elevation: 8,
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
 } as const;
 

@@ -1,103 +1,76 @@
+/**
+ * DailyChecklist – strict ruled-notebook rows with native radio buttons.
+ * No cards, no shadows, no bounce animations. Deliberate and heavy.
+ */
 import * as Haptics from 'expo-haptics';
-import React, { useCallback, useRef } from 'react';
-import { Pressable, StyleSheet, Text, View, Animated } from 'react-native';
+import React, { useCallback } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Brand, FontSizes, MIN_TOUCH, Radius, Shadow, Spacing } from '@/constants/theme';
+import { FontSizes, MIN_TOUCH, Spacing } from '@/constants/theme';
 import { useApp } from '@/context/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 
-const ICONS: Record<string, string> = {
-  workout: '🏋️',
-  nutrition: '🍽️',
-  hydration: '💧',
-  checkin: '📊',
-};
-
-interface ChecklistCardProps {
+interface ChecklistRowProps {
   id: string;
   label: string;
   subtitle?: string;
   completed: boolean;
-  type: 'workout' | 'nutrition' | 'hydration' | 'checkin';
 }
 
-function ChecklistCard({ id, label, subtitle, completed, type }: ChecklistCardProps) {
+function ChecklistRow({ id, label, subtitle, completed }: ChecklistRowProps) {
   const theme = useTheme();
   const { toggleChecklistItem } = useApp();
-  const scale = useRef(new Animated.Value(1)).current;
-  const checkScale = useRef(new Animated.Value(completed ? 1 : 0)).current;
 
   const handlePress = useCallback(async () => {
-    // Haptic feedback
     if (!completed) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-
-    // Bounce animation
-    Animated.sequence([
-      Animated.spring(scale, { toValue: 0.96, useNativeDriver: true, damping: 10 }),
-      Animated.spring(scale, { toValue: 1, useNativeDriver: true, damping: 8 }),
-    ]).start();
-
-    Animated.sequence([
-      Animated.spring(checkScale, { toValue: 1.3, useNativeDriver: true, damping: 8 }),
-      Animated.spring(checkScale, { toValue: completed ? 0 : 1, useNativeDriver: true, damping: 10 }),
-    ]).start();
-
     toggleChecklistItem(id);
-  }, [completed, id, toggleChecklistItem, scale, checkScale]);
+  }, [completed, id, toggleChecklistItem]);
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
-      <Pressable
-        onPress={handlePress}
-        style={({ pressed }) => [
-          styles.card,
+    <Pressable
+      onPress={handlePress}
+      style={({ pressed }) => [
+        styles.row,
+        { borderBottomColor: theme.border, opacity: pressed ? 0.7 : 1 },
+      ]}>
+      {/* Radio button — solid fill when checked */}
+      <View
+        style={[
+          styles.radio,
           {
-            backgroundColor: completed ? theme.backgroundElement : theme.backgroundCard,
-            borderColor: completed ? 'transparent' : theme.border,
-            ...(completed ? {} : Shadow.sm),
-            opacity: pressed ? 0.9 : 1,
+            borderColor: completed ? theme.text : theme.borderStrong,
+            backgroundColor: completed ? theme.text : 'transparent',
           },
         ]}>
-        {/* Radio button */}
-        <View style={[styles.radioOuter, {
-          borderColor: completed ? Brand.primary : theme.border,
-          backgroundColor: completed ? Brand.primary : 'transparent',
-        }]}>
-          {completed && (
-            <Animated.Text style={[styles.checkmark, { transform: [{ scale: checkScale }], opacity: checkScale }]}>✓</Animated.Text>
-          )}
-        </View>
-
-        {/* Content */}
-        <View style={styles.textContainer}>
-          <Text
-            style={[
-              styles.label,
-              { color: completed ? theme.textSecondary : theme.text },
-              completed && styles.strikethrough,
-            ]}
-            numberOfLines={1}>
-            {ICONS[type]} {label}
-          </Text>
-          {subtitle && (
-            <Text style={[styles.subtitle, { color: theme.textTertiary }]} numberOfLines={1}>
-              {subtitle}
-            </Text>
-          )}
-        </View>
-
-        {/* Completion badge */}
         {completed && (
-          <View style={[styles.doneBadge, { backgroundColor: Brand.success + '22' }]}>
-            <Text style={[styles.doneText, { color: Brand.success }]}>Done</Text>
-          </View>
+          <Text style={[styles.checkmark, { color: theme.background }]}>✓</Text>
         )}
-      </Pressable>
-    </Animated.View>
+      </View>
+
+      {/* Content */}
+      <View style={styles.textContainer}>
+        <Text
+          style={[
+            styles.label,
+            { color: completed ? theme.textTertiary : theme.text },
+            completed && styles.strikethrough,
+          ]}
+          numberOfLines={1}>
+          {label}
+        </Text>
+        {subtitle && (
+          <Text
+            style={[styles.subtitle, { color: theme.textTertiary }]}
+            numberOfLines={1}>
+            {subtitle}
+          </Text>
+        )}
+      </View>
+    </Pressable>
   );
 }
 
@@ -110,14 +83,14 @@ export function DailyChecklist() {
   return (
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Today's Tasks</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>TODAY'S TASKS</Text>
         <Text style={[styles.sectionCount, { color: theme.textSecondary }]}>
-          {done}/{total} complete
+          {done}/{total}
         </Text>
       </View>
-      <View style={styles.list}>
+      <View style={[styles.list, { borderTopColor: theme.border }]}>
         {state.checklist.map(item => (
-          <ChecklistCard key={item.id} {...item} />
+          <ChecklistRow key={item.id} {...item} />
         ))}
       </View>
     </View>
@@ -132,41 +105,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.one,
   },
   sectionTitle: {
-    fontSize: FontSizes.md,
+    fontSize: FontSizes.xs,
     fontWeight: '700',
+    letterSpacing: 2.5,
+    textTransform: 'uppercase',
   },
   sectionCount: {
     fontSize: FontSizes.sm,
-    fontWeight: '500',
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
   },
   list: {
-    gap: Spacing.two,
+    borderTopWidth: 1,
   },
-  card: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: Spacing.four,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
+    paddingVertical: Spacing.four,
+    borderBottomWidth: 1,
     minHeight: MIN_TOUCH,
     gap: Spacing.three,
   },
-  radioOuter: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+  radio: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
   },
   checkmark: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
   },
   textContainer: {
     flex: 1,
@@ -182,14 +155,5 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: FontSizes.xs,
     fontWeight: '400',
-  },
-  doneBadge: {
-    paddingHorizontal: Spacing.two,
-    paddingVertical: Spacing.half,
-    borderRadius: Radius.full,
-  },
-  doneText: {
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
   },
 });

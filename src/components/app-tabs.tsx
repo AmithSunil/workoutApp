@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
 import { useColorScheme } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import { HomeIcon, LogIcon, ProgressIcon, WorkoutsIcon } from '@/components/ui/TabIcons';
+import { Colors, FontSizes } from '@/constants/theme';
 
 export default function AppTabs() {
   const scheme = useColorScheme();
@@ -13,37 +14,54 @@ export default function AppTabs() {
         headerShown: false,
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textSecondary,
+        tabBarLabelStyle: {
+          fontSize: FontSizes.xs,
+          fontWeight: '700',
+          letterSpacing: 0.5,
+        },
         tabBarStyle: {
           backgroundColor: colors.tabBarBackground,
           borderTopColor: colors.border,
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: () => null, // Provide standard icons if needed, or omit for now
+          tabBarIcon: ({ color, focused }) => (
+            <HomeIcon color={color} size={22} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="log"
         options={{
           title: 'Log',
-          tabBarIcon: () => null,
+          tabBarIcon: ({ color, focused }) => (
+            <LogIcon color={color} size={22} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="workouts"
         options={{
           title: 'Workouts',
-          tabBarIcon: () => null,
+          tabBarIcon: ({ color, focused }) => (
+            <WorkoutsIcon color={color} size={22} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
           title: 'Progress',
-          tabBarIcon: () => null,
+          tabBarIcon: ({ color, focused }) => (
+            <ProgressIcon color={color} size={22} focused={focused} />
+          ),
         }}
       />
     </Tabs>

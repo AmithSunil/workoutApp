@@ -1,10 +1,10 @@
 /**
  * Tab 2: Log – The Nutrition Hub
+ * High-efficiency, flat, high-contrast interface for meal logging.
  */
 import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -25,45 +25,12 @@ import {
   MaxContentWidth,
   MIN_TOUCH,
   Radius,
-  Shadow,
   Spacing,
 } from '@/constants/theme';
 import { useApp } from '@/context/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 
 type LogMode = null | 'camera' | 'upload' | 'text';
-
-interface ActionButtonProps {
-  emoji: string;
-  title: string;
-  subtitle: string;
-  onPress: () => void;
-  isPrimary?: boolean;
-}
-
-function ActionButton({ emoji, title, subtitle, onPress, isPrimary }: ActionButtonProps) {
-  const theme = useTheme();
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.actionButton,
-        isPrimary ? styles.actionButtonPrimary : [styles.actionButtonSecondary, { borderColor: theme.border, backgroundColor: theme.backgroundCard }],
-        pressed && styles.pressed,
-      ]}>
-      <Text style={styles.actionEmoji}>{emoji}</Text>
-      <View style={styles.actionTextBlock}>
-        <Text style={[styles.actionTitle, { color: isPrimary ? '#fff' : theme.text }]}>
-          {title}
-        </Text>
-        <Text style={[styles.actionSubtitle, { color: isPrimary ? '#ffffffBB' : theme.textSecondary }]}>
-          {subtitle}
-        </Text>
-      </View>
-      <Text style={{ color: isPrimary ? '#ffffffBB' : theme.textTertiary, fontSize: 18 }}>→</Text>
-    </Pressable>
-  );
-}
 
 export default function LogScreen() {
   const theme = useTheme();
@@ -75,7 +42,6 @@ export default function LogScreen() {
 
   const handleCameraPress = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    // Simulate camera opening then processing
     setShowAICard(true);
   };
 
@@ -110,61 +76,61 @@ export default function LogScreen() {
         <View style={styles.inner}>
           {/* ── Header ── */}
           <View style={styles.header}>
-            <Text style={[styles.headerTitle, { color: theme.text }]}>Log a Meal</Text>
-            <View style={[styles.calorieBadge, { backgroundColor: Brand.primary + '1A' }]}>
-              <Text style={[styles.calorieBadgeText, { color: Brand.primary }]}>
-                {state.macroLog.calories} / {state.macroTarget.calories} kcal
-              </Text>
-            </View>
+            <Text style={[styles.headerTitle, { color: theme.text }]}>LOG</Text>
+            <Text style={[styles.calorieCounter, { color: theme.textSecondary }]}>
+              {state.macroLog.calories.toLocaleString()} / {state.macroTarget.calories.toLocaleString()} kcal
+            </Text>
           </View>
 
-          {/* ── Action Buttons ── */}
+          {/* ── Action Buttons — stacked, flat, high-contrast ── */}
           <View style={styles.actions}>
-            <ActionButton
-              emoji="📷"
-              title="Snap a Photo"
-              subtitle="AI identifies your meal instantly"
+            {/* Primary: Snap a Photo */}
+            <Pressable
               onPress={handleCameraPress}
-              isPrimary
-            />
-            <View style={styles.secondaryRow}>
-              <Pressable
-                onPress={handleUploadPress}
-                style={({ pressed }) => [
-                  styles.halfButton,
-                  { backgroundColor: theme.backgroundCard, borderColor: theme.border },
-                  pressed && styles.pressed,
-                  Shadow.sm,
-                ]}>
-                <Text style={styles.halfButtonEmoji}>🖼️</Text>
-                <Text style={[styles.halfButtonTitle, { color: theme.text }]}>Upload</Text>
-                <Text style={[styles.halfButtonSub, { color: theme.textSecondary }]}>From gallery</Text>
-              </Pressable>
+              style={({ pressed }) => [
+                styles.actionButton,
+                styles.actionPrimary,
+                { opacity: pressed ? 0.85 : 1 },
+              ]}>
+              <Text style={styles.actionPrimaryLabel}>SNAP A PHOTO</Text>
+              <Text style={styles.actionPrimaryArrow}>→</Text>
+            </Pressable>
 
-              <Pressable
-                onPress={() => setMode(mode === 'text' ? null : 'text')}
-                style={({ pressed }) => [
-                  styles.halfButton,
-                  {
-                    backgroundColor: mode === 'text' ? Brand.primary + '1A' : theme.backgroundCard,
-                    borderColor: mode === 'text' ? Brand.primary : theme.border,
-                  },
-                  pressed && styles.pressed,
-                  Shadow.sm,
+            {/* Secondary: Upload */}
+            <Pressable
+              onPress={handleUploadPress}
+              style={({ pressed }) => [
+                styles.actionButton,
+                { borderColor: theme.border, backgroundColor: theme.background, opacity: pressed ? 0.7 : 1 },
+              ]}>
+              <Text style={[styles.actionLabel, { color: theme.text }]}>UPLOAD</Text>
+              <Text style={[styles.actionArrow, { color: theme.textTertiary }]}>→</Text>
+            </Pressable>
+
+            {/* Secondary: Type it Out */}
+            <Pressable
+              onPress={() => setMode(mode === 'text' ? null : 'text')}
+              style={({ pressed }) => [
+                styles.actionButton,
+                {
+                  borderColor: mode === 'text' ? Brand.primary : theme.border,
+                  backgroundColor: theme.background,
+                  opacity: pressed ? 0.7 : 1,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.actionLabel,
+                  { color: mode === 'text' ? Brand.primary : theme.text },
                 ]}>
-                <Text style={styles.halfButtonEmoji}>✏️</Text>
-                <Text style={[styles.halfButtonTitle, { color: mode === 'text' ? Brand.primary : theme.text }]}>
-                  Type it Out
-                </Text>
-                <Text style={[styles.halfButtonSub, { color: theme.textSecondary }]}>
-                  Natural language
-                </Text>
-              </Pressable>
-            </View>
+                TYPE IT OUT
+              </Text>
+              <Text style={[styles.actionArrow, { color: theme.textTertiary }]}>→</Text>
+            </Pressable>
 
             {/* Text input */}
             {mode === 'text' && (
-              <View style={[styles.textInputCard, { backgroundColor: theme.backgroundCard, borderColor: theme.border }]}>
+              <View style={[styles.textInputCard, { borderColor: theme.border }]}>
                 <TextInput
                   style={[styles.textInput, { color: theme.text }]}
                   placeholder="e.g. two scrambled eggs and whole wheat toast"
@@ -176,8 +142,11 @@ export default function LogScreen() {
                 />
                 <Pressable
                   onPress={handleTextSubmit}
-                  style={[styles.analyzeButton, { backgroundColor: Brand.primary }]}>
-                  <Text style={styles.analyzeButtonText}>Analyze →</Text>
+                  style={({ pressed }) => [
+                    styles.analyzeButton,
+                    { backgroundColor: Brand.primary, opacity: pressed ? 0.85 : 1 },
+                  ]}>
+                  <Text style={styles.analyzeButtonText}>ANALYZE →</Text>
                 </Pressable>
               </View>
             )}
@@ -191,15 +160,21 @@ export default function LogScreen() {
           {/* ── Recently Logged ── */}
           {state.loggedMeals.length > 0 && (
             <View style={styles.recentSection}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>Today's Log</Text>
-              {state.loggedMeals.slice(0, 5).map(meal => (
-                <View key={meal.id} style={[styles.loggedMealRow, { borderBottomColor: theme.border }]}>
-                  <Text style={[styles.loggedMealName, { color: theme.text }]}>{meal.name}</Text>
-                  <Text style={[styles.loggedMealCals, { color: theme.textSecondary }]}>
-                    {meal.calories} kcal
-                  </Text>
-                </View>
-              ))}
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>TODAY'S LOG</Text>
+              <View style={[styles.recentList, { borderTopColor: theme.border }]}>
+                {state.loggedMeals.slice(0, 5).map(meal => (
+                  <View
+                    key={meal.id}
+                    style={[styles.loggedMealRow, { borderBottomColor: theme.border }]}>
+                    <Text style={[styles.loggedMealName, { color: theme.text }]}>
+                      {meal.name}
+                    </Text>
+                    <Text style={[styles.loggedMealCals, { color: theme.textSecondary }]}>
+                      {meal.calories} kcal
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
           )}
         </View>
@@ -230,88 +205,61 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth,
     gap: Spacing.seven,
     paddingTop: Spacing.five,
+    paddingBottom: Spacing.nine,
   },
   header: {
     paddingHorizontal: Spacing.five,
-    gap: Spacing.two,
+    gap: Spacing.one,
   },
   headerTitle: {
-    fontSize: FontSizes['2xl'],
-    fontWeight: '800',
+    fontSize: FontSizes['4xl'],
+    fontWeight: '900',
+    letterSpacing: -1,
   },
-  calorieBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one + 1,
-    borderRadius: Radius.full,
-  },
-  calorieBadgeText: {
+  calorieCounter: {
     fontSize: FontSizes.sm,
-    fontWeight: '600',
+    fontWeight: '500',
+    letterSpacing: 0.5,
   },
   actions: {
     paddingHorizontal: Spacing.five,
-    gap: Spacing.three,
+    gap: Spacing.two,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.three,
-    padding: Spacing.five,
-    borderRadius: Radius.xl,
-    minHeight: MIN_TOUCH + 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.five,
+    minHeight: MIN_TOUCH + 12,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
   },
-  actionButtonPrimary: {
+  actionPrimary: {
     backgroundColor: Brand.primary,
+    borderColor: Brand.primary,
   },
-  actionButtonSecondary: {
-    borderWidth: 1,
-    ...Shadow.sm,
-  },
-  actionEmoji: {
-    fontSize: 28,
-  },
-  actionTextBlock: {
-    flex: 1,
-  },
-  actionTitle: {
-    fontSize: FontSizes.base,
-    fontWeight: '700',
-  },
-  actionSubtitle: {
+  actionPrimaryLabel: {
+    color: '#FFFFFF',
     fontSize: FontSizes.sm,
-    marginTop: 2,
+    fontWeight: '800',
+    letterSpacing: 1.5,
   },
-  pressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.98 }],
+  actionPrimaryArrow: {
+    color: '#FFFFFF',
+    fontSize: FontSizes.lg,
+    fontWeight: '300',
   },
-  secondaryRow: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-  },
-  halfButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.four,
-    borderRadius: Radius.xl,
-    borderWidth: 1,
-    gap: Spacing.one,
-    minHeight: MIN_TOUCH + 16,
-  },
-  halfButtonEmoji: {
-    fontSize: 24,
-  },
-  halfButtonTitle: {
+  actionLabel: {
     fontSize: FontSizes.sm,
     fontWeight: '700',
+    letterSpacing: 1.5,
   },
-  halfButtonSub: {
-    fontSize: FontSizes.xs,
+  actionArrow: {
+    fontSize: FontSizes.lg,
+    fontWeight: '300',
   },
   textInputCard: {
-    borderRadius: Radius.xl,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     padding: Spacing.four,
     gap: Spacing.three,
@@ -323,24 +271,29 @@ const styles = StyleSheet.create({
   },
   analyzeButton: {
     height: MIN_TOUCH,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
   analyzeButtonText: {
     color: '#fff',
-    fontSize: FontSizes.base,
-    fontWeight: '700',
+    fontSize: FontSizes.sm,
+    fontWeight: '800',
+    letterSpacing: 1.5,
   },
   carouselSection: {},
   recentSection: {
     paddingHorizontal: Spacing.five,
-    gap: Spacing.two,
+    gap: Spacing.three,
   },
   sectionTitle: {
-    fontSize: FontSizes.md,
+    fontSize: FontSizes.xs,
     fontWeight: '700',
-    marginBottom: Spacing.one,
+    letterSpacing: 2.5,
+    textTransform: 'uppercase',
+  },
+  recentList: {
+    borderTopWidth: 1,
   },
   loggedMealRow: {
     flexDirection: 'row',
@@ -351,11 +304,11 @@ const styles = StyleSheet.create({
   },
   loggedMealName: {
     fontSize: FontSizes.base,
-    fontWeight: '500',
+    fontWeight: '600',
     flex: 1,
   },
   loggedMealCals: {
     fontSize: FontSizes.sm,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });
