@@ -1,0 +1,866 @@
+[
+  {
+    "id": "pp-00001",
+    "clientId": "c-001",
+    "date": "2026-05-23",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-05-23-front/600/800",
+    "weightKg": 84.2
+  },
+  {
+    "id": "pp-00002",
+    "clientId": "c-001",
+    "date": "2026-05-23",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-05-23-side/600/800",
+    "weightKg": 84.2
+  },
+  {
+    "id": "pp-00003",
+    "clientId": "c-001",
+    "date": "2026-05-23",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-05-23-back/600/800",
+    "weightKg": 84.2
+  },
+  {
+    "id": "pp-00004",
+    "clientId": "c-001",
+    "date": "2026-06-06",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-06-06-front/600/800",
+    "weightKg": 84.3
+  },
+  {
+    "id": "pp-00005",
+    "clientId": "c-001",
+    "date": "2026-06-06",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-06-06-side/600/800",
+    "weightKg": 84.3
+  },
+  {
+    "id": "pp-00006",
+    "clientId": "c-001",
+    "date": "2026-06-06",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-06-06-back/600/800",
+    "weightKg": 84.3
+  },
+  {
+    "id": "pp-00007",
+    "clientId": "c-001",
+    "date": "2026-06-20",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-06-20-front/600/800",
+    "weightKg": 82.9
+  },
+  {
+    "id": "pp-00008",
+    "clientId": "c-001",
+    "date": "2026-06-20",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-06-20-side/600/800",
+    "weightKg": 82.9
+  },
+  {
+    "id": "pp-00009",
+    "clientId": "c-001",
+    "date": "2026-06-20",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-06-20-back/600/800",
+    "weightKg": 82.9
+  },
+  {
+    "id": "pp-00010",
+    "clientId": "c-001",
+    "date": "2026-07-04",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-07-04-front/600/800",
+    "weightKg": 82.7
+  },
+  {
+    "id": "pp-00011",
+    "clientId": "c-001",
+    "date": "2026-07-04",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-07-04-side/600/800",
+    "weightKg": 82.7
+  },
+  {
+    "id": "pp-00012",
+    "clientId": "c-001",
+    "date": "2026-07-04",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-07-04-back/600/800",
+    "weightKg": 82.7
+  },
+  {
+    "id": "pp-00013",
+    "clientId": "c-001",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-07-18-front/600/800",
+    "weightKg": 82.3
+  },
+  {
+    "id": "pp-00014",
+    "clientId": "c-001",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-07-18-side/600/800",
+    "weightKg": 82.3
+  },
+  {
+    "id": "pp-00015",
+    "clientId": "c-001",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-07-18-back/600/800",
+    "weightKg": 82.3
+  },
+  {
+    "id": "pp-00016",
+    "clientId": "c-001",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-01-front/600/800",
+    "weightKg": 81.8
+  },
+  {
+    "id": "pp-00017",
+    "clientId": "c-001",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-01-side/600/800",
+    "weightKg": 81.8
+  },
+  {
+    "id": "pp-00018",
+    "clientId": "c-001",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-01-back/600/800",
+    "weightKg": 81.8
+  },
+  {
+    "id": "pp-00019",
+    "clientId": "c-001",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-15-front/600/800",
+    "weightKg": 80.9
+  },
+  {
+    "id": "pp-00020",
+    "clientId": "c-001",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-15-side/600/800",
+    "weightKg": 80.9
+  },
+  {
+    "id": "pp-00021",
+    "clientId": "c-001",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-15-back/600/800",
+    "weightKg": 80.9
+  },
+  {
+    "id": "pp-00022",
+    "clientId": "c-001",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-29-front/600/800",
+    "weightKg": 80.4
+  },
+  {
+    "id": "pp-00023",
+    "clientId": "c-001",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-29-side/600/800",
+    "weightKg": 80.4
+  },
+  {
+    "id": "pp-00024",
+    "clientId": "c-001",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-001-2026-08-29-back/600/800",
+    "weightKg": 80.4
+  },
+  {
+    "id": "pp-00025",
+    "clientId": "c-002",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-002-2026-07-18-front/600/800",
+    "weightKg": 69.2
+  },
+  {
+    "id": "pp-00026",
+    "clientId": "c-002",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-002-2026-07-18-side/600/800",
+    "weightKg": 69.2
+  },
+  {
+    "id": "pp-00027",
+    "clientId": "c-002",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-002-2026-07-18-back/600/800",
+    "weightKg": 69.2
+  },
+  {
+    "id": "pp-00028",
+    "clientId": "c-002",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-01-front/600/800",
+    "weightKg": 68.1
+  },
+  {
+    "id": "pp-00029",
+    "clientId": "c-002",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-01-side/600/800",
+    "weightKg": 68.1
+  },
+  {
+    "id": "pp-00030",
+    "clientId": "c-002",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-01-back/600/800",
+    "weightKg": 68.1
+  },
+  {
+    "id": "pp-00031",
+    "clientId": "c-002",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-15-front/600/800",
+    "weightKg": 67.9
+  },
+  {
+    "id": "pp-00032",
+    "clientId": "c-002",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-15-side/600/800",
+    "weightKg": 67.9
+  },
+  {
+    "id": "pp-00033",
+    "clientId": "c-002",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-15-back/600/800",
+    "weightKg": 67.9
+  },
+  {
+    "id": "pp-00034",
+    "clientId": "c-002",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-29-front/600/800",
+    "weightKg": 66.8
+  },
+  {
+    "id": "pp-00035",
+    "clientId": "c-002",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-29-side/600/800",
+    "weightKg": 66.8
+  },
+  {
+    "id": "pp-00036",
+    "clientId": "c-002",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-002-2026-08-29-back/600/800",
+    "weightKg": 66.8
+  },
+  {
+    "id": "pp-00037",
+    "clientId": "c-003",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-003-2026-07-18-front/600/800",
+    "weightKg": 82.2
+  },
+  {
+    "id": "pp-00038",
+    "clientId": "c-003",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-003-2026-07-18-side/600/800",
+    "weightKg": 82.2
+  },
+  {
+    "id": "pp-00039",
+    "clientId": "c-003",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-003-2026-07-18-back/600/800",
+    "weightKg": 82.2
+  },
+  {
+    "id": "pp-00040",
+    "clientId": "c-003",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-01-front/600/800",
+    "weightKg": 82.7
+  },
+  {
+    "id": "pp-00041",
+    "clientId": "c-003",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-01-side/600/800",
+    "weightKg": 82.7
+  },
+  {
+    "id": "pp-00042",
+    "clientId": "c-003",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-01-back/600/800",
+    "weightKg": 82.7
+  },
+  {
+    "id": "pp-00043",
+    "clientId": "c-003",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-15-front/600/800",
+    "weightKg": 84.1
+  },
+  {
+    "id": "pp-00044",
+    "clientId": "c-003",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-15-side/600/800",
+    "weightKg": 84.1
+  },
+  {
+    "id": "pp-00045",
+    "clientId": "c-003",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-15-back/600/800",
+    "weightKg": 84.1
+  },
+  {
+    "id": "pp-00046",
+    "clientId": "c-003",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-29-front/600/800",
+    "weightKg": 84.3
+  },
+  {
+    "id": "pp-00047",
+    "clientId": "c-003",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-29-side/600/800",
+    "weightKg": 84.3
+  },
+  {
+    "id": "pp-00048",
+    "clientId": "c-003",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-003-2026-08-29-back/600/800",
+    "weightKg": 84.3
+  },
+  {
+    "id": "pp-00049",
+    "clientId": "c-004",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-004-2026-07-18-front/600/800",
+    "weightKg": 63.5
+  },
+  {
+    "id": "pp-00050",
+    "clientId": "c-004",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-004-2026-07-18-side/600/800",
+    "weightKg": 63.5
+  },
+  {
+    "id": "pp-00051",
+    "clientId": "c-004",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-004-2026-07-18-back/600/800",
+    "weightKg": 63.5
+  },
+  {
+    "id": "pp-00052",
+    "clientId": "c-004",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-01-front/600/800",
+    "weightKg": 63
+  },
+  {
+    "id": "pp-00053",
+    "clientId": "c-004",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-01-side/600/800",
+    "weightKg": 63
+  },
+  {
+    "id": "pp-00054",
+    "clientId": "c-004",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-01-back/600/800",
+    "weightKg": 63
+  },
+  {
+    "id": "pp-00055",
+    "clientId": "c-004",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-15-front/600/800",
+    "weightKg": 63.3
+  },
+  {
+    "id": "pp-00056",
+    "clientId": "c-004",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-15-side/600/800",
+    "weightKg": 63.3
+  },
+  {
+    "id": "pp-00057",
+    "clientId": "c-004",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-15-back/600/800",
+    "weightKg": 63.3
+  },
+  {
+    "id": "pp-00058",
+    "clientId": "c-004",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-29-front/600/800",
+    "weightKg": 62.7
+  },
+  {
+    "id": "pp-00059",
+    "clientId": "c-004",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-29-side/600/800",
+    "weightKg": 62.7
+  },
+  {
+    "id": "pp-00060",
+    "clientId": "c-004",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-004-2026-08-29-back/600/800",
+    "weightKg": 62.7
+  },
+  {
+    "id": "pp-00061",
+    "clientId": "c-005",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-005-2026-07-18-front/600/800",
+    "weightKg": 87.6
+  },
+  {
+    "id": "pp-00062",
+    "clientId": "c-005",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-005-2026-07-18-side/600/800",
+    "weightKg": 87.6
+  },
+  {
+    "id": "pp-00063",
+    "clientId": "c-005",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-005-2026-07-18-back/600/800",
+    "weightKg": 87.6
+  },
+  {
+    "id": "pp-00064",
+    "clientId": "c-005",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-01-front/600/800",
+    "weightKg": 87.3
+  },
+  {
+    "id": "pp-00065",
+    "clientId": "c-005",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-01-side/600/800",
+    "weightKg": 87.3
+  },
+  {
+    "id": "pp-00066",
+    "clientId": "c-005",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-01-back/600/800",
+    "weightKg": 87.3
+  },
+  {
+    "id": "pp-00067",
+    "clientId": "c-005",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-15-front/600/800",
+    "weightKg": 87.2
+  },
+  {
+    "id": "pp-00068",
+    "clientId": "c-005",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-15-side/600/800",
+    "weightKg": 87.2
+  },
+  {
+    "id": "pp-00069",
+    "clientId": "c-005",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-15-back/600/800",
+    "weightKg": 87.2
+  },
+  {
+    "id": "pp-00070",
+    "clientId": "c-005",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-29-front/600/800",
+    "weightKg": 87.1
+  },
+  {
+    "id": "pp-00071",
+    "clientId": "c-005",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-29-side/600/800",
+    "weightKg": 87.1
+  },
+  {
+    "id": "pp-00072",
+    "clientId": "c-005",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-005-2026-08-29-back/600/800",
+    "weightKg": 87.1
+  },
+  {
+    "id": "pp-00073",
+    "clientId": "c-006",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-006-2026-07-18-front/600/800",
+    "weightKg": 67.6
+  },
+  {
+    "id": "pp-00074",
+    "clientId": "c-006",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-006-2026-07-18-side/600/800",
+    "weightKg": 67.6
+  },
+  {
+    "id": "pp-00075",
+    "clientId": "c-006",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-006-2026-07-18-back/600/800",
+    "weightKg": 67.6
+  },
+  {
+    "id": "pp-00076",
+    "clientId": "c-006",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-01-front/600/800",
+    "weightKg": 67.6
+  },
+  {
+    "id": "pp-00077",
+    "clientId": "c-006",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-01-side/600/800",
+    "weightKg": 67.6
+  },
+  {
+    "id": "pp-00078",
+    "clientId": "c-006",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-01-back/600/800",
+    "weightKg": 67.6
+  },
+  {
+    "id": "pp-00079",
+    "clientId": "c-006",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-15-front/600/800",
+    "weightKg": 67
+  },
+  {
+    "id": "pp-00080",
+    "clientId": "c-006",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-15-side/600/800",
+    "weightKg": 67
+  },
+  {
+    "id": "pp-00081",
+    "clientId": "c-006",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-15-back/600/800",
+    "weightKg": 67
+  },
+  {
+    "id": "pp-00082",
+    "clientId": "c-006",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-29-front/600/800",
+    "weightKg": 66.8
+  },
+  {
+    "id": "pp-00083",
+    "clientId": "c-006",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-29-side/600/800",
+    "weightKg": 66.8
+  },
+  {
+    "id": "pp-00084",
+    "clientId": "c-006",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-006-2026-08-29-back/600/800",
+    "weightKg": 66.8
+  },
+  {
+    "id": "pp-00085",
+    "clientId": "c-007",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-007-2026-07-18-front/600/800",
+    "weightKg": 92
+  },
+  {
+    "id": "pp-00086",
+    "clientId": "c-007",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-007-2026-07-18-side/600/800",
+    "weightKg": 92
+  },
+  {
+    "id": "pp-00087",
+    "clientId": "c-007",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-007-2026-07-18-back/600/800",
+    "weightKg": 92
+  },
+  {
+    "id": "pp-00088",
+    "clientId": "c-007",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-01-front/600/800",
+    "weightKg": 90.7
+  },
+  {
+    "id": "pp-00089",
+    "clientId": "c-007",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-01-side/600/800",
+    "weightKg": 90.7
+  },
+  {
+    "id": "pp-00090",
+    "clientId": "c-007",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-01-back/600/800",
+    "weightKg": 90.7
+  },
+  {
+    "id": "pp-00091",
+    "clientId": "c-007",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-15-front/600/800",
+    "weightKg": 91.3
+  },
+  {
+    "id": "pp-00092",
+    "clientId": "c-007",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-15-side/600/800",
+    "weightKg": 91.3
+  },
+  {
+    "id": "pp-00093",
+    "clientId": "c-007",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-15-back/600/800",
+    "weightKg": 91.3
+  },
+  {
+    "id": "pp-00094",
+    "clientId": "c-007",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-29-front/600/800",
+    "weightKg": 90.6
+  },
+  {
+    "id": "pp-00095",
+    "clientId": "c-007",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-29-side/600/800",
+    "weightKg": 90.6
+  },
+  {
+    "id": "pp-00096",
+    "clientId": "c-007",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-007-2026-08-29-back/600/800",
+    "weightKg": 90.6
+  },
+  {
+    "id": "pp-00097",
+    "clientId": "c-008",
+    "date": "2026-07-18",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-008-2026-07-18-front/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00098",
+    "clientId": "c-008",
+    "date": "2026-07-18",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-008-2026-07-18-side/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00099",
+    "clientId": "c-008",
+    "date": "2026-07-18",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-008-2026-07-18-back/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00100",
+    "clientId": "c-008",
+    "date": "2026-08-01",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-01-front/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00101",
+    "clientId": "c-008",
+    "date": "2026-08-01",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-01-side/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00102",
+    "clientId": "c-008",
+    "date": "2026-08-01",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-01-back/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00103",
+    "clientId": "c-008",
+    "date": "2026-08-15",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-15-front/600/800",
+    "weightKg": 61.5
+  },
+  {
+    "id": "pp-00104",
+    "clientId": "c-008",
+    "date": "2026-08-15",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-15-side/600/800",
+    "weightKg": 61.5
+  },
+  {
+    "id": "pp-00105",
+    "clientId": "c-008",
+    "date": "2026-08-15",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-15-back/600/800",
+    "weightKg": 61.5
+  },
+  {
+    "id": "pp-00106",
+    "clientId": "c-008",
+    "date": "2026-08-29",
+    "pose": "front",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-29-front/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00107",
+    "clientId": "c-008",
+    "date": "2026-08-29",
+    "pose": "side",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-29-side/600/800",
+    "weightKg": 61.4
+  },
+  {
+    "id": "pp-00108",
+    "clientId": "c-008",
+    "date": "2026-08-29",
+    "pose": "back",
+    "uri": "https://picsum.photos/seed/c-008-2026-08-29-back/600/800",
+    "weightKg": 61.4
+  }
+]

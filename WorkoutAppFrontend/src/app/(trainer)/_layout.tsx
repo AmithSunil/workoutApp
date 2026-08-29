@@ -1,0 +1,29 @@
+import { Redirect, Stack } from 'expo-router';
+
+import { routes } from '@/navigation/routes';
+import { useAppSelector } from '@/store/hooks';
+import { colors } from '@/theme';
+
+/** Trainer shell, guarded the same way as the client subtree. */
+export default function TrainerLayout() {
+  const role = useAppSelector((s) => s.session.role);
+
+  if (role === 'client') return <Redirect href={routes.client.explore()} />;
+  if (role !== 'trainer') return <Redirect href={routes.roleSelect()} />;
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="client/[id]" />
+      <Stack.Screen name="routine/new" />
+      <Stack.Screen name="routine/[id]" />
+      <Stack.Screen name="routine/edit/[id]" />
+      <Stack.Screen name="assignment/[id]" />
+      <Stack.Screen name="thread/[id]" />
+    </Stack>
+  );
+}

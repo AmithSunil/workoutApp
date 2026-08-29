@@ -1,0 +1,194 @@
+[
+  {
+    "id": "e-001",
+    "name": "Barbell Back Squat",
+    "muscleGroup": "legs",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-002",
+    "name": "Front Squat",
+    "muscleGroup": "legs",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-003",
+    "name": "Romanian Deadlift",
+    "muscleGroup": "legs",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-004",
+    "name": "Conventional Deadlift",
+    "muscleGroup": "back",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-005",
+    "name": "Bulgarian Split Squat",
+    "muscleGroup": "legs",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-006",
+    "name": "Leg Press",
+    "muscleGroup": "legs",
+    "equipment": "Machine"
+  },
+  {
+    "id": "e-007",
+    "name": "Walking Lunge",
+    "muscleGroup": "legs",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-008",
+    "name": "Leg Curl",
+    "muscleGroup": "legs",
+    "equipment": "Machine"
+  },
+  {
+    "id": "e-009",
+    "name": "Barbell Bench Press",
+    "muscleGroup": "chest",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-010",
+    "name": "Incline Dumbbell Press",
+    "muscleGroup": "chest",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-011",
+    "name": "Cable Fly",
+    "muscleGroup": "chest",
+    "equipment": "Cable"
+  },
+  {
+    "id": "e-012",
+    "name": "Weighted Dip",
+    "muscleGroup": "chest",
+    "equipment": "Bodyweight"
+  },
+  {
+    "id": "e-013",
+    "name": "Pull-up",
+    "muscleGroup": "back",
+    "equipment": "Bodyweight"
+  },
+  {
+    "id": "e-014",
+    "name": "Chest-Supported Row",
+    "muscleGroup": "back",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-015",
+    "name": "Lat Pulldown",
+    "muscleGroup": "back",
+    "equipment": "Cable"
+  },
+  {
+    "id": "e-016",
+    "name": "Barbell Row",
+    "muscleGroup": "back",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-017",
+    "name": "Seated Cable Row",
+    "muscleGroup": "back",
+    "equipment": "Cable"
+  },
+  {
+    "id": "e-018",
+    "name": "Overhead Press",
+    "muscleGroup": "shoulders",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-019",
+    "name": "Lateral Raise",
+    "muscleGroup": "shoulders",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-020",
+    "name": "Face Pull",
+    "muscleGroup": "shoulders",
+    "equipment": "Cable"
+  },
+  {
+    "id": "e-021",
+    "name": "Rear Delt Fly",
+    "muscleGroup": "shoulders",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-022",
+    "name": "Barbell Curl",
+    "muscleGroup": "arms",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-023",
+    "name": "Incline Dumbbell Curl",
+    "muscleGroup": "arms",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-024",
+    "name": "Rope Pushdown",
+    "muscleGroup": "arms",
+    "equipment": "Cable"
+  },
+  {
+    "id": "e-025",
+    "name": "Skull Crusher",
+    "muscleGroup": "arms",
+    "equipment": "Barbell"
+  },
+  {
+    "id": "e-026",
+    "name": "Hanging Leg Raise",
+    "muscleGroup": "core",
+    "equipment": "Bodyweight"
+  },
+  {
+    "id": "e-027",
+    "name": "Cable Crunch",
+    "muscleGroup": "core",
+    "equipment": "Cable"
+  },
+  {
+    "id": "e-028",
+    "name": "Plank",
+    "muscleGroup": "core",
+    "equipment": "Bodyweight"
+  },
+  {
+    "id": "e-029",
+    "name": "Farmer Carry",
+    "muscleGroup": "full body",
+    "equipment": "Dumbbell"
+  },
+  {
+    "id": "e-030",
+    "name": "Assault Bike Intervals",
+    "muscleGroup": "conditioning",
+    "equipment": "Machine"
+  },
+  {
+    "id": "e-031",
+    "name": "Rowing Erg",
+    "muscleGroup": "conditioning",
+    "equipment": "Machine"
+  },
+  {
+    "id": "e-032",
+    "name": "Incline Treadmill Walk",
+    "muscleGroup": "conditioning",
+    "equipment": "Machine"
+  }
+]

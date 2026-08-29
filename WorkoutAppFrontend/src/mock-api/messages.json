@@ -1,0 +1,230 @@
+[
+  {
+    "id": "m-00001",
+    "threadId": "th-c-001",
+    "senderId": "t-001",
+    "body": "Morning! Squat session today — keep bar speed crisp, stop 2 reps shy of failure.",
+    "sentAt": "2026-08-25T09:24:00.000Z",
+    "readAt": "2026-08-25T10:10:00.000Z"
+  },
+  {
+    "id": "m-00002",
+    "threadId": "th-c-001",
+    "senderId": "c-001",
+    "body": "Done. Felt smooth, added 2.5kg on the top set.",
+    "sentAt": "2026-08-25T18:56:00.000Z",
+    "readAt": "2026-08-25T19:03:00.000Z",
+    "attachment": {
+      "kind": "workout",
+      "logId": "wl-00044"
+    }
+  },
+  {
+    "id": "m-00003",
+    "threadId": "th-c-001",
+    "senderId": "t-001",
+    "body": "Love that. Protein is drifting low on weekends though, have a look.",
+    "sentAt": "2026-08-26T08:05:00.000Z",
+    "readAt": "2026-08-26T09:37:00.000Z",
+    "attachment": {
+      "kind": "nutrition",
+      "date": "2026-08-25"
+    }
+  },
+  {
+    "id": "m-00004",
+    "threadId": "th-c-001",
+    "senderId": "c-001",
+    "body": "Fair. Ill front-load it Saturday.",
+    "sentAt": "2026-08-26T20:58:00.000Z",
+    "readAt": "2026-08-26T21:50:00.000Z"
+  },
+  {
+    "id": "m-00005",
+    "threadId": "th-c-001",
+    "senderId": "t-001",
+    "body": "Check-in form is open — send it over before tonight?",
+    "sentAt": "2026-08-28T07:41:00.000Z",
+    "readAt": "2026-08-28T08:20:00.000Z"
+  },
+  {
+    "id": "m-00006",
+    "threadId": "th-c-001",
+    "senderId": "t-001",
+    "body": "Nice streak this week 👏 Keep dinner logged and youre golden.",
+    "sentAt": "2026-08-29T08:47:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00007",
+    "threadId": "th-c-002",
+    "senderId": "c-002",
+    "body": "Struggling with the 1780 target, Im starving by 4pm.",
+    "sentAt": "2026-08-23T10:03:00.000Z",
+    "readAt": "2026-08-23T11:38:00.000Z"
+  },
+  {
+    "id": "m-00008",
+    "threadId": "th-c-002",
+    "senderId": "t-001",
+    "body": "Lets move 200 kcal from breakfast to an afternoon snack. Try it for a week.",
+    "sentAt": "2026-08-23T11:47:00.000Z",
+    "readAt": "2026-08-23T12:36:00.000Z"
+  },
+  {
+    "id": "m-00009",
+    "threadId": "th-c-002",
+    "senderId": "c-002",
+    "body": "Much better this week, thank you!",
+    "sentAt": "2026-08-27T19:30:00.000Z",
+    "readAt": "2026-08-27T20:34:00.000Z"
+  },
+  {
+    "id": "m-00010",
+    "threadId": "th-c-002",
+    "senderId": "c-002",
+    "body": "Quick one — can I swap Thursday to Friday?",
+    "sentAt": "2026-08-29T09:43:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00011",
+    "threadId": "th-c-003",
+    "senderId": "t-001",
+    "body": "Programme for the week is up — same structure, small jump on the main lifts.",
+    "sentAt": "2026-08-25T09:02:00.000Z",
+    "readAt": "2026-08-25T10:12:00.000Z"
+  },
+  {
+    "id": "m-00012",
+    "threadId": "th-c-003",
+    "senderId": "c-003",
+    "body": "Got it, thanks!",
+    "sentAt": "2026-08-25T18:48:00.000Z",
+    "readAt": "2026-08-25T19:38:00.000Z"
+  },
+  {
+    "id": "m-00013",
+    "threadId": "th-c-003",
+    "senderId": "t-001",
+    "body": "Solid week. Keep it rolling.",
+    "sentAt": "2026-08-28T08:52:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00014",
+    "threadId": "th-c-004",
+    "senderId": "t-001",
+    "body": "Havent seen a log since last Tuesday — everything okay?",
+    "sentAt": "2026-08-20T12:57:00.000Z",
+    "readAt": "2026-08-20T13:31:00.000Z"
+  },
+  {
+    "id": "m-00015",
+    "threadId": "th-c-004",
+    "senderId": "t-001",
+    "body": "Checking in again. Even a rough estimate of meals helps me help you.",
+    "sentAt": "2026-08-27T21:15:00.000Z",
+    "readAt": "2026-08-27T22:35:00.000Z"
+  },
+  {
+    "id": "m-00016",
+    "threadId": "th-c-004",
+    "senderId": "t-001",
+    "body": "Ive dropped your sessions to 3 a week to make it easier to stick to.",
+    "sentAt": "2026-08-29T07:19:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00017",
+    "threadId": "th-c-005",
+    "senderId": "c-005",
+    "body": "That was brutal — barely finished the carries.",
+    "sentAt": "2026-08-26T20:15:00.000Z",
+    "readAt": "2026-08-26T21:27:00.000Z",
+    "attachment": {
+      "kind": "workout",
+      "logId": "wl-00096"
+    }
+  },
+  {
+    "id": "m-00018",
+    "threadId": "th-c-005",
+    "senderId": "t-001",
+    "body": "Third hard session in a row. Deloading you next week.",
+    "sentAt": "2026-08-26T21:49:00.000Z",
+    "readAt": "2026-08-26T22:12:00.000Z"
+  },
+  {
+    "id": "m-00019",
+    "threadId": "th-c-005",
+    "senderId": "c-005",
+    "body": "Sounds good. Legs still cooked today.",
+    "sentAt": "2026-08-29T06:20:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00020",
+    "threadId": "th-c-006",
+    "senderId": "t-001",
+    "body": "Programme for the week is up — same structure, small jump on the main lifts.",
+    "sentAt": "2026-08-25T09:48:00.000Z",
+    "readAt": "2026-08-25T10:01:00.000Z"
+  },
+  {
+    "id": "m-00021",
+    "threadId": "th-c-006",
+    "senderId": "c-006",
+    "body": "Got it, thanks!",
+    "sentAt": "2026-08-25T18:36:00.000Z",
+    "readAt": "2026-08-25T19:36:00.000Z"
+  },
+  {
+    "id": "m-00022",
+    "threadId": "th-c-006",
+    "senderId": "t-001",
+    "body": "Solid week. Keep it rolling.",
+    "sentAt": "2026-08-28T08:41:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00023",
+    "threadId": "th-c-007",
+    "senderId": "t-001",
+    "body": "Weight has been flat for 3 weeks. Lets audit portions together.",
+    "sentAt": "2026-08-24T15:56:00.000Z",
+    "readAt": "2026-08-24T16:28:00.000Z"
+  },
+  {
+    "id": "m-00024",
+    "threadId": "th-c-007",
+    "senderId": "t-001",
+    "body": "Booked you in for a call Thursday 6pm.",
+    "sentAt": "2026-08-29T10:06:00.000Z",
+    "readAt": null
+  },
+  {
+    "id": "m-00025",
+    "threadId": "th-c-008",
+    "senderId": "t-001",
+    "body": "Programme for the week is up — same structure, small jump on the main lifts.",
+    "sentAt": "2026-08-25T09:54:00.000Z",
+    "readAt": "2026-08-25T10:14:00.000Z"
+  },
+  {
+    "id": "m-00026",
+    "threadId": "th-c-008",
+    "senderId": "c-008",
+    "body": "Got it, thanks!",
+    "sentAt": "2026-08-25T18:38:00.000Z",
+    "readAt": "2026-08-25T19:00:00.000Z"
+  },
+  {
+    "id": "m-00027",
+    "threadId": "th-c-008",
+    "senderId": "t-001",
+    "body": "Solid week. Keep it rolling.",
+    "sentAt": "2026-08-28T08:40:00.000Z",
+    "readAt": null
+  }
+]

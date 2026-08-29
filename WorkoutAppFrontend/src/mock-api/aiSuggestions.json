@@ -1,0 +1,113 @@
+[
+  {
+    "id": "ai-001",
+    "transcript": "two scrambled eggs on sourdough with half an avocado and a flat white",
+    "confidence": 0.94,
+    "items": [
+      {
+        "name": "Whole Eggs",
+        "servings": 1,
+        "servingLabel": "2 large",
+        "calories": 143,
+        "protein": 13,
+        "carbs": 1,
+        "fat": 10,
+        "emoji": "🥚"
+      },
+      {
+        "name": "Wholemeal Bread",
+        "servings": 1,
+        "servingLabel": "2 slices",
+        "calories": 190,
+        "protein": 8,
+        "carbs": 32,
+        "fat": 3,
+        "emoji": "🍞"
+      },
+      {
+        "name": "Avocado",
+        "servings": 1,
+        "servingLabel": "Half",
+        "calories": 160,
+        "protein": 2,
+        "carbs": 9,
+        "fat": 15,
+        "emoji": "🥑"
+      },
+      {
+        "name": "Cappuccino",
+        "servings": 1,
+        "servingLabel": "1 cup",
+        "calories": 74,
+        "protein": 4,
+        "carbs": 6,
+        "fat": 4,
+        "emoji": "☕"
+      }
+    ]
+  },
+  {
+    "id": "ai-002",
+    "transcript": "chicken burrito bowl with extra rice and a diet coke",
+    "confidence": 0.88,
+    "items": [
+      {
+        "name": "Chicken Breast",
+        "servings": 1,
+        "servingLabel": "150 g cooked",
+        "calories": 248,
+        "protein": 46,
+        "carbs": 0,
+        "fat": 5,
+        "emoji": "🍗"
+      },
+      {
+        "name": "Basmati Rice",
+        "servings": 1.5,
+        "servingLabel": "270 g cooked",
+        "calories": 351,
+        "protein": 8,
+        "carbs": 77,
+        "fat": 2,
+        "emoji": "🍚"
+      },
+      {
+        "name": "Mixed Salad",
+        "servings": 1,
+        "servingLabel": "1 bowl",
+        "calories": 165,
+        "protein": 3,
+        "carbs": 9,
+        "fat": 13,
+        "emoji": "🥗"
+      }
+    ]
+  },
+  {
+    "id": "ai-003",
+    "transcript": "protein shake and a handful of almonds after the gym",
+    "confidence": 0.97,
+    "items": [
+      {
+        "name": "Whey Protein",
+        "servings": 1,
+        "servingLabel": "1 scoop",
+        "calories": 120,
+        "protein": 24,
+        "carbs": 3,
+        "fat": 1,
+        "emoji": "🥤"
+      },
+      {
+        "name": "Almonds",
+        "servings": 1,
+        "servingLabel": "30 g",
+        "calories": 174,
+        "protein": 6,
+        "carbs": 6,
+        "fat": 15,
+        "emoji": "🌰"
+      }
+    ]
+  }
+]

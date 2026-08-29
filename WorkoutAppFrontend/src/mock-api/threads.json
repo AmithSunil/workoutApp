@@ -1,0 +1,74 @@
+[
+  {
+    "id": "th-c-007",
+    "clientId": "c-007",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Booked you in for a call Thursday 6pm.",
+    "lastMessageAt": "2026-08-29T10:06:00.000Z",
+    "unreadForTrainer": 0,
+    "unreadForClient": 1
+  },
+  {
+    "id": "th-c-002",
+    "clientId": "c-002",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Quick one — can I swap Thursday to Friday?",
+    "lastMessageAt": "2026-08-29T09:43:00.000Z",
+    "unreadForTrainer": 1,
+    "unreadForClient": 0
+  },
+  {
+    "id": "th-c-001",
+    "clientId": "c-001",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Nice streak this week 👏 Keep dinner logged and youre golden.",
+    "lastMessageAt": "2026-08-29T08:47:00.000Z",
+    "unreadForTrainer": 0,
+    "unreadForClient": 1
+  },
+  {
+    "id": "th-c-004",
+    "clientId": "c-004",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Ive dropped your sessions to 3 a week to make it easier to stick to.",
+    "lastMessageAt": "2026-08-29T07:19:00.000Z",
+    "unreadForTrainer": 0,
+    "unreadForClient": 1
+  },
+  {
+    "id": "th-c-005",
+    "clientId": "c-005",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Sounds good. Legs still cooked today.",
+    "lastMessageAt": "2026-08-29T06:20:00.000Z",
+    "unreadForTrainer": 1,
+    "unreadForClient": 0
+  },
+  {
+    "id": "th-c-003",
+    "clientId": "c-003",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Solid week. Keep it rolling.",
+    "lastMessageAt": "2026-08-28T08:52:00.000Z",
+    "unreadForTrainer": 0,
+    "unreadForClient": 1
+  },
+  {
+    "id": "th-c-006",
+    "clientId": "c-006",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Solid week. Keep it rolling.",
+    "lastMessageAt": "2026-08-28T08:41:00.000Z",
+    "unreadForTrainer": 0,
+    "unreadForClient": 1
+  },
+  {
+    "id": "th-c-008",
+    "clientId": "c-008",
+    "trainerId": "t-001",
+    "lastMessagePreview": "Solid week. Keep it rolling.",
+    "lastMessageAt": "2026-08-28T08:40:00.000Z",
+    "unreadForTrainer": 0,
+    "unreadForClient": 1
+  }
+]

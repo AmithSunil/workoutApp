@@ -1,0 +1,222 @@
+{
+  "trainer": {
+    "id": "t-001",
+    "role": "trainer",
+    "name": "Maya Fernandes",
+    "email": "maya@apexcoaching.fit",
+    "avatarUrl": "https://i.pravatar.cc/240?img=47",
+    "headline": "Strength & body-composition coach",
+    "clientIds": [
+      "c-001",
+      "c-002",
+      "c-003",
+      "c-004",
+      "c-005",
+      "c-006",
+      "c-007",
+      "c-008"
+    ]
+  },
+  "clients": [
+    {
+      "id": "c-001",
+      "role": "client",
+      "name": "Aditya Rao",
+      "email": "aditya@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=12",
+      "trainerId": "t-001",
+      "goal": "recomp",
+      "heightCm": 178,
+      "startWeightKg": 84.2,
+      "targetWeightKg": 78,
+      "targets": {
+        "calories": 2450,
+        "protein": 184,
+        "carbs": 257,
+        "fat": 76
+      },
+      "joinedAt": "2026-05-01",
+      "compliance": {
+        "status": "green",
+        "score": 91,
+        "lastLoggedAt": "2026-08-29T19:45:00.000Z",
+        "streakDays": 10
+      }
+    },
+    {
+      "id": "c-002",
+      "role": "client",
+      "name": "Leah Mercer",
+      "email": "leah@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=5",
+      "trainerId": "t-001",
+      "goal": "cut",
+      "heightCm": 165,
+      "startWeightKg": 71.8,
+      "targetWeightKg": 64,
+      "targets": {
+        "calories": 1780,
+        "protein": 156,
+        "carbs": 178,
+        "fat": 49
+      },
+      "joinedAt": "2026-04-14",
+      "compliance": {
+        "status": "yellow",
+        "score": 75,
+        "lastLoggedAt": "2026-08-28T19:16:00.000Z",
+        "streakDays": 5
+      }
+    },
+    {
+      "id": "c-003",
+      "role": "client",
+      "name": "Daniel Okafor",
+      "email": "daniel@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=33",
+      "trainerId": "t-001",
+      "goal": "bulk",
+      "heightCm": 185,
+      "startWeightKg": 79.4,
+      "targetWeightKg": 88,
+      "targets": {
+        "calories": 3200,
+        "protein": 216,
+        "carbs": 360,
+        "fat": 100
+      },
+      "joinedAt": "2026-03-28",
+      "compliance": {
+        "status": "green",
+        "score": 97,
+        "lastLoggedAt": "2026-08-29T19:08:00.000Z",
+        "streakDays": 30
+      }
+    },
+    {
+      "id": "c-004",
+      "role": "client",
+      "name": "Priya Nair",
+      "email": "priya@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=44",
+      "trainerId": "t-001",
+      "goal": "cut",
+      "heightCm": 160,
+      "startWeightKg": 66.5,
+      "targetWeightKg": 58,
+      "targets": {
+        "calories": 1650,
+        "protein": 144,
+        "carbs": 165,
+        "fat": 46
+      },
+      "joinedAt": "2026-03-11",
+      "compliance": {
+        "status": "red",
+        "score": 43,
+        "lastLoggedAt": "2026-08-25T19:34:00.000Z",
+        "streakDays": 0
+      }
+    },
+    {
+      "id": "c-005",
+      "role": "client",
+      "name": "Tom Whitfield",
+      "email": "tom@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=15",
+      "trainerId": "t-001",
+      "goal": "performance",
+      "heightCm": 181,
+      "startWeightKg": 88,
+      "targetWeightKg": 86,
+      "targets": {
+        "calories": 2900,
+        "protein": 218,
+        "carbs": 304,
+        "fat": 90
+      },
+      "joinedAt": "2026-02-22",
+      "compliance": {
+        "status": "yellow",
+        "score": 62,
+        "lastLoggedAt": "2026-08-28T19:06:00.000Z",
+        "streakDays": 6
+      }
+    },
+    {
+      "id": "c-006",
+      "role": "client",
+      "name": "Sofia Duarte",
+      "email": "sofia@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=20",
+      "trainerId": "t-001",
+      "goal": "recomp",
+      "heightCm": 170,
+      "startWeightKg": 68.9,
+      "targetWeightKg": 65,
+      "targets": {
+        "calories": 2050,
+        "protein": 154,
+        "carbs": 215,
+        "fat": 64
+      },
+      "joinedAt": "2026-02-05",
+      "compliance": {
+        "status": "green",
+        "score": 96,
+        "lastLoggedAt": "2026-08-29T19:09:00.000Z",
+        "streakDays": 9
+      }
+    },
+    {
+      "id": "c-007",
+      "role": "client",
+      "name": "Marcus Hale",
+      "email": "marcus@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=60",
+      "trainerId": "t-001",
+      "goal": "cut",
+      "heightCm": 176,
+      "startWeightKg": 95.3,
+      "targetWeightKg": 84,
+      "targets": {
+        "calories": 2200,
+        "protein": 193,
+        "carbs": 220,
+        "fat": 61
+      },
+      "joinedAt": "2026-01-19",
+      "compliance": {
+        "status": "red",
+        "score": 32,
+        "lastLoggedAt": "2026-08-25T19:03:00.000Z",
+        "streakDays": 0
+      }
+    },
+    {
+      "id": "c-008",
+      "role": "client",
+      "name": "Ines Rossi",
+      "email": "ines@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=26",
+      "trainerId": "t-001",
+      "goal": "performance",
+      "heightCm": 168,
+      "startWeightKg": 61.2,
+      "targetWeightKg": 62,
+      "targets": {
+        "calories": 2400,
+        "protein": 180,
+        "carbs": 252,
+        "fat": 75
+      },
+      "joinedAt": "2026-01-02",
+      "compliance": {
+        "status": "green",
+        "score": 91,
+        "lastLoggedAt": "2026-08-29T19:44:00.000Z",
+        "streakDays": 18
+      }
+    }
+  ]
+}
