@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   grabber: {
     width: 36,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.pill,
     backgroundColor: colors.borderStrong,
     alignSelf: 'center',
     marginTop: spacing.md,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   close: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',

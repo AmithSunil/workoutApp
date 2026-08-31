@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     minWidth: 15,
     height: 15,
     paddingHorizontal: 3,
-    borderRadius: 8,
+    borderRadius: radius.pill,
     backgroundColor: colors.danger,
     alignItems: 'center',
     justifyContent: 'center',

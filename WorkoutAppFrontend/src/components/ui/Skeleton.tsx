@@ -10,6 +10,9 @@ import Animated, {
 
 import { colors, radius, spacing } from '@/theme';
 
+/** Placeholder lines read as soft bars, never as boxes. */
+const DEFAULT_RADIUS = radius.pill;
+
 export interface SkeletonProps {
   width?: number | `${number}%`;
   height?: number;
@@ -17,7 +20,7 @@ export interface SkeletonProps {
   style?: ViewStyle;
 }
 
-export function Skeleton({ width = '100%', height = 16, radius: r = 8, style }: SkeletonProps) {
+export function Skeleton({ width = '100%', height = 16, radius: r = DEFAULT_RADIUS, style }: SkeletonProps) {
   const pulse = useSharedValue(0.5);
 
   useEffect(() => {

@@ -235,14 +235,14 @@ const styles = StyleSheet.create({
   },
   progressTrack: {
     height: 6,
-    borderRadius: 3,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     marginTop: spacing.lg,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: radius.pill,
     backgroundColor: colors.primary,
   },
   notesHeader: {

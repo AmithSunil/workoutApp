@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   pressed: {
-    opacity: 0.72,
-    transform: [{ scale: 0.995 }],
+    opacity: 0.9,
+    transform: [{ scale: 0.997 }],
   },
   header: {
     flexDirection: 'row',

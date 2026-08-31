@@ -23,7 +23,7 @@ import {
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import { TODAY, diffInDays } from '@/utils/date';
 import { kg, pct, signed } from '@/utils/format';
 
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   legendLine: {
     width: 14,
     height: 2,
-    borderRadius: 1,
+    borderRadius: radius.pill,
   },
   legendDashed: {
     backgroundColor: colors.textTertiary,
@@ -251,13 +251,13 @@ const styles = StyleSheet.create({
   goalTrack: {
     flex: 1,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     overflow: 'hidden',
   },
   goalFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: radius.pill,
     backgroundColor: colors.success,
   },
   cta: {

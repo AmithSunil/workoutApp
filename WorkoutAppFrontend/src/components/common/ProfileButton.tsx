@@ -1,11 +1,9 @@
 import { useRouter } from 'expo-router';
 import { Alert, Pressable } from 'react-native';
 
+import { signOutEverywhere } from '@/auth';
 import { Avatar } from '@/components/ui';
 import { routes } from '@/navigation/routes';
-import { useAppDispatch } from '@/store/hooks';
-import { clearSession } from '@/store/persistence';
-import { signedOut } from '@/store/slices/sessionSlice';
 
 export interface ProfileButtonProps {
   name: string;
@@ -14,24 +12,23 @@ export interface ProfileButtonProps {
 }
 
 /**
- * Header avatar that doubles as the sign-out affordance. In production this
- * opens a profile screen; in the demo build it returns to the role gate so both
- * sides of the product stay reachable.
+ * Header avatar that doubles as the sign-out affordance.
+ *
+ * It only ends the Supabase session. Clearing the session slice, the cached
+ * identity and the RTK Query cache is the auth listener's job — doing it here
+ * too would mean two places that have to agree on what signing out means.
  */
 export function ProfileButton({ name, avatarUrl, size = 40 }: ProfileButtonProps) {
-  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const onPress = () =>
-    Alert.alert(name, 'Switch to a different profile?', [
+    Alert.alert(name, 'Sign out of this account?', [
       { text: 'Stay signed in', style: 'cancel' },
       {
-        text: 'Switch profile',
+        text: 'Sign out',
         style: 'destructive',
         onPress: () => {
-          dispatch(signedOut());
-          void clearSession();
-          router.replace(routes.roleSelect());
+          void signOutEverywhere().then(() => router.replace(routes.signIn()));
         },
       },
     ]);

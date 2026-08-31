@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 4,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.pill,
     backgroundColor: 'transparent',
     marginTop: 2,
   },

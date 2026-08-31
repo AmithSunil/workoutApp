@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     bottom: -1,
     width: 11,
     height: 11,
-    borderRadius: 6,
+    borderRadius: radius.pill,
     backgroundColor: colors.success,
     borderWidth: 2,
     borderColor: colors.surface,

@@ -1,5 +1,7 @@
 import type { Href } from 'expo-router';
 
+import type { UserRole } from '@/types/models';
+
 /**
  * Every navigation target in the app, in one place.
  *
@@ -10,7 +12,7 @@ import type { Href } from 'expo-router';
 const href = (path: string): Href => path as unknown as Href;
 
 export const routes = {
-  roleSelect: () => href('/'),
+  signIn: () => href('/sign-in'),
 
   client: {
     explore: () => href('/(client)/(tabs)/explore'),
@@ -39,3 +41,7 @@ export const routes = {
 
   workoutLog: (logId: string) => href(`/workout-log/${logId}`),
 } as const;
+
+/** Where a signed-in user lands, given the role the backend resolved for them. */
+export const homeFor = (role: UserRole): Href =>
+  role === 'trainer' ? routes.trainer.dashboard() : routes.client.explore();

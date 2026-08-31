@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   descriptorDot: {
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: radius.pill,
   },
   notes: {
     marginTop: spacing.md,

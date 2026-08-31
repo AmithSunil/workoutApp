@@ -16,8 +16,8 @@ export interface AvatarProps {
   status?: ComplianceStatus;
 }
 
-const TINTS = [palette.blue100, palette.green50, palette.amber50, palette.violet50, palette.teal50];
-const INK = [palette.blue600, palette.green600, palette.amber500, palette.violet500, palette.teal500];
+const TINTS = [palette.indigo100, palette.green50, palette.amber50, palette.violet50, palette.teal50];
+const INK = [palette.indigo600, palette.green600, palette.amber500, palette.violet500, palette.teal500];
 
 /** Deterministic tint so the same person always gets the same monogram colour. */
 const hash = (value: string) =>

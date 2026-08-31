@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Avatar, EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { ThreadView } from '@/components/messaging/ThreadView';
 import { useClientThread, useSession } from '@/hooks/useSession';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 
 /** The client's single conversation with their coach. */
 export default function ClientChatScreen() {
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: radius.pill,
     backgroundColor: colors.success,
   },
 });

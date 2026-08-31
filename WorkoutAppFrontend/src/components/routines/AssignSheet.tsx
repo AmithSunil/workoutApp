@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   check: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderColor: colors.borderStrong,
     alignItems: 'center',

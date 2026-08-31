@@ -134,6 +134,44 @@ RTK Query owns anything the server owns. Plain slices own only what it doesn't:
 type scale. `src/components/ui/` wraps them into primitives — `Text` is the only
 text component in the app, so the type scale stays auditable in one file.
 
+The system is light, airy and deliberately soft. Its rules, and why they live in
+tokens rather than per screen:
+
+- **Off-white canvas, white cards, calm indigo accent.** `#F8F9FC` ground,
+  `#5B6CF0` primary. No pure black: text bottoms out at `#1A1F2B`, so nothing
+  on screen is a maximum-contrast edge.
+- **Rounding is a token, never a local decision.** The `radius` scale
+  (`xs: 10` … `xxl: 36`, plus `pill`) is deliberately generous — nothing in the
+  product is square-cornered, and even the smallest step is visibly soft, so a
+  surface that looks boxy is using the wrong token rather than needing a new
+  one. Raising or lowering the softness of the whole product is one file. A
+  component that needs a rounded corner takes it from `radius`; a literal number
+  in a stylesheet is a bug, and anything meant to be circular or fully round
+  (dots, badges, avatars, tracks, circular buttons) uses `radius.pill` rather
+  than half its own height.
+- **Depth is a wide, low-opacity shadow, not a rule.** `elevation.card` and
+  `elevation.floating` keep their blur radius much larger than their offset —
+  that ratio is what stops the shadow reading as a hard line under the card.
+  Borders are for grouping, not for lift.
+- **One family, no synthetic weights.** Inter throughout — a neutral,
+  high-x-height UI face built for screens, which keeps small labels legible and
+  leaves the rounded shapes to carry the softness on their own. Inter tracks
+  loose at large sizes, which is why the display and metric variants carry
+  negative tracking while body sizes sit at 0.
+  React Native ignores `fontWeight` on a custom font, so a weight is a
+  *different family name* — `fonts` maps them (400/500/600/700, plus 800 for
+  hero readouts) and `fontFor(group, weight)` resolves the `weight` prop on
+  `Text`. A raw `fontWeight` in a stylesheet is silently a no-op; set
+  `fontFamily` instead.
+- **Numbers get tabular figures rather than a second family.** `metric` and
+  `metricLg` carry `fontVariant: ['tabular-nums']`, which is what keeps columns
+  of loads and totals aligned without pulling in a monospace face.
+- **Press feedback settles, it doesn't snap.** Pressed states sit around 0.9
+  opacity and a ~0.99 scale; `motion` durations are unhurried on purpose.
+- **Fonts gate the first paint.** `src/app/_layout.tsx` holds the splash screen
+  until `useFonts` settles, so no screen paints in a fallback face and reflows.
+  A font *error* also counts as settled — a missing file must not wedge the app.
+
 Charts are hand-built on `react-native-svg` (`components/charts/`) rather than a
 chart library, which keeps the visual language consistent with the rest of the
 system and avoids a dependency that would need re-styling anyway.

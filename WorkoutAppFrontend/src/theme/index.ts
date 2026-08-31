@@ -1,5 +1,15 @@
-export { colors, palette, spacing, radius, typography, elevation, motion } from './tokens';
-export type { TypographyVariant } from './tokens';
+export {
+  colors,
+  palette,
+  spacing,
+  radius,
+  typography,
+  fonts,
+  fontFor,
+  elevation,
+  motion,
+} from './tokens';
+export type { TypographyVariant, TypographySpec, FontFamilyGroup } from './tokens';
 
 import { colors } from './tokens';
 import type { ComplianceStatus } from '@/types/models';

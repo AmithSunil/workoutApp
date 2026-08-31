@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { Card, Divider, EmptyState, Text } from '@/components/ui';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import type { RoutineDay, Weekday } from '@/types/models';
 import { WEEKDAY_LABEL } from '@/utils/date';
 import { plural } from '@/utils/format';
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
     backgroundColor: colors.surfaceSunken,
-    borderRadius: spacing.sm,
+    borderRadius: radius.xs,
     padding: spacing.md,
     marginTop: spacing.md,
   },

@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { ProgressBar, Text } from '@/components/ui';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import type { MacroTargets } from '@/types/models';
 import { grams, pct } from '@/utils/format';
 
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   swatch: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.pill,
   },
   barCol: {
     flex: 1,

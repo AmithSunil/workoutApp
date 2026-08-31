@@ -74,7 +74,7 @@ export function PhotoGallery({ photos, onAdd, onPressPhoto }: PhotoGalleryProps)
                 {/* Gradient sits under the image so the tile still reads if the
                     remote asset is unavailable offline. */}
                 <LinearGradient
-                  colors={[palette.blue100, palette.grey200]}
+                  colors={[palette.indigo100, palette.grey200]}
                   style={StyleSheet.absoluteFill}
                 />
                 <Image

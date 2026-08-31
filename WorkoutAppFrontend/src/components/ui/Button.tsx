@@ -78,9 +78,10 @@ export function Button({
             <Ionicons name={icon} size={size === 'sm' ? 15 : 17} color={content} />
           ) : null}
           <Text
-            variant={size === 'sm' ? 'label' : 'bodyStrong'}
+            variant="button"
             color={content}
-            numberOfLines={1}>
+            numberOfLines={1}
+            style={size === 'sm' && styles.smLabel}>
             {label}
           </Text>
           {icon && iconPosition === 'right' ? (
@@ -108,6 +109,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
+  smLabel: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
   fullWidth: {
     alignSelf: 'stretch',
   },
@@ -115,7 +120,7 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   pressed: {
-    opacity: 0.82,
-    transform: [{ scale: 0.98 }],
+    opacity: 0.9,
+    transform: [{ scale: 0.985 }],
   },
 });

@@ -4,47 +4,53 @@
  * Single source of truth for colour, spacing, radius, elevation and type.
  * Screens and components must never hard-code a hex value or a magic number —
  * import from here so the whole product can be re-skinned in one place.
+ *
+ * The system is light, airy and soft: an off-white canvas, white cards that
+ * float on wide low-opacity shadows rather than hard rules, generously rounded
+ * corners on every surface, and a calm indigo accent. Nothing should read as
+ * sharp, boxy or heavy — there are no square corners in this system.
  */
 
 export const palette = {
-  // Neutrals — cool grey ramp
+  // Neutrals — a soft, very slightly cool ramp. No pure black anywhere.
   white: '#FFFFFF',
-  grey25: '#FCFCFD',
-  grey50: '#F7F8FA',
-  grey100: '#F1F3F7',
-  grey200: '#E6E9EF',
-  grey300: '#D3D8E0',
-  grey400: '#A6AEBC',
-  grey500: '#79839A',
-  grey600: '#5B6478',
-  grey700: '#3E4658',
-  grey800: '#252C3B',
-  grey900: '#0E1116',
+  grey25: '#FCFDFE',
+  grey50: '#F8F9FC',
+  grey100: '#F2F4F8',
+  grey200: '#EAEDF3',
+  grey300: '#DCE1EA',
+  grey400: '#B2BAC9',
+  grey500: '#858FA3',
+  grey600: '#616B7F',
+  grey700: '#454E60',
+  grey800: '#2B3242',
+  grey900: '#1A1F2B',
 
-  // Brand
-  blue50: '#EDF2FF',
-  blue100: '#DCE5FF',
-  blue300: '#8FAAFF',
-  blue500: '#2F6BFF',
-  blue600: '#1F51D8',
+  // Brand — a calm indigo. Softer and dustier than a primary blue.
+  indigo50: '#F0F2FE',
+  indigo100: '#E0E4FD',
+  indigo200: '#C6CDFB',
+  indigo300: '#9AA5F6',
+  indigo500: '#5B6CF0',
+  indigo600: '#4A59D6',
 
-  // Semantic
-  green50: '#E7F8F0',
-  green500: '#12B76A',
-  green600: '#0E9455',
-  amber50: '#FEF4E6',
-  amber500: '#F79009',
-  red50: '#FEECEB',
-  red500: '#F04438',
-  red600: '#D92D20',
+  // Semantic — all desaturated a step so nothing shouts.
+  green50: '#E9F8F1',
+  green500: '#2FBF87',
+  green600: '#22A272',
+  amber50: '#FEF5E8',
+  amber500: '#F0A63C',
+  red50: '#FDEEEC',
+  red500: '#EF6B62',
+  red600: '#DB5249',
 
   // Macro accents
-  violet50: '#F4EDFE',
-  violet500: '#8B5CF6',
-  orange50: '#FFF1E7',
-  orange500: '#FB8C3C',
-  teal50: '#E6F7F6',
-  teal500: '#0FBFB0',
+  violet50: '#F3EFFE',
+  violet500: '#A78BFA',
+  peach50: '#FEF3EA',
+  peach500: '#F5A46E',
+  teal50: '#E8F7F7',
+  teal500: '#4FC3C0',
 } as const;
 
 export const colors = {
@@ -65,10 +71,10 @@ export const colors = {
   textInverse: palette.white,
   textOnPrimary: palette.white,
 
-  primary: palette.blue500,
-  primaryPressed: palette.blue600,
-  primarySoft: palette.blue50,
-  primarySoftBorder: palette.blue100,
+  primary: palette.indigo500,
+  primaryPressed: palette.indigo600,
+  primarySoft: palette.indigo50,
+  primarySoftBorder: palette.indigo100,
 
   success: palette.green500,
   successSoft: palette.green50,
@@ -79,10 +85,10 @@ export const colors = {
   dangerSoft: palette.red50,
 
   /** Macronutrient identity colours, reused by gauges, bars and legends */
-  protein: palette.blue500,
-  proteinSoft: palette.blue50,
-  carbs: palette.orange500,
-  carbsSoft: palette.orange50,
+  protein: palette.indigo500,
+  proteinSoft: palette.indigo50,
+  carbs: palette.peach500,
+  carbsSoft: palette.peach50,
   fat: palette.violet500,
   fatSoft: palette.violet50,
 
@@ -91,7 +97,7 @@ export const colors = {
   statusYellow: palette.amber500,
   statusRed: palette.red500,
 
-  overlay: 'rgba(14, 17, 22, 0.45)',
+  overlay: 'rgba(26, 31, 43, 0.38)',
   skeleton: palette.grey100,
 } as const;
 
@@ -108,54 +114,202 @@ export const spacing = {
   giant: 56,
 } as const;
 
+/**
+ * Corner radii. Nothing in this product is square-cornered. The scale is
+ * deliberately generous — the smallest step is already visibly soft, chips and
+ * pills are fully round, cards land at `lg`, and sheets at `xxl`. If a surface
+ * looks boxy, it is using the wrong token, not a missing one.
+ */
 export const radius = {
-  xs: 6,
-  sm: 10,
-  md: 14,
-  lg: 18,
-  xl: 24,
-  xxl: 32,
+  /** Tight inner details — bar caps, tag corners, a bubble's tail. */
+  xs: 10,
+  /** Inset rows, inputs, small tiles nested inside a card. */
+  sm: 14,
+  /** Standalone controls and secondary surfaces. */
+  md: 18,
+  /** The card radius. Every floating surface uses this unless it is a sheet. */
+  lg: 24,
+  /** Large hero surfaces and modal bodies. */
+  xl: 30,
+  /** Bottom sheets and full-width overlays. */
+  xxl: 36,
+  /** Fully round: dots, badges, avatars, pills, circular buttons, tracks. */
   pill: 999,
 } as const;
 
-export const typography = {
-  display: { fontSize: 34, lineHeight: 40, fontWeight: '700' },
-  title: { fontSize: 26, lineHeight: 32, fontWeight: '700' },
-  h1: { fontSize: 20, lineHeight: 26, fontWeight: '700' },
-  h2: { fontSize: 17, lineHeight: 23, fontWeight: '600' },
-  body: { fontSize: 15, lineHeight: 21, fontWeight: '500' },
-  bodyStrong: { fontSize: 15, lineHeight: 21, fontWeight: '700' },
-  label: { fontSize: 13, lineHeight: 18, fontWeight: '600' },
-  caption: { fontSize: 12, lineHeight: 16, fontWeight: '500' },
-  micro: { fontSize: 11, lineHeight: 14, fontWeight: '600' },
-  metric: { fontSize: 28, lineHeight: 32, fontWeight: '700' },
+/**
+ * Concrete font files. Custom fonts on React Native ignore `fontWeight`, so a
+ * weight is selected by naming the exact family.
+ */
+export const fonts = {
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semibold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
+  /** Hero readouts only — Inter's 800 is what gives a big number its weight. */
+  extrabold: 'Inter_800ExtraBold',
 } as const;
+
+export type FontFamilyGroup = 'sans';
+
+const BY_WEIGHT: Record<string, string> = {
+  '100': fonts.regular,
+  '200': fonts.regular,
+  '300': fonts.regular,
+  '400': fonts.regular,
+  '500': fonts.medium,
+  '600': fonts.semibold,
+  '700': fonts.bold,
+  '800': fonts.extrabold,
+  '900': fonts.extrabold,
+  normal: fonts.regular,
+  bold: fonts.bold,
+};
+
+/** Resolves a weight onto the concrete loaded font file. */
+export const fontFor = (_group: FontFamilyGroup, weight: string | number = '400'): string =>
+  BY_WEIGHT[String(weight)] ?? fonts.regular;
+
+export interface TypographySpec {
+  /** Which family group the variant belongs to, so `weight` can re-resolve it. */
+  family: FontFamilyGroup;
+  fontFamily: string;
+  fontSize: number;
+  lineHeight: number;
+  letterSpacing?: number;
+  /** `as const` on the scale below makes these tuples readonly. */
+  fontVariant?: readonly ['tabular-nums'];
+}
+
+/**
+ * Inter throughout — a neutral, high-x-height UI face built for screens, which
+ * keeps small labels legible and lets the rounded shapes carry the softness on
+ * their own. Inter tracks loose by default at large sizes, so display and
+ * metric variants pull tracking in and body sizes sit at 0. Numbers use tabular
+ * figures so metric columns line up without a separate monospace family.
+ */
+export const typography = {
+  display: {
+    family: 'sans',
+    fontFamily: fonts.bold,
+    fontSize: 34,
+    lineHeight: 42,
+    letterSpacing: -0.8,
+  },
+  title: {
+    family: 'sans',
+    fontFamily: fonts.bold,
+    fontSize: 26,
+    lineHeight: 33,
+    letterSpacing: -0.6,
+  },
+  h1: {
+    family: 'sans',
+    fontFamily: fonts.semibold,
+    fontSize: 20,
+    lineHeight: 27,
+    letterSpacing: -0.3,
+  },
+  h2: {
+    family: 'sans',
+    fontFamily: fonts.semibold,
+    fontSize: 17,
+    lineHeight: 24,
+    letterSpacing: -0.1,
+  },
+  /** Button faces — sentence case, never shouted. */
+  button: {
+    family: 'sans',
+    fontFamily: fonts.semibold,
+    fontSize: 15,
+    lineHeight: 20,
+    letterSpacing: 0,
+  },
+  body: {
+    family: 'sans',
+    fontFamily: fonts.regular,
+    fontSize: 15,
+    lineHeight: 23,
+    letterSpacing: 0,
+  },
+  bodyStrong: {
+    family: 'sans',
+    fontFamily: fonts.semibold,
+    fontSize: 15,
+    lineHeight: 23,
+    letterSpacing: 0,
+  },
+  label: {
+    family: 'sans',
+    fontFamily: fonts.medium,
+    fontSize: 13,
+    lineHeight: 19,
+    letterSpacing: 0,
+  },
+  caption: {
+    family: 'sans',
+    fontFamily: fonts.regular,
+    fontSize: 12,
+    lineHeight: 17,
+    letterSpacing: 0,
+  },
+  micro: {
+    family: 'sans',
+    fontFamily: fonts.medium,
+    fontSize: 11,
+    lineHeight: 15,
+    letterSpacing: 0.1,
+  },
+  /** Readouts — totals, loads, timers. */
+  metric: {
+    family: 'sans',
+    fontFamily: fonts.bold,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.8,
+    fontVariant: ['tabular-nums'],
+  },
+  /** Hero readout on progress / session headers. */
+  metricLg: {
+    family: 'sans',
+    fontFamily: fonts.extrabold,
+    fontSize: 44,
+    lineHeight: 50,
+    letterSpacing: -1.6,
+    fontVariant: ['tabular-nums'],
+  },
+} as const satisfies Record<string, TypographySpec>;
 
 export type TypographyVariant = keyof typeof typography;
 
+/**
+ * Depth is a wide, low-opacity shadow — a surface lifting off the canvas, not a
+ * hard drop. Shadows are always softer and larger than their offset, which is
+ * what keeps the edge from reading as a line.
+ */
 export const elevation = {
   none: {},
   /** Resting cards */
   card: {
-    shadowColor: '#0E1116',
+    shadowColor: '#1A1F2B',
     shadowOpacity: 0.05,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 6 },
     elevation: 2,
   },
   /** Floating action button, sheets */
   floating: {
-    shadowColor: '#0E1116',
-    shadowOpacity: 0.16,
-    shadowRadius: 22,
-    shadowOffset: { width: 0, height: 10 },
+    shadowColor: '#1A1F2B',
+    shadowOpacity: 0.13,
+    shadowRadius: 32,
+    shadowOffset: { width: 0, height: 14 },
     elevation: 10,
   },
 } as const;
 
-/** Duration tokens for Reanimated / LayoutAnimation. */
+/** Duration tokens for Reanimated / LayoutAnimation. Unhurried by design. */
 export const motion = {
-  fast: 140,
-  normal: 220,
-  slow: 360,
+  fast: 180,
+  normal: 260,
+  slow: 420,
 } as const;

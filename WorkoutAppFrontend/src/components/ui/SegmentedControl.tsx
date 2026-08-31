@@ -64,6 +64,8 @@ const styles = StyleSheet.create({
   segmentActive: {
     backgroundColor: colors.surface,
     ...elevation.card,
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 3 },
   },
 });

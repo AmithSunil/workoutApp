@@ -6,10 +6,12 @@ import { colors } from '@/theme';
 
 /** Trainer shell, guarded the same way as the client subtree. */
 export default function TrainerLayout() {
+  const status = useAppSelector((s) => s.session.status);
   const role = useAppSelector((s) => s.session.role);
 
+  if (status !== 'signedIn') return <Redirect href={routes.signIn()} />;
   if (role === 'client') return <Redirect href={routes.client.explore()} />;
-  if (role !== 'trainer') return <Redirect href={routes.roleSelect()} />;
+  if (role !== 'trainer') return <Redirect href={routes.signIn()} />;
 
   return (
     <Stack

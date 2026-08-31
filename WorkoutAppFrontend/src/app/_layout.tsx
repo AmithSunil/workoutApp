@@ -1,3 +1,11 @@
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+} from '@expo-google-fonts/inter';
+import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -5,12 +13,10 @@ import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 
-import { store, type AppDispatch } from '@/store';
-import { useAppSelector } from '@/store/hooks';
-import { loadSession } from '@/store/persistence';
-import { hydrated } from '@/store/slices/sessionSlice';
+import { useAuthSession } from '@/auth';
+import { store } from '@/store';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
@@ -18,41 +24,29 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 /**
- * Restores the persisted identity before the first navigation decision is made,
- * so a returning user never sees the role picker flash.
+ * Resolves the Supabase session before the first navigation decision is made,
+ * so a returning user never sees the sign-in screen flash. The Inter stack is
+ * held here too, so no screen paints in a fallback face and then reflows.
  */
 function SessionBootstrap({ children }: { children: React.ReactNode }) {
-  const dispatch = useDispatch<AppDispatch>();
-  const ready = useAppSelector((s) => s.session.hydrated);
+  const { ready } = useAuthSession();
+
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+  });
+
+  // A missing font file must not wedge the app behind the splash screen.
+  const fontsSettled = fontsLoaded || !!fontError;
 
   useEffect(() => {
-    let cancelled = false;
-    loadSession().then((persisted) => {
-      if (cancelled) return;
-      dispatch(
-        hydrated(
-          persisted
-            ? {
-                role: persisted.role,
-                userId: persisted.userId,
-                activeClientId: persisted.activeClientId,
-                activeDate: store.getState().session.activeDate,
-                hydrated: true,
-              }
-            : null
-        )
-      );
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [dispatch]);
+    if (ready && fontsSettled) SplashScreen.hideAsync().catch(() => undefined);
+  }, [ready, fontsSettled]);
 
-  useEffect(() => {
-    if (ready) SplashScreen.hideAsync().catch(() => undefined);
-  }, [ready]);
-
-  if (!ready) return null;
+  if (!ready || !fontsSettled) return null;
   return <>{children}</>;
 }
 
@@ -70,6 +64,7 @@ export default function RootLayout() {
                 animation: 'slide_from_right',
               }}>
               <Stack.Screen name="index" options={{ animation: 'fade' }} />
+              <Stack.Screen name="sign-in" options={{ animation: 'fade' }} />
               <Stack.Screen name="(client)" options={{ animation: 'fade' }} />
               <Stack.Screen name="(trainer)" options={{ animation: 'fade' }} />
               <Stack.Screen name="workout-log/[id]" options={{ presentation: 'modal' }} />

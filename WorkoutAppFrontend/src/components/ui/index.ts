@@ -4,6 +4,7 @@ export { Card, CardHeader } from './Card';
 export { Chip } from './Chip';
 export { Divider } from './Divider';
 export { EmptyState } from './EmptyState';
+export { Input } from './Input';
 export { ProgressBar } from './ProgressBar';
 export { Screen, TAB_BAR_HEIGHT } from './Screen';
 export { SectionHeader } from './SectionHeader';

@@ -1,0 +1,193 @@
+-- NOT APPLIED. The real per-role policy set, written and tested.
+--
+-- Tested on 2026-08-31 by applying this file inside a transaction, signing in as
+-- the trainer and two clients via request.jwt.claims, counting what each could
+-- see, and rolling back. `tests/rls.sql` is that test, re-runnable at any time.
+-- Results are recorded at the bottom of this file.
+--
+-- Prerequisites, all already met:
+--   1. users.auth_user_id exists and the helper predicates are applied
+--      (migration 20260831000011).
+--   2. Every person who needs to sign in has an auth.users row linked to their
+--      users row (seed/auth_dev_users.sql for the fixtures).
+--
+-- Remaining prerequisite, the reason this is not applied:
+--   3. The app must actually sign in. `src/app/index.tsx` is still a demo role
+--      switcher that writes a role into sessionSlice without a token, so under
+--      these policies every screen would read zero rows. Applying this before
+--      the sign-in screen exists turns the app dark.
+--
+-- Applying it is this file, in one transaction. Nothing else changes: the RPCs
+-- are SECURITY INVOKER and will simply start obeying these policies.
+
+-- ---------------------------------------------------------------------------
+-- Two more predicates, needed only here
+-- ---------------------------------------------------------------------------
+
+create function public.owns_routine(p_routine_id text)
+returns boolean language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.routines r
+                  where r.id = p_routine_id and r.trainer_id = public.app_user_id());
+$$;
+
+/** A trainer sees their own templates; a client sees the ones assigned to them. */
+create function public.can_read_routine(p_routine_id text)
+returns boolean language sql stable security definer set search_path = '' as $$
+  select public.owns_routine(p_routine_id)
+      or exists (select 1 from public.routine_assignments a
+                  where a.routine_id = p_routine_id and a.client_id = public.app_user_id());
+$$;
+
+-- ---------------------------------------------------------------------------
+-- Out with the development posture
+-- ---------------------------------------------------------------------------
+
+do $$ declare p record; begin
+  for p in select policyname, tablename from pg_policies
+            where schemaname = 'public' and policyname like '%\_dev\_%'
+  loop execute format('drop policy %I on public.%I', p.policyname, p.tablename); end loop;
+end $$;
+
+-- ---------------------------------------------------------------------------
+-- Reference data: readable by anyone signed in, maintained by trainers
+-- ---------------------------------------------------------------------------
+
+create policy exercises_read  on exercises for select to authenticated using (true);
+create policy exercises_write on exercises for all to authenticated
+  using (public.app_role() = 'trainer') with check (public.app_role() = 'trainer');
+create policy foods_read  on foods for select to authenticated using (true);
+create policy foods_write on foods for all to authenticated
+  using (public.app_role() = 'trainer') with check (public.app_role() = 'trainer');
+
+-- ---------------------------------------------------------------------------
+-- Identity
+-- ---------------------------------------------------------------------------
+
+-- Three ways to be visible: you, someone you coach, or the coach you belong to.
+create policy users_visible on users for select to authenticated
+  using (id = public.app_user_id() or public.is_trainer_of(id) or public.is_my_trainer(id));
+create policy users_self_update on users for update to authenticated
+  using (id = public.app_user_id()) with check (id = public.app_user_id());
+
+create policy trainer_profiles_visible on trainer_profiles for select to authenticated
+  using (id = public.app_user_id() or public.is_my_trainer(id));
+create policy trainer_profiles_self on trainer_profiles for all to authenticated
+  using (id = public.app_user_id()) with check (id = public.app_user_id());
+
+-- A client reads their own profile but does not edit it: macro targets, goals
+-- and compliance are the coach's to set.
+create policy client_profiles_visible on client_profiles for select to authenticated
+  using (public.owns_client(id));
+create policy client_profiles_trainer_writes on client_profiles for all to authenticated
+  using (public.is_trainer_of(id)) with check (public.is_trainer_of(id));
+
+-- ---------------------------------------------------------------------------
+-- Everything hanging off a client_id: the client, or their trainer
+-- ---------------------------------------------------------------------------
+
+do $$
+declare t text;
+begin
+  foreach t in array array['workout_sessions','workout_logs','nutrition_days','food_entries',
+                           'body_metrics','progress_photos','habits','check_ins',
+                           'ai_food_suggestions','routine_assignments']
+  loop
+    execute format(
+      'create policy %I on public.%I for all to authenticated '
+      'using (public.owns_client(client_id)) with check (public.owns_client(client_id))',
+      t || '_owner', t);
+  end loop;
+end $$;
+
+-- Alerts are raised by the system on the trainer's behalf and resolved by them;
+-- a client can see their own but must not clear them.
+create policy alerts_read on red_flag_alerts for select to authenticated
+  using (public.owns_client(client_id));
+create policy alerts_trainer_write on red_flag_alerts for all to authenticated
+  using (public.is_trainer_of(client_id)) with check (public.is_trainer_of(client_id));
+
+-- ---------------------------------------------------------------------------
+-- Child tables: no client_id of their own, so they gate on their parent
+-- ---------------------------------------------------------------------------
+
+do $$
+declare r record;
+begin
+  for r in select * from (values
+    ('session_exercises',
+     'exists (select 1 from public.workout_sessions s where s.id = session_exercises.session_id and public.owns_client(s.client_id))'),
+    ('prescribed_sets',
+     'exists (select 1 from public.session_exercises x join public.workout_sessions s on s.id = x.session_id where x.id = prescribed_sets.session_exercise_id and public.owns_client(s.client_id))'),
+    ('logged_exercises',
+     'exists (select 1 from public.workout_logs l where l.id = logged_exercises.workout_log_id and public.owns_client(l.client_id))'),
+    ('logged_sets',
+     'exists (select 1 from public.logged_exercises x join public.workout_logs l on l.id = x.workout_log_id where x.id = logged_sets.logged_exercise_id and public.owns_client(l.client_id))'),
+    ('habit_completions',
+     'exists (select 1 from public.habits h where h.id = habit_completions.habit_id and public.owns_client(h.client_id))'),
+    ('routine_assignment_days',
+     'exists (select 1 from public.routine_assignments a where a.id = routine_assignment_days.assignment_id and public.owns_client(a.client_id))'),
+    ('routine_assignment_exercises',
+     'exists (select 1 from public.routine_assignment_days d join public.routine_assignments a on a.id = d.assignment_id where d.id = routine_assignment_exercises.assignment_day_id and public.owns_client(a.client_id))')
+  ) as v(tbl, pred)
+  loop
+    execute format('create policy %I on public.%I for all to authenticated using (%s) with check (%s)',
+                   r.tbl || '_via_parent', r.tbl, r.pred, r.pred);
+  end loop;
+end $$;
+
+-- ---------------------------------------------------------------------------
+-- Routines: the trainer's library, readable by whoever it is assigned to
+-- ---------------------------------------------------------------------------
+
+create policy routines_read on routines for select to authenticated
+  using (public.can_read_routine(id));
+create policy routines_owner on routines for all to authenticated
+  using (trainer_id = public.app_user_id()) with check (trainer_id = public.app_user_id());
+
+create policy routine_days_read on routine_days for select to authenticated
+  using (public.can_read_routine(routine_id));
+create policy routine_days_owner on routine_days for all to authenticated
+  using (public.owns_routine(routine_id)) with check (public.owns_routine(routine_id));
+
+create policy routine_exercises_read on routine_exercises for select to authenticated
+  using (exists (select 1 from routine_days d
+                  where d.id = routine_exercises.routine_day_id and public.can_read_routine(d.routine_id)));
+create policy routine_exercises_owner on routine_exercises for all to authenticated
+  using (exists (select 1 from routine_days d
+                  where d.id = routine_exercises.routine_day_id and public.owns_routine(d.routine_id)))
+  with check (exists (select 1 from routine_days d
+                  where d.id = routine_exercises.routine_day_id and public.owns_routine(d.routine_id)));
+
+-- ---------------------------------------------------------------------------
+-- Messaging: both parties, and you can only send as yourself
+-- ---------------------------------------------------------------------------
+
+create policy threads_participants on threads for all to authenticated
+  using (public.in_thread(id)) with check (public.in_thread(id));
+create policy messages_read on messages for select to authenticated
+  using (public.in_thread(thread_id));
+create policy messages_send on messages for insert to authenticated
+  with check (public.in_thread(thread_id) and sender_id = public.app_user_id());
+create policy messages_update on messages for update to authenticated
+  using (public.in_thread(thread_id)) with check (public.in_thread(thread_id));
+
+-- id_sequences deliberately gets no policy: RLS is on and nothing can reach it.
+-- next_id() is SECURITY DEFINER and owned by postgres, which bypasses RLS, so
+-- the counters stay reachable exactly one way.
+
+-- ---------------------------------------------------------------------------
+-- Measured behaviour (tests/rls.sql, 2026-08-31)
+-- ---------------------------------------------------------------------------
+--
+--                        trainer t-001   client c-001   client c-002   anon
+--   client_profiles              8              1              -          0
+--   workout_logs               144             44             10          0
+--   logged_sets               2290            700              -          0
+--   nutrition_days             177             45              -          0
+--   body_metrics                 -             72              -          -
+--   threads                      8              1              1          0
+--   messages                    27              6              -          0
+--   users                        9              2              -          -
+--   exercises                   32             32              -          0
+--
+--   c-001 rows visible to c-002: 0.  Other clients' logs visible to c-001: 0.

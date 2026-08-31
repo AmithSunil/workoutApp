@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Sparkline } from '@/components/charts';
 import { Avatar, Card, Text } from '@/components/ui';
-import { colors, spacing, statusColor, statusLabel } from '@/theme';
+import { colors, radius, spacing, statusColor, statusLabel } from '@/theme';
 import type { ClientProfile } from '@/types/models';
 import { timeAgo } from '@/utils/date';
 
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   pill: {
-    borderRadius: 999,
+    borderRadius: radius.pill,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
   },

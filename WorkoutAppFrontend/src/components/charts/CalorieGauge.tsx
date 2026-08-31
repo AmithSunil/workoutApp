@@ -9,7 +9,7 @@ import Animated, {
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 import { Text } from '@/components/ui';
-import { colors, motion } from '@/theme';
+import { colors, motion, palette } from '@/theme';
 import { kcal, ratio } from '@/utils/format';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -59,7 +59,7 @@ export function CalorieGauge({
         <Defs>
           <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
             <Stop offset="0" stopColor={over ? colors.warning : colors.primary} />
-            <Stop offset="1" stopColor={over ? colors.danger : '#6E9BFF'} />
+            <Stop offset="1" stopColor={over ? colors.danger : palette.violet500} />
           </LinearGradient>
         </Defs>
         <Circle

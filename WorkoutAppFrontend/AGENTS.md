@@ -13,7 +13,17 @@ Rules that matter here:
 - **No path strings in screens.** Add a helper to `src/navigation/routes.ts`.
 - **Server data goes through RTK Query**, never a slice. Slices are for session,
   UI and the in-progress workout draft only.
-- **Only `src/api/*` may import `mockDb`.** Components talk to endpoints.
+- **Only `src/api/*` may import `mockDb` or the Supabase client.** Components
+  talk to endpoints. Two transports sit behind one URL contract: Supabase by
+  default, the mock when `EXPO_PUBLIC_API_TRANSPORT=mock`. `handlers.ts` is the
+  spec; `src/api/supabase/routes.ts` mirrors it entry for entry, and both go
+  through the shared matcher in `src/api/matchRoute.ts`.
+- **A `.select()` string must be one literal** — supabase-js parses it at the
+  type level and a concatenated string collapses the row type to `unknown`.
+- **Only `src/auth/*` may touch `supabase.auth`**, and only the auth bootstrap
+  writes the session slice. Screens import from `@/auth` and never see a
+  Supabase type. Never `await` a Supabase call inside `onAuthStateChange` —
+  it runs under the client's auth lock and deadlocks.
 - `tabBar` render props are called as plain functions by react-navigation —
   never call a hook inside `AppTabBar`; safe-area values arrive in props.
 - A web bundle passing proves nothing about native — Metro shims Node builtins

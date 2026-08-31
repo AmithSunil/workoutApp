@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   goalDot: {
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: radius.pill,
   },
   chartCaption: {
     marginBottom: spacing.md,
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   legendSwatch: {
     width: 8,
     height: 8,
-    borderRadius: 2,
+    borderRadius: radius.pill,
   },
   table: {
     marginTop: spacing.md,

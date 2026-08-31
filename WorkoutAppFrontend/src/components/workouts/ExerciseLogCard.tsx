@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   check: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1.5,

@@ -7,7 +7,7 @@ import {
   useSendMessageMutation,
 } from '@/api/endpoints/messagingApi';
 import { EmptyState, Skeleton, Text } from '@/components/ui';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import type { MessageAttachment } from '@/types/models';
 import { friendlyDate } from '@/utils/date';
 
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   dayPill: {
     backgroundColor: colors.surfaceMuted,
-    borderRadius: 999,
+    borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
     paddingVertical: 4,
   },

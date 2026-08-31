@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     minWidth: 18,
     paddingHorizontal: 4,
     height: 18,
-    borderRadius: 9,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surfaceMuted,

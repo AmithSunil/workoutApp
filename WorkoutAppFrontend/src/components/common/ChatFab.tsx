@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     ...elevation.floating,
   },
   pressed: {
-    opacity: 0.86,
-    transform: [{ scale: 0.97 }],
+    opacity: 0.92,
+    transform: [{ scale: 0.98 }],
   },
   badge: {
     position: 'absolute',
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     minWidth: 20,
     height: 20,
     paddingHorizontal: 5,
-    borderRadius: 10,
+    borderRadius: radius.pill,
     borderWidth: 2,
     borderColor: colors.primary,
     backgroundColor: colors.danger,

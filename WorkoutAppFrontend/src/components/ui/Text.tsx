@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
 
-import { colors, typography, type TypographyVariant } from '@/theme';
+import { colors, fontFor, typography, type TypographyVariant } from '@/theme';
 
 export interface TextProps extends RNTextProps {
   variant?: TypographyVariant;
@@ -26,6 +26,9 @@ const toneMap: Record<NonNullable<TextProps['tone']>, string> = {
 /**
  * The only text primitive in the app. Screens never import RN's `Text`
  * directly — that keeps type scale and colour usage auditable in one place.
+ *
+ * Custom fonts ignore `fontWeight` on native, so a `weight` prop is re-resolved
+ * onto the concrete Inter file for the variant's family.
  */
 export const Text = memo(function Text({
   variant = 'body',
@@ -36,13 +39,15 @@ export const Text = memo(function Text({
   style,
   ...rest
 }: TextProps) {
+  const { family, ...spec } = typography[variant];
+
   return (
     <RNText
       style={[
-        typography[variant] as TextStyle,
+        spec as unknown as TextStyle,
         { color: color ?? toneMap[tone] },
         align ? { textAlign: align } : null,
-        weight ? { fontWeight: weight } : null,
+        weight ? { fontFamily: fontFor(family, weight) } : null,
         style,
       ]}
       {...rest}

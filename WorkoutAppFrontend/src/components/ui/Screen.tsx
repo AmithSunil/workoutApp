@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View, type ScrollViewProps } from 'r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from './Text';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 
 export const TAB_BAR_HEIGHT = 64;
 
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   back: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,

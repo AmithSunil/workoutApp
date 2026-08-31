@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   pip: {
     width: 14,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.pill,
     backgroundColor: colors.border,
   },
   pipTraining: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   action: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: radius.pill,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',

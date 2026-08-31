@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: radius.pill,
   },
   notes: {
     marginTop: spacing.sm,

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   marker: {
     width: 5,
     height: 5,
-    borderRadius: 3,
+    borderRadius: radius.pill,
     backgroundColor: colors.borderStrong,
   },
   markerTraining: {

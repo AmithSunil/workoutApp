@@ -11,3 +11,6 @@ shots/
 
 expo-env.d.ts
 # @end expo-cli
+
+# Local secrets
+.env*.local

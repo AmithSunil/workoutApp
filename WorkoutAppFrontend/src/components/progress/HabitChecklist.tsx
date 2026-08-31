@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   check: {
     width: 22,
     height: 22,
-    borderRadius: 7,
+    borderRadius: radius.xs,
     borderWidth: 1.5,
     borderColor: colors.borderStrong,
     alignItems: 'center',
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
   },
   dotDone: {
