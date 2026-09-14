@@ -57,6 +57,7 @@ export default function RoutineDetailScreen() {
   const [assignOpen, setAssignOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [assignError, setAssignError] = useState<string | null>(null);
   const [active, setActive] = useState<Weekday | null>(null);
 
   const data = routine.data;
@@ -88,10 +89,10 @@ export default function RoutineDetailScreen() {
   const avgRest = Math.round(
     allExercises.reduce((sum, e) => sum + e.restSeconds, 0) / Math.max(allExercises.length, 1)
   );
-  const peakRpe = allExercises.reduce((max, e) => Math.max(max, e.targetRpe), 0);
 
   const openAssign = () => {
     setSelectedIds(data.assignedClientIds);
+    setAssignError(null);
     setAssignOpen(true);
   };
 
@@ -112,12 +113,7 @@ export default function RoutineDetailScreen() {
       <View style={styles.tiles}>
         <StatTile label="Days / week" value={`${totals.days}`} icon="calendar-outline" tone="primary" />
         <StatTile label="Avg rest" value={restLabel(avgRest)} icon="time-outline" />
-        <StatTile
-          label="Peak RPE"
-          value={`${peakRpe}`}
-          icon="speedometer-outline"
-          tone={peakRpe >= 9 ? 'danger' : 'success'}
-        />
+        <StatTile label="Working sets" value={`${totals.sets}`} icon="barbell-outline" />
       </View>
 
       {data.notes ? (
@@ -219,15 +215,24 @@ export default function RoutineDetailScreen() {
         clients={clients.data ?? []}
         selectedIds={selectedIds}
         saving={assigning}
+        error={assignError}
         onToggle={(clientId) =>
           setSelectedIds((prev) =>
             prev.includes(clientId) ? prev.filter((c) => c !== clientId) : [...prev, clientId]
           )
         }
         onConfirm={() => {
+          setAssignError(null);
           void assignRoutine({ id: data.id, clientIds: selectedIds })
             .unwrap()
-            .then(() => setAssignOpen(false));
+            .then(() => setAssignOpen(false))
+            // Unticking someone whose only routine this is would empty their
+            // app, so the server refuses it — say so rather than closing.
+            .catch(() =>
+              setAssignError(
+                'Someone you unticked has no other routine. A client keeps their last one until another is assigned.'
+              )
+            );
         }}
       />
     </Screen>

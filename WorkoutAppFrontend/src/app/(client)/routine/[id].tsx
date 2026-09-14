@@ -68,7 +68,6 @@ export default function ClientRoutineScreen() {
   const avgRest = Math.round(
     allExercises.reduce((sum, e) => sum + e.restSeconds, 0) / Math.max(allExercises.length, 1)
   );
-  const peakRpe = allExercises.reduce((max, e) => Math.max(max, e.targetRpe), 0);
 
   return (
     <Screen
@@ -84,13 +83,7 @@ export default function ClientRoutineScreen() {
           tone="primary"
         />
         <StatTile label="Working sets" value={`${totals.sets}`} icon="barbell-outline" />
-        <StatTile
-          label="Peak RPE"
-          value={`${peakRpe}`}
-          hint={`${restLabel(avgRest)} rest`}
-          icon="speedometer-outline"
-          tone={peakRpe >= 9 ? 'danger' : 'success'}
-        />
+        <StatTile label="Avg rest" value={restLabel(avgRest)} icon="time-outline" />
       </View>
 
       {data.notes ? (
@@ -117,9 +110,6 @@ export default function ClientRoutineScreen() {
       />
       <RoutineDayView day={activeDay} weekday={activeWeekday} />
 
-      <Text variant="micro" tone="tertiary" align="center">
-        RPE is how hard the set should feel — RPE 8 means about two reps left in the tank.
-      </Text>
     </Screen>
   );
 }

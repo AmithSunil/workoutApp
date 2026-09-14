@@ -34,7 +34,7 @@ richest history. Tap the avatar in any header to switch profiles.
   card. Nothing the model produces is written until the client confirms it.
 - **Workouts** — the programme the trainer published, a weekly load chart, and
   live session logging: per-set weight and reps, large completion targets, and a
-  1–10 RPE slider with plain-language anchors.
+  session note for the coach.
 - **Progress** — an interactive body-weight chart (drag to inspect any day) with
   a 7-day trend overlay and goal line, a progress-photo timeline grouped into
   shoots, and habit consistency.
@@ -45,8 +45,8 @@ richest history. Tap the avatar in any header to switch profiles.
 
 - **Triage** — the command centre: active clients, check-ins due, unread
   messages, red flags and average adherence, a roster pulse strip, then the
-  automated alerts ordered by severity (missed logs, RPE spikes, weight stalls,
-  calorie misses) each with Message and Dismiss, the pending check-in queue, and
+  automated alerts ordered by severity (missed logs, weight stalls, calorie
+  misses, check-ins due) each with Message and Dismiss, the pending check-in queue, and
   a watchlist of anyone under 80%.
 - **Clients** — searchable roster with traffic-light status dots, adherence
   score, streak and an inline weight sparkline, filterable by compliance and
@@ -74,7 +74,7 @@ All data is served from `src/mock-api/*.json` through a mock transport that
 mimics `fetchBaseQuery` — same request shape, simulated latency, real status
 codes. Writes mutate an in-memory database, so the two sides stay in sync inside
 a session: log a meal as a client and the trainer's compliance numbers move;
-finish a session at RPE 9 and a red flag appears on the triage dashboard.
+miss four days of logging and a red flag appears on the triage dashboard.
 
 Regenerate the dataset with `npm run mock-data`. It is seeded, so the output is
 byte-identical every run.

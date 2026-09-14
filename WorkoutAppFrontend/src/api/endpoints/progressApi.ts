@@ -53,6 +53,20 @@ export const progressApi = baseApi.injectEndpoints({
       query: (body) => ({ url: '/habits', method: 'POST', body }),
       invalidatesTags: (_r, _e, arg) => [{ type: 'Habit', id: arg.clientId }],
     }),
+
+    /** The coach editing a habit they set. `clientId` is for the cache tag only. */
+    updateHabit: build.mutation<
+      Habit,
+      { id: string; clientId: string; patch: Partial<Pick<Habit, 'title' | 'icon'>> }
+    >({
+      query: ({ id, patch }) => ({ url: `/habits/${id}`, method: 'PATCH', body: patch }),
+      invalidatesTags: (_r, _e, arg) => [{ type: 'Habit', id: arg.clientId }],
+    }),
+
+    deleteHabit: build.mutation<{ id: string }, { id: string; clientId: string }>({
+      query: ({ id }) => ({ url: `/habits/${id}`, method: 'DELETE' }),
+      invalidatesTags: (_r, _e, arg) => [{ type: 'Habit', id: arg.clientId }],
+    }),
   }),
 });
 
@@ -63,4 +77,6 @@ export const {
   useGetHabitsQuery,
   useToggleHabitMutation,
   useCreateHabitMutation,
+  useUpdateHabitMutation,
+  useDeleteHabitMutation,
 } = progressApi;

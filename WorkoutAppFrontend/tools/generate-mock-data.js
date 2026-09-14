@@ -425,9 +425,6 @@ for (const c of clients) {
       };
     });
 
-    let rpe = rint(6, 8);
-    if (c.compliance.status === 'red' && chance(0.5)) rpe = rint(9, 10);
-    if (c.id === 'c-005' && chance(0.55)) rpe = rint(9, 10); // deliberate high-strain signal
     logId += 1;
     workoutLogs.push({
       id: `wl-${String(logId).padStart(5, '0')}`,
@@ -436,7 +433,6 @@ for (const c of clients) {
       title: session.title,
       date,
       durationMinutes: session.estimatedMinutes + rint(-10, 12),
-      rpe,
       totalVolumeKg: Math.round(volume),
       ...(chance(0.3)
         ? { notes: pick(['Felt strong, bar speed good.', 'Left knee a bit cranky on the last set.', 'Short on sleep — grinder.', 'Added a set, felt easy today.', 'Gym was packed, rushed the finisher.']) }
@@ -474,8 +470,6 @@ for (const c of clients) {
       clientId: c.id,
       date,
       weightKg: w,
-      bodyFatPct: Number((22 - progress * 3.2 + rfloat(-0.4, 0.4, 2)).toFixed(1)),
-      waistCm: Number((86 - progress * 5 + rfloat(-0.6, 0.6, 1)).toFixed(1)),
     });
   }
 }
@@ -649,9 +643,7 @@ addAlert('c-004', 'missed-logs', 'critical', 'No food logged in 4 days', 'Last e
 addAlert('c-004', 'weight-stall', 'warning', 'Weight flat for 3 weeks', 'Trailing 21-day average moved 0.2 kg against a 0.5 kg/wk target.', 1);
 addAlert('c-007', 'weight-stall', 'critical', 'Weight stalled, 3 sessions missed', 'Adherence dropped to 41% this week.', 0);
 addAlert('c-007', 'calorie-deficit-miss', 'warning', 'Averaging 480 kcal over target', 'Weekend intake is driving the surplus.', 2);
-addAlert('c-005', 'high-rpe', 'critical', 'Three sessions at RPE 9+', 'Strain trending up while volume is flat — deload candidate.', 0);
 addAlert('c-002', 'check-in-due', 'info', 'Check-in submitted, awaiting review', 'Week of Aug 24 — 6 days since last review.', 0);
-addAlert('c-002', 'high-rpe', 'warning', 'RPE spike on lower body', 'Reported 9 on a session prescribed at 7.', 3);
 addAlert('c-005', 'check-in-due', 'info', 'Check-in due tomorrow', 'Auto-reminder already sent.', 0);
 write('alerts.json', alerts);
 
@@ -666,7 +658,6 @@ for (const c of clients) {
     const avgCalories = cDays.length
       ? Math.round(cDays.reduce((s, n) => s + n.consumed.calories, 0) / cDays.length)
       : 0;
-    const avgRpe = cLogs.length ? Number((cLogs.reduce((s, l) => s + l.rpe, 0) / cLogs.length).toFixed(1)) : 0;
     const wStart = metrics.filter((m) => m.clientId === c.id && m.date <= weekOf).slice(-1)[0];
     const wEnd = metrics.filter((m) => m.clientId === c.id && m.date < addDays(weekOf, 7)).slice(-1)[0];
     ciId += 1;
@@ -681,7 +672,6 @@ for (const c of clients) {
       targetCalories: c.targets.calories,
       sessionsCompleted: cLogs.length,
       sessionsPlanned: 5,
-      avgRpe,
       clientNote: pick([
         'Solid week, sleep was the weak link.',
         'Travel Wednesday and Thursday made food tricky.',

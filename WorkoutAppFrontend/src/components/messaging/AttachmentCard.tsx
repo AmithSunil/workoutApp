@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native';
 import { useGetNutritionDayQuery } from '@/api/endpoints/nutritionApi';
 import { useGetWorkoutLogQuery } from '@/api/endpoints/workoutsApi';
 import { Skeleton, Text } from '@/components/ui';
-import { rpeColor } from '@/components/workouts/RpeSlider';
 import { colors, radius, spacing } from '@/theme';
 import type { MessageAttachment } from '@/types/models';
 import { friendlyDate } from '@/utils/date';
@@ -72,13 +71,13 @@ function WorkoutAttachment({ logId, onDark }: { logId: string; onDark?: boolean 
         {log.title}
       </Text>
       <View style={styles.metrics}>
-        <View style={[styles.rpeChip, { backgroundColor: rpeColor(log.rpe) }]}>
+        <View style={[styles.metricChip, { backgroundColor: colors.primary }]}>
           <Text variant="micro" color={colors.textInverse}>
-            RPE {log.rpe}
+            {volume(log.totalVolumeKg)}
           </Text>
         </View>
         <Text variant="micro" color={onDark ? colors.textInverse : colors.textSecondary}>
-          {friendlyDate(log.date)} · {log.durationMinutes} min · {volume(log.totalVolumeKg)}
+          {friendlyDate(log.date)} · {log.durationMinutes} min
         </Text>
       </View>
     </Shell>
@@ -114,7 +113,7 @@ function NutritionAttachment({
       <View style={styles.metrics}>
         <View
           style={[
-            styles.rpeChip,
+            styles.metricChip,
             { backgroundColor: share > 110 ? colors.warning : colors.success },
           ]}>
           <Text variant="micro" color={colors.textInverse}>
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     flexWrap: 'wrap',
   },
-  rpeChip: {
+  metricChip: {
     borderRadius: radius.pill,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,

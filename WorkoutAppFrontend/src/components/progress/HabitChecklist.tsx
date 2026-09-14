@@ -15,7 +15,8 @@ export interface HabitChecklistProps {
   readOnly?: boolean;
 }
 
-const ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+/** The icons a habit can carry — the editor offers exactly this set. */
+export const HABIT_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   water: 'water-outline',
   walk: 'walk-outline',
   moon: 'moon-outline',
@@ -65,7 +66,7 @@ export function HabitChecklist({
 
             <View style={styles.icon}>
               <Ionicons
-                name={ICONS[habit.icon] ?? 'ellipse-outline'}
+                name={HABIT_ICONS[habit.icon] ?? 'ellipse-outline'}
                 size={15}
                 color={done ? colors.success : colors.textTertiary}
               />

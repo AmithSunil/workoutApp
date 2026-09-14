@@ -133,7 +133,7 @@ const findChrome = () => {
   await click(page.getByText('Start session'), 'start session');
   await shot('client-active-session');
   await page.mouse.wheel(0, 2600);
-  await shot('client-rpe-slider');
+  await shot('client-session-finish');
 
   await click(page.getByLabel('Go back'), 'back');
   await click(page.getByLabel('Progress', { exact: true }), 'Progress tab');
@@ -186,10 +186,9 @@ const findChrome = () => {
   await click(page.getByText('Done', { exact: true }), 'close picker');
   await shot('trainer-routine-builder');
 
-  // Exercise the prescription steppers — sets, rest and target RPE all clamp.
+  // Exercise the prescription steppers — sets and rest both clamp.
   await click(page.getByLabel('Increase Sets for Plank'), 'sets +1');
   await click(page.getByLabel('Increase Rest for Plank'), 'rest +15s');
-  await click(page.getByLabel('Increase Target RPE for Plank'), 'RPE +1');
   await shot('trainer-routine-prescription');
 
   await click(page.getByText('Save routine'), 'save routine');
@@ -212,7 +211,6 @@ const findChrome = () => {
   await click(page.getByText('Customise', { exact: true }), 'start customising');
   await shot('trainer-assignment-editing');
   await click(page.getByLabel('Decrease Sets for Barbell Bench Press'), 'drop a set for her');
-  await click(page.getByLabel('Decrease Target RPE for Barbell Bench Press'), 'ease the RPE');
   await click(page.getByText('Save for this client'), 'save customisation');
   await shot('trainer-assignment-customised');
 

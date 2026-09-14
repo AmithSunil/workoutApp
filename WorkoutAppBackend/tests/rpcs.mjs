@@ -43,7 +43,7 @@ async function rejects(name, args, status, label) {
 
 const day = (weekday, focus, exerciseId, name, muscleGroup, sets, notes) => ({
   weekday, focus, name: notes ?? null,
-  exercises: [{ exerciseId, name, muscleGroup, sets, repMin: 8, repMax: 12, restSeconds: 90, targetRpe: 8 }],
+  exercises: [{ exerciseId, name, muscleGroup, sets, repMin: 8, repMax: 12, restSeconds: 90 }],
 });
 
 const created = { routines: [], logs: [], alerts: [], entries: [], days: [] };
@@ -163,7 +163,7 @@ const alertsBefore = (await rest('red_flag_alerts?select=id')).length;
 const log = await rpc('create_workout_log', {
   p_input: {
     clientId: 'c-001', sessionId: 'ws-c-001-2026-07-06', title: 'RPC Test Session',
-    date: '2026-08-30', durationMinutes: 61, rpe: 9.5, totalVolumeKg: 4200,
+    date: '2026-08-30', durationMinutes: 61, totalVolumeKg: 4200,
     exercises: [{
       exerciseId: 'e-001', name: 'Barbell Back Squat', muscleGroup: 'legs',
       sets: [{ reps: 5, weightKg: 100, completed: true }, { reps: 5, weightKg: 102.5, completed: false }],
@@ -183,17 +183,12 @@ check('set order is preserved', () =>
 const sessionAfter = (await rest('workout_sessions?id=eq.ws-c-001-2026-07-06&select=status'))[0].status;
 check('the source session is marked completed', () => assert.equal(sessionAfter, 'completed'));
 
-const newAlerts = await rest('red_flag_alerts?kind=eq.high-rpe&order=raised_at.desc&limit=1&select=id,title,client_id');
-check('RPE 9+ raises a strain alert', () => {
-  assert.equal(newAlerts.length, 1);
-  assert.equal(newAlerts[0].title, 'RPE 9.5 on RPC Test Session');
-  assert.equal(newAlerts[0].client_id, 'c-001');
-});
+// Saving a log used to raise a strain alert at RPE 9+; with RPE gone it must
+// raise nothing at all.
 const alertsAfter = (await rest('red_flag_alerts?select=id')).length;
-check('exactly one alert was added', () => assert.equal(alertsAfter, alertsBefore + 1));
-created.alerts.push(newAlerts[0].id);
+check('saving a log raises no alerts', () => assert.equal(alertsAfter, alertsBefore));
 
-await rejects('create_workout_log', { p_input: { clientId: 'c-999', title: 'x', date: '2026-08-30', durationMinutes: 1, rpe: 5 } }, 404, 'log for unknown client rejected');
+await rejects('create_workout_log', { p_input: { clientId: 'c-999', title: 'x', date: '2026-08-30', durationMinutes: 1 } }, 404, 'log for unknown client rejected');
 
 console.log('\n— nutrition —');
 

@@ -12,10 +12,12 @@ import {
   useGetTrainerSummaryQuery,
   useResolveAlertMutation,
   useReviewCheckInMutation,
+  useUpdateTrainerMutation,
 } from '@/api/endpoints/trainerApi';
 import { ProfileButton } from '@/components/common/ProfileButton';
 import { AlertCard } from '@/components/trainer/AlertCard';
 import { CheckInCard } from '@/components/trainer/CheckInCard';
+import { TrackingPicker } from '@/components/trainer/TrackingPicker';
 import {
   Avatar,
   Card,
@@ -27,10 +29,12 @@ import {
   StatusDot,
   Text,
 } from '@/components/ui';
+import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch } from '@/store/hooks';
 import { activeClientChanged } from '@/store/slices/sessionSlice';
 import { colors, radius, spacing, statusColor } from '@/theme';
+import { ALERT_DOMAIN, shows } from '@/utils/tracking';
 import { TODAY, longDate, timeAgo } from '@/utils/date';
 import { firstName } from '@/utils/format';
 
@@ -57,6 +61,14 @@ export default function TriageDashboard() {
   const threads = useGetThreadsQuery();
   const [resolveAlert] = useResolveAlertMutation();
   const [reviewCheckIn, reviewState] = useReviewCheckInMutation();
+  const [updateTrainer, trackingState] = useUpdateTrainerMutation();
+  const tracking = useTracking();
+
+  // A coach only triages the half of the product they track.
+  const visibleAlerts = useMemo(
+    () => (alerts.data ?? []).filter((a) => shows(tracking.mode, ALERT_DOMAIN[a.kind])),
+    [alerts.data, tracking.mode]
+  );
 
   const clientById = useMemo(
     () => Object.fromEntries((clients.data ?? []).map((c) => [c.id, c])),
@@ -88,7 +100,13 @@ export default function TriageDashboard() {
       title={trainer ? `${greeting()}, ${firstName(trainer.name)}` : 'Triage'}
       subtitle={longDate(TODAY)}
       headerRight={
-        trainer ? <ProfileButton name={trainer.name} avatarUrl={trainer.avatarUrl} /> : undefined
+        trainer ? (
+          <ProfileButton
+            name={trainer.name}
+            avatarUrl={trainer.avatarUrl}
+            href={routes.trainer.profile()}
+          />
+        ) : undefined
       }
       refreshControl={
         <RefreshControl
@@ -101,6 +119,21 @@ export default function TriageDashboard() {
           }}
         />
       }>
+      {/* First run: the tracking choice a sign-up flow would have asked for. */}
+      {tracking.chosen ? null : (
+        <Card>
+          <Text variant="h2">What do you coach?</Text>
+          <Text variant="caption" tone="secondary" style={styles.setupCopy}>
+            This decides what Apex shows you. You can change it any time from your profile.
+          </Text>
+          <TrackingPicker
+            value={null}
+            busy={trackingState.isLoading}
+            onChange={(tracks) => void updateTrainer({ tracks })}
+          />
+        </Card>
+      )}
+
       {/* Command-centre KPIs */}
       <View style={styles.tiles}>
         <StatTile
@@ -127,7 +160,7 @@ export default function TriageDashboard() {
         />
         <StatTile
           label="Red flags"
-          value={`${summary.data?.criticalAlerts ?? '—'}`}
+          value={`${visibleAlerts.filter((a) => a.severity === 'critical').length}`}
           icon="warning"
           tone="danger"
         />
@@ -181,11 +214,11 @@ export default function TriageDashboard() {
       {/* Automated red flags */}
       <SectionHeader
         title="Needs a decision"
-        caption={`${alerts.data?.length ?? 0} open flag${alerts.data?.length === 1 ? '' : 's'}`}
+        caption={`${visibleAlerts.length} open flag${visibleAlerts.length === 1 ? '' : 's'}`}
       />
       {alerts.isLoading ? (
         <SkeletonCard lines={3} />
-      ) : (alerts.data ?? []).length === 0 ? (
+      ) : visibleAlerts.length === 0 ? (
         <Card>
           <EmptyState
             icon="checkmark-done-circle-outline"
@@ -195,7 +228,7 @@ export default function TriageDashboard() {
           />
         </Card>
       ) : (
-        (alerts.data ?? []).map((alert) => (
+        visibleAlerts.map((alert) => (
           <AlertCard
             key={alert.id}
             alert={alert}
@@ -273,6 +306,10 @@ export default function TriageDashboard() {
 }
 
 const styles = StyleSheet.create({
+  setupCopy: {
+    marginTop: spacing.xs,
+    marginBottom: spacing.md,
+  },
   tiles: {
     flexDirection: 'row',
     gap: spacing.md,

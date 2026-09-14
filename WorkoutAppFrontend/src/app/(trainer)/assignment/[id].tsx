@@ -259,14 +259,22 @@ export default function AssignmentScreen() {
                 setConfirmingRemove(true);
                 return;
               }
+              setError(null);
               void removeAssignment(assignmentId)
                 .unwrap()
-                .then(() => router.back());
+                .then(() => router.back())
+                .catch(() => {
+                  setConfirmingRemove(false);
+                  setError(
+                    `Could not unassign this routine. ${firstName(name)} keeps their last routine until another one is assigned.`
+                  );
+                });
             }}
           />
           {confirmingRemove ? (
             <Text variant="micro" tone="tertiary" align="center">
               This removes the routine from their app{data.customised ? ', along with the customisation' : ''}.
+              Only possible if they have another one.
             </Text>
           ) : null}
         </>

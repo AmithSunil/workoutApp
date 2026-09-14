@@ -8,7 +8,6 @@ import { useGetNutritionRangeQuery } from '@/api/endpoints/nutritionApi';
 import { useGetClientQuery } from '@/api/endpoints/trainerApi';
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { ThreadView } from '@/components/messaging/ThreadView';
-import { rpeColor } from '@/components/workouts/RpeSlider';
 import {
   Avatar,
   EmptyState,
@@ -19,13 +18,20 @@ import {
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
+import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing, statusLabel } from '@/theme';
 import type { MessageAttachment } from '@/types/models';
 import { friendlyDate, monthDay } from '@/utils/date';
 import { kcal, pct, volume } from '@/utils/format';
+import { shows } from '@/utils/tracking';
 
 type AttachTab = 'workout' | 'nutrition';
+
+const ATTACH_TABS: Array<{ value: AttachTab; label: string }> = [
+  { value: 'workout', label: 'Workout logs' },
+  { value: 'nutrition', label: 'Nutrition days' },
+];
 
 /**
  * Trainer-side conversation. The differentiator over a generic chat is the
@@ -36,8 +42,14 @@ export default function TrainerThreadScreen() {
   const router = useRouter();
   const { userId } = useSession();
 
+  const tracking = useTracking();
+  const attachSegments = ATTACH_TABS.filter((t) => shows(tracking.mode, t.value));
+
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [attachTab, setAttachTab] = useState<AttachTab>('workout');
+  const [storedTab, setAttachTab] = useState<AttachTab>('workout');
+  const attachTab = attachSegments.some((t) => t.value === storedTab)
+    ? storedTab
+    : attachSegments[0].value;
   const [pending, setPending] = useState<MessageAttachment | null>(null);
 
   const threadId = id ?? '';
@@ -99,10 +111,7 @@ export default function TrainerThreadScreen() {
         <SegmentedControl<AttachTab>
           value={attachTab}
           onChange={setAttachTab}
-          segments={[
-            { value: 'workout', label: 'Workout logs' },
-            { value: 'nutrition', label: 'Nutrition days' },
-          ]}
+          segments={attachSegments}
         />
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
@@ -118,10 +127,8 @@ export default function TrainerThreadScreen() {
                     setPickerOpen(false);
                   }}
                   style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-                  <View style={[styles.badge, { backgroundColor: rpeColor(log.rpe) }]}>
-                    <Text variant="label" color={colors.textInverse}>
-                      {log.rpe}
-                    </Text>
+                  <View style={[styles.badge, { backgroundColor: colors.primary }]}>
+                    <Ionicons name="barbell" size={15} color={colors.textInverse} />
                   </View>
                   <View style={styles.rowText}>
                     <Text variant="body" numberOfLines={1}>

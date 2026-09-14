@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '@/components/ui';
-import { rpeColor } from '@/components/workouts/RpeSlider';
 import { colors, radius, spacing } from '@/theme';
 import type { RoutineExercise } from '@/types/models';
 import { restLabel, setsAndReps } from '@/utils/format';
@@ -18,8 +17,6 @@ export interface RoutineExerciseRowProps {
  * identically on both sides — no translation step to get wrong.
  */
 export function RoutineExerciseRow({ exercise, index }: RoutineExerciseRowProps) {
-  const tint = rpeColor(exercise.targetRpe);
-
   return (
     <View style={styles.row}>
       <View style={styles.index}>
@@ -50,12 +47,6 @@ export function RoutineExerciseRow({ exercise, index }: RoutineExerciseRowProps)
             </Text>
           </View>
 
-          <View style={[styles.chip, { backgroundColor: `${tint}1A` }]}>
-            <View style={[styles.dot, { backgroundColor: tint }]} />
-            <Text variant="micro" color={tint}>
-              RPE {exercise.targetRpe}
-            </Text>
-          </View>
         </View>
 
         {exercise.notes ? (
@@ -104,11 +95,6 @@ const styles = StyleSheet.create({
   },
   primaryChip: {
     backgroundColor: colors.primarySoft,
-  },
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: radius.pill,
   },
   notes: {
     marginTop: spacing.sm,

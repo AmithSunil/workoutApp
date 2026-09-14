@@ -41,7 +41,7 @@ const cmp = (label, got, want) => {
     if (!r) { fail.push({ label: `workout_log ${f.id}`, got: 'missing', want: 'present' }); continue; }
     cmp(`workout_log ${f.id}`, {
       id: r.id, clientId: r.client_id, sessionId: r.session_id, title: r.title,
-      date: r.date, durationMinutes: r.duration_minutes, rpe: num(r.rpe),
+      date: r.date, durationMinutes: r.duration_minutes,
       totalVolumeKg: num(r.total_volume_kg), notes: r.notes ?? undefined,
       completedAt: iso(r.completed_at),
       exercises: r.logged_exercises.sort(byPos).map((x) => ({
@@ -52,7 +52,7 @@ const cmp = (label, got, want) => {
       })),
     }, {
       id: f.id, clientId: f.clientId, sessionId: f.sessionId, title: f.title,
-      date: f.date, durationMinutes: f.durationMinutes, rpe: f.rpe,
+      date: f.date, durationMinutes: f.durationMinutes,
       totalVolumeKg: f.totalVolumeKg, notes: f.notes, completedAt: iso(f.completedAt),
       exercises: f.exercises.map((x) => ({
         id: x.id, exerciseId: x.exerciseId, name: x.name, muscleGroup: x.muscleGroup,
@@ -123,10 +123,8 @@ const cmp = (label, got, want) => {
     if (!r) { fail.push({ label: `metric ${f.id}`, got: 'missing', want: 'present' }); continue; }
     cmp(`metric ${f.id}`, {
       id: r.id, clientId: r.client_id, date: r.date, weightKg: num(r.weight_kg),
-      bodyFatPct: num(r.body_fat_pct), waistCm: num(r.waist_cm),
     }, {
       id: f.id, clientId: f.clientId, date: f.date, weightKg: f.weightKg,
-      bodyFatPct: f.bodyFatPct ?? null, waistCm: f.waistCm ?? null,
     });
   }
 }

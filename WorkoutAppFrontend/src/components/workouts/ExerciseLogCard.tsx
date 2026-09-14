@@ -12,6 +12,8 @@ export interface ExerciseLogCardProps {
   onToggleSet: (setId: string) => void;
   onAddSet: () => void;
   onRemoveSet: (setId: string) => void;
+  /** Drops the whole exercise from this workout. Absent means it cannot be. */
+  onRemove?: () => void;
 }
 
 /**
@@ -25,6 +27,7 @@ export function ExerciseLogCard({
   onToggleSet,
   onAddSet,
   onRemoveSet,
+  onRemove,
 }: ExerciseLogCardProps) {
   const done = exercise.sets.filter((s) => s.completed).length;
   const complete = done === exercise.sets.length;
@@ -49,6 +52,16 @@ export function ExerciseLogCard({
             {exercise.muscleGroup} · {done}/{exercise.sets.length} sets
           </Text>
         </View>
+        {onRemove ? (
+          <Pressable
+            onPress={onRemove}
+            accessibilityRole="button"
+            accessibilityLabel={`Remove ${exercise.name}`}
+            hitSlop={10}
+            style={({ pressed }) => [styles.remove, pressed && styles.removePressed]}>
+            <Ionicons name="close" size={15} color={colors.textTertiary} />
+          </Pressable>
+        ) : null}
       </View>
 
       <View style={styles.columns}>
@@ -125,6 +138,17 @@ export function ExerciseLogCard({
 }
 
 const styles = StyleSheet.create({
+  remove: {
+    width: 28,
+    height: 28,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removePressed: {
+    opacity: 0.6,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -17,10 +17,14 @@ export interface User {
   email: string;
 }
 
+/** What a coach tracks. `null` means the choice has not been made yet. */
+export type TrackingMode = 'workout' | 'nutrition' | 'both';
+
 export interface TrainerProfile extends User {
   role: 'trainer';
   headline: string;
   clientIds: string[];
+  tracks: TrackingMode | null;
 }
 
 export type ComplianceStatus = 'green' | 'yellow' | 'red';
@@ -134,32 +138,6 @@ export interface Exercise {
   equipment: string;
 }
 
-export interface PrescribedSet {
-  reps: number;
-  targetWeightKg: number | null;
-}
-
-export interface ProgrammedExercise {
-  id: string;
-  exerciseId: string;
-  name: string;
-  muscleGroup: MuscleGroup;
-  notes?: string;
-  sets: PrescribedSet[];
-}
-
-export interface WorkoutSession {
-  id: string;
-  clientId: string;
-  title: string;
-  /** Day the trainer scheduled it for. */
-  scheduledFor: ISODate;
-  estimatedMinutes: number;
-  focus: MuscleGroup;
-  exercises: ProgrammedExercise[];
-  status: 'scheduled' | 'in-progress' | 'completed' | 'missed';
-}
-
 export interface LoggedSet {
   id: string;
   reps: number;
@@ -175,15 +153,16 @@ export interface LoggedExercise {
   sets: LoggedSet[];
 }
 
+/**
+ * A completed workout. Training is prescribed by the client's routine, which
+ * carries no dates, so a log stands on its own date and references no schedule.
+ */
 export interface WorkoutLog {
   id: string;
   clientId: string;
-  sessionId: string;
   title: string;
   date: ISODate;
   durationMinutes: number;
-  /** Rate of Perceived Exertion, 1–10. */
-  rpe: number;
   totalVolumeKg: number;
   notes?: string;
   exercises: LoggedExercise[];
@@ -197,7 +176,7 @@ export type Weekday = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
  * One exercise as it is *prescribed* inside a routine.
  *
  * Deliberately not `ProgrammedExercise`: a routine states intent ("4 sets of
- * 8-12 at RPE 8, rest 90s") rather than enumerating concrete sets, which is how
+ * 8-12, rest 90s") rather than enumerating concrete sets, which is how
  * coaches actually write programmes and what keeps the builder to one row per
  * exercise.
  */
@@ -213,8 +192,6 @@ export interface RoutineExercise {
   repMax: number;
   /** Rest between sets, in seconds. */
   restSeconds: number;
-  /** Target Rate of Perceived Exertion, 1-10 — the effort the coach is asking for. */
-  targetRpe: number;
   /** Coaching cue shown under the prescription. */
   notes?: string;
 }
@@ -299,8 +276,6 @@ export interface BodyMetric {
   clientId: string;
   date: ISODate;
   weightKg: number;
-  bodyFatPct?: number;
-  waistCm?: number;
 }
 
 export interface ProgressPhoto {
@@ -358,7 +333,6 @@ export interface Thread {
 
 export type AlertKind =
   | 'missed-logs'
-  | 'high-rpe'
   | 'weight-stall'
   | 'calorie-deficit-miss'
   | 'check-in-due';
@@ -387,7 +361,6 @@ export interface CheckIn {
   targetCalories: number;
   sessionsCompleted: number;
   sessionsPlanned: number;
-  avgRpe: number;
   clientNote: string;
 }
 

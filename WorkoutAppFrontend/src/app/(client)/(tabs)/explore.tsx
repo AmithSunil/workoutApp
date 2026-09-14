@@ -5,12 +5,14 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-n
 
 import { useGetNutritionDayQuery } from '@/api/endpoints/nutritionApi';
 import { useGetBodyMetricsQuery, useGetHabitsQuery, useToggleHabitMutation } from '@/api/endpoints/progressApi';
-import { useGetWorkoutLogsQuery, useGetWorkoutSessionsQuery } from '@/api/endpoints/workoutsApi';
+import { useGetClientRoutinesQuery } from '@/api/endpoints/routinesApi';
+import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { CalorieGauge, MacroBars, Sparkline } from '@/components/charts';
 import { ProfileButton } from '@/components/common/ProfileButton';
 import { TrainerIndicator } from '@/components/common/TrainerIndicator';
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
-import { SessionCard } from '@/components/workouts/SessionCard';
+import { WeighInPrompt } from '@/components/progress/WeighInPrompt';
+import { TodayCard } from '@/components/workouts/TodayCard';
 import {
   Card,
   EmptyState,
@@ -23,8 +25,8 @@ import {
 import { useSession } from '@/hooks/useSession';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing } from '@/theme';
-import { TODAY, diffInDays, longDate } from '@/utils/date';
-import { firstName, kg, signed } from '@/utils/format';
+import { TODAY, WEEKDAY_LABEL, diffInDays, longDate, weekdayOf } from '@/utils/date';
+import { firstName, kg, signed, volume } from '@/utils/format';
 
 const DISCOVER = [
   {
@@ -66,29 +68,31 @@ export default function ExploreScreen() {
     { clientId: clientId ?? '', date: TODAY },
     { skip: !clientId }
   );
-  const sessions = useGetWorkoutSessionsQuery({ clientId: clientId ?? '' }, { skip: !clientId });
+  const routines = useGetClientRoutinesQuery({ clientId: clientId ?? '' }, { skip: !clientId });
   const logs = useGetWorkoutLogsQuery({ clientId: clientId ?? '', limit: 20 }, { skip: !clientId });
   const habits = useGetHabitsQuery({ clientId: clientId ?? '' }, { skip: !clientId });
   const metrics = useGetBodyMetricsQuery({ clientId: clientId ?? '' }, { skip: !clientId });
   const [toggleHabit] = useToggleHabitMutation();
 
   const refreshing =
-    nutrition.isFetching || sessions.isFetching || habits.isFetching || metrics.isFetching;
+    nutrition.isFetching || routines.isFetching || habits.isFetching || metrics.isFetching;
 
   const refetchAll = useCallback(() => {
     void nutrition.refetch();
-    void sessions.refetch();
+    void routines.refetch();
     void logs.refetch();
     void habits.refetch();
     void metrics.refetch();
-  }, [nutrition, sessions, logs, habits, metrics]);
+  }, [nutrition, routines, logs, habits, metrics]);
 
-  const todaySession = sessions.data?.find((s) => s.scheduledFor === TODAY);
-  const nextSession = sessions.data?.find((s) => s.scheduledFor > TODAY);
+  // Newest assignment is the current programme; today is whichever day of it
+  // matches today's weekday. No dated sessions — the routine simply repeats.
+  const routine = routines.data?.[0];
+  const today = weekdayOf();
+  const todayDay = routine?.days.find((d) => d.weekday === today) ?? null;
+  const loggedToday = logs.data?.some((l) => l.date === TODAY) ?? false;
   const weekLogs = logs.data?.filter((l) => diffInDays(TODAY, l.date) < 7) ?? [];
-  const avgRpe = weekLogs.length
-    ? (weekLogs.reduce((s, l) => s + l.rpe, 0) / weekLogs.length).toFixed(1)
-    : '—';
+  const weekVolume = weekLogs.reduce((sum, l) => sum + l.totalVolumeKg, 0);
   const weightSeries = (metrics.data ?? []).slice(-30).map((m) => m.weightKg);
   const latestWeight = metrics.data?.[metrics.data.length - 1];
   const weekAgo = metrics.data?.find((m) => diffInDays(TODAY, m.date) <= 7);
@@ -108,11 +112,19 @@ export default function ExploreScreen() {
     <Screen
       title={`Hi, ${firstName(client.name)}`}
       subtitle={longDate(TODAY)}
-      headerRight={<ProfileButton name={client.name} avatarUrl={client.avatarUrl} />}
+      headerRight={
+        <ProfileButton
+          name={client.name}
+          avatarUrl={client.avatarUrl}
+          href={routes.client.profile()}
+        />
+      }
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetchAll} />}>
       {trainer ? (
         <TrainerIndicator trainer={trainer} href={routes.client.chat()} />
       ) : null}
+
+      <WeighInPrompt clientId={client.id} startWeightKg={client.startWeightKg} />
 
       {/* Today's nutrition at a glance */}
       <Card onPress={() => router.push(routes.client.log())}>
@@ -163,37 +175,39 @@ export default function ExploreScreen() {
           tone="primary"
         />
         <StatTile
-          label="Avg RPE"
-          value={avgRpe}
-          icon="speedometer"
-          tone={Number(avgRpe) >= 8.5 ? 'danger' : 'success'}
+          label="Volume / 7d"
+          value={volume(weekVolume)}
+          icon="stats-chart"
+          tone="success"
         />
       </View>
 
       {/* Today's training */}
       <SectionHeader
         title="Training"
-        caption={todaySession ? 'Scheduled for today' : 'Nothing scheduled today'}
+        caption={loggedToday ? 'Done' : todayDay ? WEEKDAY_LABEL[today] : 'Rest day'}
         actionLabel="All workouts"
         onAction={() => router.push(routes.client.workouts())}
       />
-      {todaySession ? (
-        <SessionCard
-          session={todaySession}
-          featured
-          onStart={() => router.push(routes.client.session(todaySession.id))}
-        />
-      ) : nextSession ? (
-        <SessionCard
-          session={nextSession}
-          onPress={() => router.push(routes.client.workouts())}
+      {todayDay && routine ? (
+        <TodayCard
+          day={todayDay}
+          routineTitle={routine.title}
+          done={loggedToday}
+          onStart={() => router.push(routes.client.train(routine.assignmentId))}
         />
       ) : (
         <Card>
           <EmptyState
-            icon="bed-outline"
-            title="Rest day"
-            message="No session programmed. Move a little, eat well, sleep more."
+            icon={loggedToday ? 'checkmark-circle' : routine ? 'bed-outline' : 'calendar-outline'}
+            title={loggedToday ? 'Workout logged' : routine ? 'Rest day' : 'No routine yet'}
+            message={
+              loggedToday
+                ? "You've trained today. Open your workouts to review or edit it."
+                : routine
+                  ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
+                  : 'Your coach will give you a routine — it will show up here.'
+            }
             compact
           />
         </Card>

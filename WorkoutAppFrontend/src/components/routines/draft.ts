@@ -41,14 +41,12 @@ export const DEFAULT_PRESCRIPTION = {
   repMin: 8,
   repMax: 12,
   restSeconds: 90,
-  targetRpe: 8,
 } as const;
 
 export const LIMITS = {
   sets: { min: 1, max: 10, step: 1 },
   reps: { min: 1, max: 30, step: 1 },
   rest: { min: 0, max: 300, step: 15 },
-  rpe: { min: 1, max: 10, step: 1 },
 } as const;
 
 let sequence = 0;

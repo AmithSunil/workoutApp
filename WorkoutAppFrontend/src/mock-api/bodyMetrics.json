@@ -3,4032 +3,3024 @@
     "id": "bm-00001",
     "clientId": "c-001",
     "date": "2026-06-01",
-    "weightKg": 84,
-    "bodyFatPct": 22.4,
-    "waistCm": 86.5
+    "weightKg": 84
   },
   {
     "id": "bm-00002",
     "clientId": "c-001",
     "date": "2026-06-02",
-    "weightKg": 84,
-    "bodyFatPct": 22,
-    "waistCm": 85.7
+    "weightKg": 84
   },
   {
     "id": "bm-00003",
     "clientId": "c-001",
     "date": "2026-06-03",
-    "weightKg": 84.5,
-    "bodyFatPct": 22,
-    "waistCm": 85.3
+    "weightKg": 84.5
   },
   {
     "id": "bm-00004",
     "clientId": "c-001",
     "date": "2026-06-04",
-    "weightKg": 83.9,
-    "bodyFatPct": 22.3,
-    "waistCm": 85.8
+    "weightKg": 83.9
   },
   {
     "id": "bm-00005",
     "clientId": "c-001",
     "date": "2026-06-05",
-    "weightKg": 83.8,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.7
+    "weightKg": 83.8
   },
   {
     "id": "bm-00006",
     "clientId": "c-001",
     "date": "2026-06-06",
-    "weightKg": 84.3,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.6
+    "weightKg": 84.3
   },
   {
     "id": "bm-00007",
     "clientId": "c-001",
     "date": "2026-06-08",
-    "weightKg": 83.9,
-    "bodyFatPct": 21.7,
-    "waistCm": 86.1
+    "weightKg": 83.9
   },
   {
     "id": "bm-00008",
     "clientId": "c-001",
     "date": "2026-06-09",
-    "weightKg": 84,
-    "bodyFatPct": 22.1,
-    "waistCm": 85.8
+    "weightKg": 84
   },
   {
     "id": "bm-00009",
     "clientId": "c-001",
     "date": "2026-06-10",
-    "weightKg": 83.6,
-    "bodyFatPct": 21.6,
-    "waistCm": 85.9
+    "weightKg": 83.6
   },
   {
     "id": "bm-00010",
     "clientId": "c-001",
     "date": "2026-06-12",
-    "weightKg": 83.4,
-    "bodyFatPct": 21.6,
-    "waistCm": 85.1
+    "weightKg": 83.4
   },
   {
     "id": "bm-00011",
     "clientId": "c-001",
     "date": "2026-06-13",
-    "weightKg": 84,
-    "bodyFatPct": 21.6,
-    "waistCm": 85.6
+    "weightKg": 84
   },
   {
     "id": "bm-00012",
     "clientId": "c-001",
     "date": "2026-06-14",
-    "weightKg": 84,
-    "bodyFatPct": 21.1,
-    "waistCm": 85.3
+    "weightKg": 84
   },
   {
     "id": "bm-00013",
     "clientId": "c-001",
     "date": "2026-06-15",
-    "weightKg": 84,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.4
+    "weightKg": 84
   },
   {
     "id": "bm-00014",
     "clientId": "c-001",
     "date": "2026-06-16",
-    "weightKg": 83.4,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.7
+    "weightKg": 83.4
   },
   {
     "id": "bm-00015",
     "clientId": "c-001",
     "date": "2026-06-19",
-    "weightKg": 83.6,
-    "bodyFatPct": 21.6,
-    "waistCm": 85.4
+    "weightKg": 83.6
   },
   {
     "id": "bm-00016",
     "clientId": "c-001",
     "date": "2026-06-20",
-    "weightKg": 82.9,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.4
+    "weightKg": 82.9
   },
   {
     "id": "bm-00017",
     "clientId": "c-001",
     "date": "2026-06-21",
-    "weightKg": 83.2,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.7
+    "weightKg": 83.2
   },
   {
     "id": "bm-00018",
     "clientId": "c-001",
     "date": "2026-06-22",
-    "weightKg": 83.7,
-    "bodyFatPct": 21.5,
-    "waistCm": 85
+    "weightKg": 83.7
   },
   {
     "id": "bm-00019",
     "clientId": "c-001",
     "date": "2026-06-23",
-    "weightKg": 83.2,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.9
+    "weightKg": 83.2
   },
   {
     "id": "bm-00020",
     "clientId": "c-001",
     "date": "2026-06-25",
-    "weightKg": 83.4,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.2
+    "weightKg": 83.4
   },
   {
     "id": "bm-00021",
     "clientId": "c-001",
     "date": "2026-06-26",
-    "weightKg": 83.5,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.1
+    "weightKg": 83.5
   },
   {
     "id": "bm-00022",
     "clientId": "c-001",
     "date": "2026-06-27",
-    "weightKg": 82.7,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.5
+    "weightKg": 82.7
   },
   {
     "id": "bm-00023",
     "clientId": "c-001",
     "date": "2026-06-28",
-    "weightKg": 83.1,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.2
+    "weightKg": 83.1
   },
   {
     "id": "bm-00024",
     "clientId": "c-001",
     "date": "2026-06-29",
-    "weightKg": 83,
-    "bodyFatPct": 20.9,
-    "waistCm": 83.8
+    "weightKg": 83
   },
   {
     "id": "bm-00025",
     "clientId": "c-001",
     "date": "2026-06-30",
-    "weightKg": 83.3,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.5
+    "weightKg": 83.3
   },
   {
     "id": "bm-00026",
     "clientId": "c-001",
     "date": "2026-07-01",
-    "weightKg": 82.7,
-    "bodyFatPct": 20.6,
-    "waistCm": 84.2
+    "weightKg": 82.7
   },
   {
     "id": "bm-00027",
     "clientId": "c-001",
     "date": "2026-07-05",
-    "weightKg": 82.9,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.6
+    "weightKg": 82.9
   },
   {
     "id": "bm-00028",
     "clientId": "c-001",
     "date": "2026-07-06",
-    "weightKg": 83,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.9
+    "weightKg": 83
   },
   {
     "id": "bm-00029",
     "clientId": "c-001",
     "date": "2026-07-08",
-    "weightKg": 82.6,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.1
+    "weightKg": 82.6
   },
   {
     "id": "bm-00030",
     "clientId": "c-001",
     "date": "2026-07-09",
-    "weightKg": 82.5,
-    "bodyFatPct": 20.8,
-    "waistCm": 84
+    "weightKg": 82.5
   },
   {
     "id": "bm-00031",
     "clientId": "c-001",
     "date": "2026-07-11",
-    "weightKg": 82.5,
-    "bodyFatPct": 20.6,
-    "waistCm": 83.7
+    "weightKg": 82.5
   },
   {
     "id": "bm-00032",
     "clientId": "c-001",
     "date": "2026-07-12",
-    "weightKg": 82.1,
-    "bodyFatPct": 20.8,
-    "waistCm": 83.8
+    "weightKg": 82.1
   },
   {
     "id": "bm-00033",
     "clientId": "c-001",
     "date": "2026-07-13",
-    "weightKg": 82,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.2
+    "weightKg": 82
   },
   {
     "id": "bm-00034",
     "clientId": "c-001",
     "date": "2026-07-14",
-    "weightKg": 82.6,
-    "bodyFatPct": 20.1,
-    "waistCm": 84
+    "weightKg": 82.6
   },
   {
     "id": "bm-00035",
     "clientId": "c-001",
     "date": "2026-07-15",
-    "weightKg": 82.6,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.8
+    "weightKg": 82.6
   },
   {
     "id": "bm-00036",
     "clientId": "c-001",
     "date": "2026-07-16",
-    "weightKg": 82,
-    "bodyFatPct": 20.3,
-    "waistCm": 84
+    "weightKg": 82
   },
   {
     "id": "bm-00037",
     "clientId": "c-001",
     "date": "2026-07-17",
-    "weightKg": 82.1,
-    "bodyFatPct": 20,
-    "waistCm": 83
+    "weightKg": 82.1
   },
   {
     "id": "bm-00038",
     "clientId": "c-001",
     "date": "2026-07-18",
-    "weightKg": 82.3,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.2
+    "weightKg": 82.3
   },
   {
     "id": "bm-00039",
     "clientId": "c-001",
     "date": "2026-07-19",
-    "weightKg": 82.1,
-    "bodyFatPct": 19.9,
-    "waistCm": 83.3
+    "weightKg": 82.1
   },
   {
     "id": "bm-00040",
     "clientId": "c-001",
     "date": "2026-07-20",
-    "weightKg": 81.9,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.7
+    "weightKg": 81.9
   },
   {
     "id": "bm-00041",
     "clientId": "c-001",
     "date": "2026-07-21",
-    "weightKg": 82.3,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.6
+    "weightKg": 82.3
   },
   {
     "id": "bm-00042",
     "clientId": "c-001",
     "date": "2026-07-22",
-    "weightKg": 82.4,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.9
+    "weightKg": 82.4
   },
   {
     "id": "bm-00043",
     "clientId": "c-001",
     "date": "2026-07-23",
-    "weightKg": 82.4,
-    "bodyFatPct": 20.4,
-    "waistCm": 83
+    "weightKg": 82.4
   },
   {
     "id": "bm-00044",
     "clientId": "c-001",
     "date": "2026-07-24",
-    "weightKg": 82,
-    "bodyFatPct": 20.2,
-    "waistCm": 82.8
+    "weightKg": 82
   },
   {
     "id": "bm-00045",
     "clientId": "c-001",
     "date": "2026-07-25",
-    "weightKg": 81.7,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.3
+    "weightKg": 81.7
   },
   {
     "id": "bm-00046",
     "clientId": "c-001",
     "date": "2026-07-27",
-    "weightKg": 81.8,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.3
+    "weightKg": 81.8
   },
   {
     "id": "bm-00047",
     "clientId": "c-001",
     "date": "2026-07-28",
-    "weightKg": 82,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.9
+    "weightKg": 82
   },
   {
     "id": "bm-00048",
     "clientId": "c-001",
     "date": "2026-07-29",
-    "weightKg": 81.8,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.5
+    "weightKg": 81.8
   },
   {
     "id": "bm-00049",
     "clientId": "c-001",
     "date": "2026-07-30",
-    "weightKg": 82.1,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.6
+    "weightKg": 82.1
   },
   {
     "id": "bm-00050",
     "clientId": "c-001",
     "date": "2026-07-31",
-    "weightKg": 81.3,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.4
+    "weightKg": 81.3
   },
   {
     "id": "bm-00051",
     "clientId": "c-001",
     "date": "2026-08-01",
-    "weightKg": 81.8,
-    "bodyFatPct": 19.9,
-    "waistCm": 83
+    "weightKg": 81.8
   },
   {
     "id": "bm-00052",
     "clientId": "c-001",
     "date": "2026-08-02",
-    "weightKg": 81.8,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.1
+    "weightKg": 81.8
   },
   {
     "id": "bm-00053",
     "clientId": "c-001",
     "date": "2026-08-03",
-    "weightKg": 81.7,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.9
+    "weightKg": 81.7
   },
   {
     "id": "bm-00054",
     "clientId": "c-001",
     "date": "2026-08-04",
-    "weightKg": 81.2,
-    "bodyFatPct": 19.9,
-    "waistCm": 82
+    "weightKg": 81.2
   },
   {
     "id": "bm-00055",
     "clientId": "c-001",
     "date": "2026-08-05",
-    "weightKg": 81.2,
-    "bodyFatPct": 19.3,
-    "waistCm": 82
+    "weightKg": 81.2
   },
   {
     "id": "bm-00056",
     "clientId": "c-001",
     "date": "2026-08-06",
-    "weightKg": 81.4,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.3
+    "weightKg": 81.4
   },
   {
     "id": "bm-00057",
     "clientId": "c-001",
     "date": "2026-08-07",
-    "weightKg": 81.6,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.3
+    "weightKg": 81.6
   },
   {
     "id": "bm-00058",
     "clientId": "c-001",
     "date": "2026-08-08",
-    "weightKg": 80.9,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.3
+    "weightKg": 80.9
   },
   {
     "id": "bm-00059",
     "clientId": "c-001",
     "date": "2026-08-09",
-    "weightKg": 81,
-    "bodyFatPct": 19.4,
-    "waistCm": 82.4
+    "weightKg": 81
   },
   {
     "id": "bm-00060",
     "clientId": "c-001",
     "date": "2026-08-10",
-    "weightKg": 80.9,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.6
+    "weightKg": 80.9
   },
   {
     "id": "bm-00061",
     "clientId": "c-001",
     "date": "2026-08-11",
-    "weightKg": 81.2,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.1
+    "weightKg": 81.2
   },
   {
     "id": "bm-00062",
     "clientId": "c-001",
     "date": "2026-08-13",
-    "weightKg": 80.9,
-    "bodyFatPct": 19.5,
-    "waistCm": 81.5
+    "weightKg": 80.9
   },
   {
     "id": "bm-00063",
     "clientId": "c-001",
     "date": "2026-08-16",
-    "weightKg": 81,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.2
+    "weightKg": 81
   },
   {
     "id": "bm-00064",
     "clientId": "c-001",
     "date": "2026-08-17",
-    "weightKg": 81.1,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.1
+    "weightKg": 81.1
   },
   {
     "id": "bm-00065",
     "clientId": "c-001",
     "date": "2026-08-18",
-    "weightKg": 80.5,
-    "bodyFatPct": 19.1,
-    "waistCm": 82.1
+    "weightKg": 80.5
   },
   {
     "id": "bm-00066",
     "clientId": "c-001",
     "date": "2026-08-22",
-    "weightKg": 80.5,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.2
+    "weightKg": 80.5
   },
   {
     "id": "bm-00067",
     "clientId": "c-001",
     "date": "2026-08-23",
-    "weightKg": 80.3,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.5
+    "weightKg": 80.3
   },
   {
     "id": "bm-00068",
     "clientId": "c-001",
     "date": "2026-08-24",
-    "weightKg": 80.6,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.5
+    "weightKg": 80.6
   },
   {
     "id": "bm-00069",
     "clientId": "c-001",
     "date": "2026-08-25",
-    "weightKg": 80.3,
-    "bodyFatPct": 18.7,
-    "waistCm": 81.7
+    "weightKg": 80.3
   },
   {
     "id": "bm-00070",
     "clientId": "c-001",
     "date": "2026-08-26",
-    "weightKg": 80.9,
-    "bodyFatPct": 18.7,
-    "waistCm": 80.9
+    "weightKg": 80.9
   },
   {
     "id": "bm-00071",
     "clientId": "c-001",
     "date": "2026-08-28",
-    "weightKg": 80.1,
-    "bodyFatPct": 18.6,
-    "waistCm": 81.4
+    "weightKg": 80.1
   },
   {
     "id": "bm-00072",
     "clientId": "c-001",
     "date": "2026-08-29",
-    "weightKg": 80.4,
-    "bodyFatPct": 18.5,
-    "waistCm": 81.2
+    "weightKg": 80.4
   },
   {
     "id": "bm-00073",
     "clientId": "c-002",
     "date": "2026-06-02",
-    "weightKg": 71.4,
-    "bodyFatPct": 21.6,
-    "waistCm": 86.4
+    "weightKg": 71.4
   },
   {
     "id": "bm-00074",
     "clientId": "c-002",
     "date": "2026-06-03",
-    "weightKg": 71.6,
-    "bodyFatPct": 22.3,
-    "waistCm": 86.2
+    "weightKg": 71.6
   },
   {
     "id": "bm-00075",
     "clientId": "c-002",
     "date": "2026-06-04",
-    "weightKg": 71.4,
-    "bodyFatPct": 21.9,
-    "waistCm": 85.9
+    "weightKg": 71.4
   },
   {
     "id": "bm-00076",
     "clientId": "c-002",
     "date": "2026-06-06",
-    "weightKg": 71.7,
-    "bodyFatPct": 21.4,
-    "waistCm": 85.4
+    "weightKg": 71.7
   },
   {
     "id": "bm-00077",
     "clientId": "c-002",
     "date": "2026-06-07",
-    "weightKg": 71,
-    "bodyFatPct": 22.1,
-    "waistCm": 85.4
+    "weightKg": 71
   },
   {
     "id": "bm-00078",
     "clientId": "c-002",
     "date": "2026-06-08",
-    "weightKg": 71.6,
-    "bodyFatPct": 21.9,
-    "waistCm": 85.8
+    "weightKg": 71.6
   },
   {
     "id": "bm-00079",
     "clientId": "c-002",
     "date": "2026-06-10",
-    "weightKg": 71.2,
-    "bodyFatPct": 22,
-    "waistCm": 85.4
+    "weightKg": 71.2
   },
   {
     "id": "bm-00080",
     "clientId": "c-002",
     "date": "2026-06-12",
-    "weightKg": 71.3,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.7
+    "weightKg": 71.3
   },
   {
     "id": "bm-00081",
     "clientId": "c-002",
     "date": "2026-06-16",
-    "weightKg": 71,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.6
+    "weightKg": 71
   },
   {
     "id": "bm-00082",
     "clientId": "c-002",
     "date": "2026-06-17",
-    "weightKg": 70.7,
-    "bodyFatPct": 21,
-    "waistCm": 85.7
+    "weightKg": 70.7
   },
   {
     "id": "bm-00083",
     "clientId": "c-002",
     "date": "2026-06-19",
-    "weightKg": 70.9,
-    "bodyFatPct": 21.7,
-    "waistCm": 84.8
+    "weightKg": 70.9
   },
   {
     "id": "bm-00084",
     "clientId": "c-002",
     "date": "2026-06-23",
-    "weightKg": 70.9,
-    "bodyFatPct": 21.6,
-    "waistCm": 85.1
+    "weightKg": 70.9
   },
   {
     "id": "bm-00085",
     "clientId": "c-002",
     "date": "2026-06-25",
-    "weightKg": 70.5,
-    "bodyFatPct": 20.8,
-    "waistCm": 85
+    "weightKg": 70.5
   },
   {
     "id": "bm-00086",
     "clientId": "c-002",
     "date": "2026-06-28",
-    "weightKg": 70.4,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.9
+    "weightKg": 70.4
   },
   {
     "id": "bm-00087",
     "clientId": "c-002",
     "date": "2026-07-01",
-    "weightKg": 70.4,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.5
+    "weightKg": 70.4
   },
   {
     "id": "bm-00088",
     "clientId": "c-002",
     "date": "2026-07-03",
-    "weightKg": 69.7,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.7
+    "weightKg": 69.7
   },
   {
     "id": "bm-00089",
     "clientId": "c-002",
     "date": "2026-07-04",
-    "weightKg": 70.1,
-    "bodyFatPct": 20.5,
-    "waistCm": 84.5
+    "weightKg": 70.1
   },
   {
     "id": "bm-00090",
     "clientId": "c-002",
     "date": "2026-07-06",
-    "weightKg": 69.5,
-    "bodyFatPct": 20.9,
-    "waistCm": 83.8
+    "weightKg": 69.5
   },
   {
     "id": "bm-00091",
     "clientId": "c-002",
     "date": "2026-07-07",
-    "weightKg": 69.6,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.4
+    "weightKg": 69.6
   },
   {
     "id": "bm-00092",
     "clientId": "c-002",
     "date": "2026-07-09",
-    "weightKg": 69.7,
-    "bodyFatPct": 20.3,
-    "waistCm": 84.5
+    "weightKg": 69.7
   },
   {
     "id": "bm-00093",
     "clientId": "c-002",
     "date": "2026-07-10",
-    "weightKg": 69.9,
-    "bodyFatPct": 20.9,
-    "waistCm": 83.6
+    "weightKg": 69.9
   },
   {
     "id": "bm-00094",
     "clientId": "c-002",
     "date": "2026-07-11",
-    "weightKg": 69.9,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.9
+    "weightKg": 69.9
   },
   {
     "id": "bm-00095",
     "clientId": "c-002",
     "date": "2026-07-12",
-    "weightKg": 69.3,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.2
+    "weightKg": 69.3
   },
   {
     "id": "bm-00096",
     "clientId": "c-002",
     "date": "2026-07-15",
-    "weightKg": 69.5,
-    "bodyFatPct": 20.6,
-    "waistCm": 83.7
+    "weightKg": 69.5
   },
   {
     "id": "bm-00097",
     "clientId": "c-002",
     "date": "2026-07-17",
-    "weightKg": 69.7,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.8
+    "weightKg": 69.7
   },
   {
     "id": "bm-00098",
     "clientId": "c-002",
     "date": "2026-07-18",
-    "weightKg": 69.2,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.4
+    "weightKg": 69.2
   },
   {
     "id": "bm-00099",
     "clientId": "c-002",
     "date": "2026-07-19",
-    "weightKg": 68.9,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.5
+    "weightKg": 68.9
   },
   {
     "id": "bm-00100",
     "clientId": "c-002",
     "date": "2026-07-21",
-    "weightKg": 68.8,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.3
+    "weightKg": 68.8
   },
   {
     "id": "bm-00101",
     "clientId": "c-002",
     "date": "2026-07-22",
-    "weightKg": 68.7,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.5
+    "weightKg": 68.7
   },
   {
     "id": "bm-00102",
     "clientId": "c-002",
     "date": "2026-07-23",
-    "weightKg": 68.9,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.3
+    "weightKg": 68.9
   },
   {
     "id": "bm-00103",
     "clientId": "c-002",
     "date": "2026-07-24",
-    "weightKg": 69.3,
-    "bodyFatPct": 19.7,
-    "waistCm": 83.6
+    "weightKg": 69.3
   },
   {
     "id": "bm-00104",
     "clientId": "c-002",
     "date": "2026-07-26",
-    "weightKg": 69.2,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.5
+    "weightKg": 69.2
   },
   {
     "id": "bm-00105",
     "clientId": "c-002",
     "date": "2026-07-30",
-    "weightKg": 68.8,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.8
+    "weightKg": 68.8
   },
   {
     "id": "bm-00106",
     "clientId": "c-002",
     "date": "2026-08-01",
-    "weightKg": 68.1,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.4
+    "weightKg": 68.1
   },
   {
     "id": "bm-00107",
     "clientId": "c-002",
     "date": "2026-08-02",
-    "weightKg": 68.3,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.9
+    "weightKg": 68.3
   },
   {
     "id": "bm-00108",
     "clientId": "c-002",
     "date": "2026-08-03",
-    "weightKg": 68.7,
-    "bodyFatPct": 19.6,
-    "waistCm": 83
+    "weightKg": 68.7
   },
   {
     "id": "bm-00109",
     "clientId": "c-002",
     "date": "2026-08-04",
-    "weightKg": 68.7,
-    "bodyFatPct": 20,
-    "waistCm": 83
+    "weightKg": 68.7
   },
   {
     "id": "bm-00110",
     "clientId": "c-002",
     "date": "2026-08-07",
-    "weightKg": 68.5,
-    "bodyFatPct": 19.9,
-    "waistCm": 81.7
+    "weightKg": 68.5
   },
   {
     "id": "bm-00111",
     "clientId": "c-002",
     "date": "2026-08-08",
-    "weightKg": 67.7,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.4
+    "weightKg": 67.7
   },
   {
     "id": "bm-00112",
     "clientId": "c-002",
     "date": "2026-08-10",
-    "weightKg": 68.4,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.6
+    "weightKg": 68.4
   },
   {
     "id": "bm-00113",
     "clientId": "c-002",
     "date": "2026-08-11",
-    "weightKg": 68.3,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.5
+    "weightKg": 68.3
   },
   {
     "id": "bm-00114",
     "clientId": "c-002",
     "date": "2026-08-15",
-    "weightKg": 67.9,
-    "bodyFatPct": 19.4,
-    "waistCm": 81.4
+    "weightKg": 67.9
   },
   {
     "id": "bm-00115",
     "clientId": "c-002",
     "date": "2026-08-16",
-    "weightKg": 67.8,
-    "bodyFatPct": 19.5,
-    "waistCm": 81.2
+    "weightKg": 67.8
   },
   {
     "id": "bm-00116",
     "clientId": "c-002",
     "date": "2026-08-18",
-    "weightKg": 67.2,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.5
+    "weightKg": 67.2
   },
   {
     "id": "bm-00117",
     "clientId": "c-002",
     "date": "2026-08-19",
-    "weightKg": 67.1,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.6
+    "weightKg": 67.1
   },
   {
     "id": "bm-00118",
     "clientId": "c-002",
     "date": "2026-08-20",
-    "weightKg": 67.3,
-    "bodyFatPct": 19.4,
-    "waistCm": 82
+    "weightKg": 67.3
   },
   {
     "id": "bm-00119",
     "clientId": "c-002",
     "date": "2026-08-21",
-    "weightKg": 67.8,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.2
+    "weightKg": 67.8
   },
   {
     "id": "bm-00120",
     "clientId": "c-002",
     "date": "2026-08-22",
-    "weightKg": 67.6,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.1
+    "weightKg": 67.6
   },
   {
     "id": "bm-00121",
     "clientId": "c-002",
     "date": "2026-08-23",
-    "weightKg": 67.2,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.7
+    "weightKg": 67.2
   },
   {
     "id": "bm-00122",
     "clientId": "c-002",
     "date": "2026-08-26",
-    "weightKg": 66.9,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.2
+    "weightKg": 66.9
   },
   {
     "id": "bm-00123",
     "clientId": "c-002",
     "date": "2026-08-28",
-    "weightKg": 67,
-    "bodyFatPct": 18.7,
-    "waistCm": 80.7
+    "weightKg": 67
   },
   {
     "id": "bm-00124",
     "clientId": "c-002",
     "date": "2026-08-29",
-    "weightKg": 66.8,
-    "bodyFatPct": 19.1,
-    "waistCm": 80.6
+    "weightKg": 66.8
   },
   {
     "id": "bm-00125",
     "clientId": "c-003",
     "date": "2026-06-01",
-    "weightKg": 79.5,
-    "bodyFatPct": 21.8,
-    "waistCm": 86.1
+    "weightKg": 79.5
   },
   {
     "id": "bm-00126",
     "clientId": "c-003",
     "date": "2026-06-02",
-    "weightKg": 79.5,
-    "bodyFatPct": 21.7,
-    "waistCm": 86.2
+    "weightKg": 79.5
   },
   {
     "id": "bm-00127",
     "clientId": "c-003",
     "date": "2026-06-03",
-    "weightKg": 79.5,
-    "bodyFatPct": 22.3,
-    "waistCm": 85.3
+    "weightKg": 79.5
   },
   {
     "id": "bm-00128",
     "clientId": "c-003",
     "date": "2026-06-04",
-    "weightKg": 80,
-    "bodyFatPct": 22.2,
-    "waistCm": 86
+    "weightKg": 80
   },
   {
     "id": "bm-00129",
     "clientId": "c-003",
     "date": "2026-06-05",
-    "weightKg": 79.8,
-    "bodyFatPct": 22,
-    "waistCm": 85.3
+    "weightKg": 79.8
   },
   {
     "id": "bm-00130",
     "clientId": "c-003",
     "date": "2026-06-06",
-    "weightKg": 79.4,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.7
+    "weightKg": 79.4
   },
   {
     "id": "bm-00131",
     "clientId": "c-003",
     "date": "2026-06-07",
-    "weightKg": 80,
-    "bodyFatPct": 22.2,
-    "waistCm": 85.5
+    "weightKg": 80
   },
   {
     "id": "bm-00132",
     "clientId": "c-003",
     "date": "2026-06-08",
-    "weightKg": 80.3,
-    "bodyFatPct": 22.1,
-    "waistCm": 85.1
+    "weightKg": 80.3
   },
   {
     "id": "bm-00133",
     "clientId": "c-003",
     "date": "2026-06-09",
-    "weightKg": 80.2,
-    "bodyFatPct": 22.1,
-    "waistCm": 85.3
+    "weightKg": 80.2
   },
   {
     "id": "bm-00134",
     "clientId": "c-003",
     "date": "2026-06-10",
-    "weightKg": 79.8,
-    "bodyFatPct": 22,
-    "waistCm": 85.6
+    "weightKg": 79.8
   },
   {
     "id": "bm-00135",
     "clientId": "c-003",
     "date": "2026-06-11",
-    "weightKg": 80.1,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.5
+    "weightKg": 80.1
   },
   {
     "id": "bm-00136",
     "clientId": "c-003",
     "date": "2026-06-12",
-    "weightKg": 80,
-    "bodyFatPct": 22,
-    "waistCm": 85.7
+    "weightKg": 80
   },
   {
     "id": "bm-00137",
     "clientId": "c-003",
     "date": "2026-06-13",
-    "weightKg": 80.4,
-    "bodyFatPct": 21.4,
-    "waistCm": 85.3
+    "weightKg": 80.4
   },
   {
     "id": "bm-00138",
     "clientId": "c-003",
     "date": "2026-06-14",
-    "weightKg": 80.5,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.5
+    "weightKg": 80.5
   },
   {
     "id": "bm-00139",
     "clientId": "c-003",
     "date": "2026-06-15",
-    "weightKg": 80.6,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.4
+    "weightKg": 80.6
   },
   {
     "id": "bm-00140",
     "clientId": "c-003",
     "date": "2026-06-16",
-    "weightKg": 80,
-    "bodyFatPct": 21.7,
-    "waistCm": 85
+    "weightKg": 80
   },
   {
     "id": "bm-00141",
     "clientId": "c-003",
     "date": "2026-06-17",
-    "weightKg": 80.7,
-    "bodyFatPct": 21.1,
-    "waistCm": 85.3
+    "weightKg": 80.7
   },
   {
     "id": "bm-00142",
     "clientId": "c-003",
     "date": "2026-06-18",
-    "weightKg": 80.5,
-    "bodyFatPct": 21.7,
-    "waistCm": 84.5
+    "weightKg": 80.5
   },
   {
     "id": "bm-00143",
     "clientId": "c-003",
     "date": "2026-06-20",
-    "weightKg": 80.4,
-    "bodyFatPct": 20.9,
-    "waistCm": 85.4
+    "weightKg": 80.4
   },
   {
     "id": "bm-00144",
     "clientId": "c-003",
     "date": "2026-06-21",
-    "weightKg": 80.2,
-    "bodyFatPct": 21,
-    "waistCm": 85.2
+    "weightKg": 80.2
   },
   {
     "id": "bm-00145",
     "clientId": "c-003",
     "date": "2026-06-22",
-    "weightKg": 80.4,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.1
+    "weightKg": 80.4
   },
   {
     "id": "bm-00146",
     "clientId": "c-003",
     "date": "2026-06-23",
-    "weightKg": 80.5,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.3
+    "weightKg": 80.5
   },
   {
     "id": "bm-00147",
     "clientId": "c-003",
     "date": "2026-06-24",
-    "weightKg": 81.1,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.5
+    "weightKg": 81.1
   },
   {
     "id": "bm-00148",
     "clientId": "c-003",
     "date": "2026-06-25",
-    "weightKg": 80.4,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.1
+    "weightKg": 80.4
   },
   {
     "id": "bm-00149",
     "clientId": "c-003",
     "date": "2026-06-26",
-    "weightKg": 80.9,
-    "bodyFatPct": 21,
-    "waistCm": 85.1
+    "weightKg": 80.9
   },
   {
     "id": "bm-00150",
     "clientId": "c-003",
     "date": "2026-06-28",
-    "weightKg": 81.3,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.6
+    "weightKg": 81.3
   },
   {
     "id": "bm-00151",
     "clientId": "c-003",
     "date": "2026-06-29",
-    "weightKg": 80.9,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.2
+    "weightKg": 80.9
   },
   {
     "id": "bm-00152",
     "clientId": "c-003",
     "date": "2026-06-30",
-    "weightKg": 81.3,
-    "bodyFatPct": 21,
-    "waistCm": 84
+    "weightKg": 81.3
   },
   {
     "id": "bm-00153",
     "clientId": "c-003",
     "date": "2026-07-01",
-    "weightKg": 81.3,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.6
+    "weightKg": 81.3
   },
   {
     "id": "bm-00154",
     "clientId": "c-003",
     "date": "2026-07-02",
-    "weightKg": 81.2,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.8
+    "weightKg": 81.2
   },
   {
     "id": "bm-00155",
     "clientId": "c-003",
     "date": "2026-07-03",
-    "weightKg": 81.2,
-    "bodyFatPct": 21.2,
-    "waistCm": 83.8
+    "weightKg": 81.2
   },
   {
     "id": "bm-00156",
     "clientId": "c-003",
     "date": "2026-07-04",
-    "weightKg": 81.2,
-    "bodyFatPct": 21,
-    "waistCm": 83.9
+    "weightKg": 81.2
   },
   {
     "id": "bm-00157",
     "clientId": "c-003",
     "date": "2026-07-05",
-    "weightKg": 81.8,
-    "bodyFatPct": 20.6,
-    "waistCm": 84.4
+    "weightKg": 81.8
   },
   {
     "id": "bm-00158",
     "clientId": "c-003",
     "date": "2026-07-06",
-    "weightKg": 81.9,
-    "bodyFatPct": 21,
-    "waistCm": 84.1
+    "weightKg": 81.9
   },
   {
     "id": "bm-00159",
     "clientId": "c-003",
     "date": "2026-07-07",
-    "weightKg": 81.5,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.3
+    "weightKg": 81.5
   },
   {
     "id": "bm-00160",
     "clientId": "c-003",
     "date": "2026-07-08",
-    "weightKg": 81.8,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.1
+    "weightKg": 81.8
   },
   {
     "id": "bm-00161",
     "clientId": "c-003",
     "date": "2026-07-09",
-    "weightKg": 81.5,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.8
+    "weightKg": 81.5
   },
   {
     "id": "bm-00162",
     "clientId": "c-003",
     "date": "2026-07-11",
-    "weightKg": 81.7,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.8
+    "weightKg": 81.7
   },
   {
     "id": "bm-00163",
     "clientId": "c-003",
     "date": "2026-07-12",
-    "weightKg": 81.6,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.3
+    "weightKg": 81.6
   },
   {
     "id": "bm-00164",
     "clientId": "c-003",
     "date": "2026-07-13",
-    "weightKg": 81.8,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.4
+    "weightKg": 81.8
   },
   {
     "id": "bm-00165",
     "clientId": "c-003",
     "date": "2026-07-14",
-    "weightKg": 81.6,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.5
+    "weightKg": 81.6
   },
   {
     "id": "bm-00166",
     "clientId": "c-003",
     "date": "2026-07-15",
-    "weightKg": 82,
-    "bodyFatPct": 20.8,
-    "waistCm": 83.3
+    "weightKg": 82
   },
   {
     "id": "bm-00167",
     "clientId": "c-003",
     "date": "2026-07-17",
-    "weightKg": 82.2,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.3
+    "weightKg": 82.2
   },
   {
     "id": "bm-00168",
     "clientId": "c-003",
     "date": "2026-07-19",
-    "weightKg": 82.5,
-    "bodyFatPct": 20.6,
-    "waistCm": 83
+    "weightKg": 82.5
   },
   {
     "id": "bm-00169",
     "clientId": "c-003",
     "date": "2026-07-20",
-    "weightKg": 82.7,
-    "bodyFatPct": 20.5,
-    "waistCm": 82.9
+    "weightKg": 82.7
   },
   {
     "id": "bm-00170",
     "clientId": "c-003",
     "date": "2026-07-22",
-    "weightKg": 82.8,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.4
+    "weightKg": 82.8
   },
   {
     "id": "bm-00171",
     "clientId": "c-003",
     "date": "2026-07-23",
-    "weightKg": 82.8,
-    "bodyFatPct": 19.9,
-    "waistCm": 83.2
+    "weightKg": 82.8
   },
   {
     "id": "bm-00172",
     "clientId": "c-003",
     "date": "2026-07-24",
-    "weightKg": 82.9,
-    "bodyFatPct": 19.7,
-    "waistCm": 83.2
+    "weightKg": 82.9
   },
   {
     "id": "bm-00173",
     "clientId": "c-003",
     "date": "2026-07-25",
-    "weightKg": 83,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.5
+    "weightKg": 83
   },
   {
     "id": "bm-00174",
     "clientId": "c-003",
     "date": "2026-07-26",
-    "weightKg": 82.4,
-    "bodyFatPct": 20.2,
-    "waistCm": 82.7
+    "weightKg": 82.4
   },
   {
     "id": "bm-00175",
     "clientId": "c-003",
     "date": "2026-07-27",
-    "weightKg": 83.2,
-    "bodyFatPct": 20.3,
-    "waistCm": 83
+    "weightKg": 83.2
   },
   {
     "id": "bm-00176",
     "clientId": "c-003",
     "date": "2026-07-28",
-    "weightKg": 83,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.3
+    "weightKg": 83
   },
   {
     "id": "bm-00177",
     "clientId": "c-003",
     "date": "2026-07-29",
-    "weightKg": 82.8,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.4
+    "weightKg": 82.8
   },
   {
     "id": "bm-00178",
     "clientId": "c-003",
     "date": "2026-07-30",
-    "weightKg": 83,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.8
+    "weightKg": 83
   },
   {
     "id": "bm-00179",
     "clientId": "c-003",
     "date": "2026-07-31",
-    "weightKg": 82.7,
-    "bodyFatPct": 19.5,
-    "waistCm": 83.2
+    "weightKg": 82.7
   },
   {
     "id": "bm-00180",
     "clientId": "c-003",
     "date": "2026-08-01",
-    "weightKg": 82.7,
-    "bodyFatPct": 20.1,
-    "waistCm": 83
+    "weightKg": 82.7
   },
   {
     "id": "bm-00181",
     "clientId": "c-003",
     "date": "2026-08-04",
-    "weightKg": 82.8,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.3
+    "weightKg": 82.8
   },
   {
     "id": "bm-00182",
     "clientId": "c-003",
     "date": "2026-08-05",
-    "weightKg": 83.1,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.8
+    "weightKg": 83.1
   },
   {
     "id": "bm-00183",
     "clientId": "c-003",
     "date": "2026-08-06",
-    "weightKg": 83.7,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.1
+    "weightKg": 83.7
   },
   {
     "id": "bm-00184",
     "clientId": "c-003",
     "date": "2026-08-07",
-    "weightKg": 83.5,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.2
+    "weightKg": 83.5
   },
   {
     "id": "bm-00185",
     "clientId": "c-003",
     "date": "2026-08-08",
-    "weightKg": 83.7,
-    "bodyFatPct": 19.6,
-    "waistCm": 81.8
+    "weightKg": 83.7
   },
   {
     "id": "bm-00186",
     "clientId": "c-003",
     "date": "2026-08-11",
-    "weightKg": 84,
-    "bodyFatPct": 19.7,
-    "waistCm": 81.8
+    "weightKg": 84
   },
   {
     "id": "bm-00187",
     "clientId": "c-003",
     "date": "2026-08-12",
-    "weightKg": 83.6,
-    "bodyFatPct": 19.2,
-    "waistCm": 82.3
+    "weightKg": 83.6
   },
   {
     "id": "bm-00188",
     "clientId": "c-003",
     "date": "2026-08-13",
-    "weightKg": 83.8,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.4
+    "weightKg": 83.8
   },
   {
     "id": "bm-00189",
     "clientId": "c-003",
     "date": "2026-08-14",
-    "weightKg": 83.5,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.9
+    "weightKg": 83.5
   },
   {
     "id": "bm-00190",
     "clientId": "c-003",
     "date": "2026-08-15",
-    "weightKg": 84.1,
-    "bodyFatPct": 19.7,
-    "waistCm": 81.2
+    "weightKg": 84.1
   },
   {
     "id": "bm-00191",
     "clientId": "c-003",
     "date": "2026-08-16",
-    "weightKg": 84.4,
-    "bodyFatPct": 19.5,
-    "waistCm": 81.8
+    "weightKg": 84.4
   },
   {
     "id": "bm-00192",
     "clientId": "c-003",
     "date": "2026-08-17",
-    "weightKg": 83.7,
-    "bodyFatPct": 18.8,
-    "waistCm": 82
+    "weightKg": 83.7
   },
   {
     "id": "bm-00193",
     "clientId": "c-003",
     "date": "2026-08-18",
-    "weightKg": 84.5,
-    "bodyFatPct": 18.8,
-    "waistCm": 82.2
+    "weightKg": 84.5
   },
   {
     "id": "bm-00194",
     "clientId": "c-003",
     "date": "2026-08-19",
-    "weightKg": 84.1,
-    "bodyFatPct": 19.5,
-    "waistCm": 81.9
+    "weightKg": 84.1
   },
   {
     "id": "bm-00195",
     "clientId": "c-003",
     "date": "2026-08-20",
-    "weightKg": 84,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.3
+    "weightKg": 84
   },
   {
     "id": "bm-00196",
     "clientId": "c-003",
     "date": "2026-08-21",
-    "weightKg": 84.3,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.6
+    "weightKg": 84.3
   },
   {
     "id": "bm-00197",
     "clientId": "c-003",
     "date": "2026-08-22",
-    "weightKg": 84.7,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.5
+    "weightKg": 84.7
   },
   {
     "id": "bm-00198",
     "clientId": "c-003",
     "date": "2026-08-23",
-    "weightKg": 84.6,
-    "bodyFatPct": 18.6,
-    "waistCm": 80.9
+    "weightKg": 84.6
   },
   {
     "id": "bm-00199",
     "clientId": "c-003",
     "date": "2026-08-24",
-    "weightKg": 84.1,
-    "bodyFatPct": 18.6,
-    "waistCm": 81.5
+    "weightKg": 84.1
   },
   {
     "id": "bm-00200",
     "clientId": "c-003",
     "date": "2026-08-25",
-    "weightKg": 84.5,
-    "bodyFatPct": 19,
-    "waistCm": 80.8
+    "weightKg": 84.5
   },
   {
     "id": "bm-00201",
     "clientId": "c-003",
     "date": "2026-08-26",
-    "weightKg": 84.2,
-    "bodyFatPct": 18.8,
-    "waistCm": 80.6
+    "weightKg": 84.2
   },
   {
     "id": "bm-00202",
     "clientId": "c-003",
     "date": "2026-08-27",
-    "weightKg": 84.4,
-    "bodyFatPct": 18.8,
-    "waistCm": 80.7
+    "weightKg": 84.4
   },
   {
     "id": "bm-00203",
     "clientId": "c-003",
     "date": "2026-08-28",
-    "weightKg": 84.4,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.6
+    "weightKg": 84.4
   },
   {
     "id": "bm-00204",
     "clientId": "c-003",
     "date": "2026-08-29",
-    "weightKg": 84.3,
-    "bodyFatPct": 18.9,
-    "waistCm": 80.8
+    "weightKg": 84.3
   },
   {
     "id": "bm-00205",
     "clientId": "c-004",
     "date": "2026-06-01",
-    "weightKg": 66.4,
-    "bodyFatPct": 21.8,
-    "waistCm": 86.4
+    "weightKg": 66.4
   },
   {
     "id": "bm-00206",
     "clientId": "c-004",
     "date": "2026-06-03",
-    "weightKg": 66.5,
-    "bodyFatPct": 22.1,
-    "waistCm": 86.1
+    "weightKg": 66.5
   },
   {
     "id": "bm-00207",
     "clientId": "c-004",
     "date": "2026-06-06",
-    "weightKg": 66.5,
-    "bodyFatPct": 21.4,
-    "waistCm": 86.3
+    "weightKg": 66.5
   },
   {
     "id": "bm-00208",
     "clientId": "c-004",
     "date": "2026-06-10",
-    "weightKg": 65.9,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.2
+    "weightKg": 65.9
   },
   {
     "id": "bm-00209",
     "clientId": "c-004",
     "date": "2026-06-13",
-    "weightKg": 66,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.1
+    "weightKg": 66
   },
   {
     "id": "bm-00210",
     "clientId": "c-004",
     "date": "2026-06-16",
-    "weightKg": 65.2,
-    "bodyFatPct": 21.1,
-    "waistCm": 85.4
+    "weightKg": 65.2
   },
   {
     "id": "bm-00211",
     "clientId": "c-004",
     "date": "2026-06-22",
-    "weightKg": 65.1,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.2
+    "weightKg": 65.1
   },
   {
     "id": "bm-00212",
     "clientId": "c-004",
     "date": "2026-06-24",
-    "weightKg": 65.1,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.3
+    "weightKg": 65.1
   },
   {
     "id": "bm-00213",
     "clientId": "c-004",
     "date": "2026-06-25",
-    "weightKg": 65.2,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.2
+    "weightKg": 65.2
   },
   {
     "id": "bm-00214",
     "clientId": "c-004",
     "date": "2026-06-27",
-    "weightKg": 64.9,
-    "bodyFatPct": 21.4,
-    "waistCm": 85
+    "weightKg": 64.9
   },
   {
     "id": "bm-00215",
     "clientId": "c-004",
     "date": "2026-06-29",
-    "weightKg": 64.9,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.1
+    "weightKg": 64.9
   },
   {
     "id": "bm-00216",
     "clientId": "c-004",
     "date": "2026-06-30",
-    "weightKg": 65.1,
-    "bodyFatPct": 20.7,
-    "waistCm": 85
+    "weightKg": 65.1
   },
   {
     "id": "bm-00217",
     "clientId": "c-004",
     "date": "2026-07-03",
-    "weightKg": 64.4,
-    "bodyFatPct": 21,
-    "waistCm": 84.8
+    "weightKg": 64.4
   },
   {
     "id": "bm-00218",
     "clientId": "c-004",
     "date": "2026-07-05",
-    "weightKg": 64.6,
-    "bodyFatPct": 20.6,
-    "waistCm": 84.1
+    "weightKg": 64.6
   },
   {
     "id": "bm-00219",
     "clientId": "c-004",
     "date": "2026-07-06",
-    "weightKg": 64.6,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.8
+    "weightKg": 64.6
   },
   {
     "id": "bm-00220",
     "clientId": "c-004",
     "date": "2026-07-07",
-    "weightKg": 64.6,
-    "bodyFatPct": 20.6,
-    "waistCm": 84
+    "weightKg": 64.6
   },
   {
     "id": "bm-00221",
     "clientId": "c-004",
     "date": "2026-07-10",
-    "weightKg": 63.8,
-    "bodyFatPct": 20.3,
-    "waistCm": 84
+    "weightKg": 63.8
   },
   {
     "id": "bm-00222",
     "clientId": "c-004",
     "date": "2026-07-11",
-    "weightKg": 64.4,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.7
+    "weightKg": 64.4
   },
   {
     "id": "bm-00223",
     "clientId": "c-004",
     "date": "2026-07-12",
-    "weightKg": 64.5,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.1
+    "weightKg": 64.5
   },
   {
     "id": "bm-00224",
     "clientId": "c-004",
     "date": "2026-07-16",
-    "weightKg": 64.3,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.5
+    "weightKg": 64.3
   },
   {
     "id": "bm-00225",
     "clientId": "c-004",
     "date": "2026-07-18",
-    "weightKg": 63.5,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.3
+    "weightKg": 63.5
   },
   {
     "id": "bm-00226",
     "clientId": "c-004",
     "date": "2026-07-19",
-    "weightKg": 63.9,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.2
+    "weightKg": 63.9
   },
   {
     "id": "bm-00227",
     "clientId": "c-004",
     "date": "2026-07-21",
-    "weightKg": 63.6,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.7
+    "weightKg": 63.6
   },
   {
     "id": "bm-00228",
     "clientId": "c-004",
     "date": "2026-07-22",
-    "weightKg": 63.1,
-    "bodyFatPct": 20,
-    "waistCm": 82.8
+    "weightKg": 63.1
   },
   {
     "id": "bm-00229",
     "clientId": "c-004",
     "date": "2026-07-24",
-    "weightKg": 63.2,
-    "bodyFatPct": 19.7,
-    "waistCm": 83.2
+    "weightKg": 63.2
   },
   {
     "id": "bm-00230",
     "clientId": "c-004",
     "date": "2026-07-25",
-    "weightKg": 62.9,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.7
+    "weightKg": 62.9
   },
   {
     "id": "bm-00231",
     "clientId": "c-004",
     "date": "2026-07-26",
-    "weightKg": 62.8,
-    "bodyFatPct": 19.7,
-    "waistCm": 83.2
+    "weightKg": 62.8
   },
   {
     "id": "bm-00232",
     "clientId": "c-004",
     "date": "2026-07-28",
-    "weightKg": 63,
-    "bodyFatPct": 19.6,
-    "waistCm": 83.3
+    "weightKg": 63
   },
   {
     "id": "bm-00233",
     "clientId": "c-004",
     "date": "2026-07-31",
-    "weightKg": 63.2,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.2
+    "weightKg": 63.2
   },
   {
     "id": "bm-00234",
     "clientId": "c-004",
     "date": "2026-08-01",
-    "weightKg": 63,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.8
+    "weightKg": 63
   },
   {
     "id": "bm-00235",
     "clientId": "c-004",
     "date": "2026-08-02",
-    "weightKg": 62.5,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.2
+    "weightKg": 62.5
   },
   {
     "id": "bm-00236",
     "clientId": "c-004",
     "date": "2026-08-04",
-    "weightKg": 62.4,
-    "bodyFatPct": 20,
-    "waistCm": 81.8
+    "weightKg": 62.4
   },
   {
     "id": "bm-00237",
     "clientId": "c-004",
     "date": "2026-08-05",
-    "weightKg": 62.8,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.4
+    "weightKg": 62.8
   },
   {
     "id": "bm-00238",
     "clientId": "c-004",
     "date": "2026-08-07",
-    "weightKg": 62.4,
-    "bodyFatPct": 19.8,
-    "waistCm": 81.6
+    "weightKg": 62.4
   },
   {
     "id": "bm-00239",
     "clientId": "c-004",
     "date": "2026-08-09",
-    "weightKg": 63.4,
-    "bodyFatPct": 19.3,
-    "waistCm": 82.4
+    "weightKg": 63.4
   },
   {
     "id": "bm-00240",
     "clientId": "c-004",
     "date": "2026-08-12",
-    "weightKg": 63.8,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.5
+    "weightKg": 63.8
   },
   {
     "id": "bm-00241",
     "clientId": "c-004",
     "date": "2026-08-14",
-    "weightKg": 63,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.7
+    "weightKg": 63
   },
   {
     "id": "bm-00242",
     "clientId": "c-004",
     "date": "2026-08-15",
-    "weightKg": 63.3,
-    "bodyFatPct": 19,
-    "waistCm": 82
+    "weightKg": 63.3
   },
   {
     "id": "bm-00243",
     "clientId": "c-004",
     "date": "2026-08-16",
-    "weightKg": 63.6,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.8
+    "weightKg": 63.6
   },
   {
     "id": "bm-00244",
     "clientId": "c-004",
     "date": "2026-08-17",
-    "weightKg": 62.9,
-    "bodyFatPct": 19.1,
-    "waistCm": 82.1
+    "weightKg": 62.9
   },
   {
     "id": "bm-00245",
     "clientId": "c-004",
     "date": "2026-08-18",
-    "weightKg": 63.3,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.1
+    "weightKg": 63.3
   },
   {
     "id": "bm-00246",
     "clientId": "c-004",
     "date": "2026-08-19",
-    "weightKg": 63,
-    "bodyFatPct": 19,
-    "waistCm": 81.5
+    "weightKg": 63
   },
   {
     "id": "bm-00247",
     "clientId": "c-004",
     "date": "2026-08-20",
-    "weightKg": 63.1,
-    "bodyFatPct": 19.4,
-    "waistCm": 81.3
+    "weightKg": 63.1
   },
   {
     "id": "bm-00248",
     "clientId": "c-004",
     "date": "2026-08-24",
-    "weightKg": 63.3,
-    "bodyFatPct": 18.6,
-    "waistCm": 81.1
+    "weightKg": 63.3
   },
   {
     "id": "bm-00249",
     "clientId": "c-004",
     "date": "2026-08-26",
-    "weightKg": 63.2,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.3
+    "weightKg": 63.2
   },
   {
     "id": "bm-00250",
     "clientId": "c-004",
     "date": "2026-08-28",
-    "weightKg": 62.8,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.5
+    "weightKg": 62.8
   },
   {
     "id": "bm-00251",
     "clientId": "c-004",
     "date": "2026-08-29",
-    "weightKg": 62.7,
-    "bodyFatPct": 18.7,
-    "waistCm": 81.2
+    "weightKg": 62.7
   },
   {
     "id": "bm-00252",
     "clientId": "c-005",
     "date": "2026-06-01",
-    "weightKg": 87.8,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.8
+    "weightKg": 87.8
   },
   {
     "id": "bm-00253",
     "clientId": "c-005",
     "date": "2026-06-04",
-    "weightKg": 88,
-    "bodyFatPct": 22,
-    "waistCm": 85.9
+    "weightKg": 88
   },
   {
     "id": "bm-00254",
     "clientId": "c-005",
     "date": "2026-06-05",
-    "weightKg": 87.7,
-    "bodyFatPct": 21.9,
-    "waistCm": 85.9
+    "weightKg": 87.7
   },
   {
     "id": "bm-00255",
     "clientId": "c-005",
     "date": "2026-06-06",
-    "weightKg": 87.7,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.3
+    "weightKg": 87.7
   },
   {
     "id": "bm-00256",
     "clientId": "c-005",
     "date": "2026-06-07",
-    "weightKg": 87.8,
-    "bodyFatPct": 21.9,
-    "waistCm": 85.2
+    "weightKg": 87.8
   },
   {
     "id": "bm-00257",
     "clientId": "c-005",
     "date": "2026-06-12",
-    "weightKg": 88.1,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.6
+    "weightKg": 88.1
   },
   {
     "id": "bm-00258",
     "clientId": "c-005",
     "date": "2026-06-14",
-    "weightKg": 87.9,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.2
+    "weightKg": 87.9
   },
   {
     "id": "bm-00259",
     "clientId": "c-005",
     "date": "2026-06-15",
-    "weightKg": 88.1,
-    "bodyFatPct": 21.4,
-    "waistCm": 85.6
+    "weightKg": 88.1
   },
   {
     "id": "bm-00260",
     "clientId": "c-005",
     "date": "2026-06-16",
-    "weightKg": 87.5,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.7
+    "weightKg": 87.5
   },
   {
     "id": "bm-00261",
     "clientId": "c-005",
     "date": "2026-06-18",
-    "weightKg": 88.1,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.9
+    "weightKg": 88.1
   },
   {
     "id": "bm-00262",
     "clientId": "c-005",
     "date": "2026-06-19",
-    "weightKg": 88.1,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.2
+    "weightKg": 88.1
   },
   {
     "id": "bm-00263",
     "clientId": "c-005",
     "date": "2026-06-20",
-    "weightKg": 87.4,
-    "bodyFatPct": 21.5,
-    "waistCm": 84.6
+    "weightKg": 87.4
   },
   {
     "id": "bm-00264",
     "clientId": "c-005",
     "date": "2026-06-22",
-    "weightKg": 87.9,
-    "bodyFatPct": 20.9,
-    "waistCm": 85.3
+    "weightKg": 87.9
   },
   {
     "id": "bm-00265",
     "clientId": "c-005",
     "date": "2026-06-24",
-    "weightKg": 87.8,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.4
+    "weightKg": 87.8
   },
   {
     "id": "bm-00266",
     "clientId": "c-005",
     "date": "2026-06-26",
-    "weightKg": 88,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.3
+    "weightKg": 88
   },
   {
     "id": "bm-00267",
     "clientId": "c-005",
     "date": "2026-06-27",
-    "weightKg": 87.7,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.4
+    "weightKg": 87.7
   },
   {
     "id": "bm-00268",
     "clientId": "c-005",
     "date": "2026-06-29",
-    "weightKg": 87.8,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.9
+    "weightKg": 87.8
   },
   {
     "id": "bm-00269",
     "clientId": "c-005",
     "date": "2026-06-30",
-    "weightKg": 87.5,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.5
+    "weightKg": 87.5
   },
   {
     "id": "bm-00270",
     "clientId": "c-005",
     "date": "2026-07-01",
-    "weightKg": 87.6,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.7
+    "weightKg": 87.6
   },
   {
     "id": "bm-00271",
     "clientId": "c-005",
     "date": "2026-07-02",
-    "weightKg": 87.4,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.7
+    "weightKg": 87.4
   },
   {
     "id": "bm-00272",
     "clientId": "c-005",
     "date": "2026-07-03",
-    "weightKg": 87.3,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.6
+    "weightKg": 87.3
   },
   {
     "id": "bm-00273",
     "clientId": "c-005",
     "date": "2026-07-04",
-    "weightKg": 87.4,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.4
+    "weightKg": 87.4
   },
   {
     "id": "bm-00274",
     "clientId": "c-005",
     "date": "2026-07-06",
-    "weightKg": 87.5,
-    "bodyFatPct": 21.1,
-    "waistCm": 83.7
+    "weightKg": 87.5
   },
   {
     "id": "bm-00275",
     "clientId": "c-005",
     "date": "2026-07-08",
-    "weightKg": 87.6,
-    "bodyFatPct": 20.5,
-    "waistCm": 84
+    "weightKg": 87.6
   },
   {
     "id": "bm-00276",
     "clientId": "c-005",
     "date": "2026-07-09",
-    "weightKg": 87.2,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.9
+    "weightKg": 87.2
   },
   {
     "id": "bm-00277",
     "clientId": "c-005",
     "date": "2026-07-12",
-    "weightKg": 87.8,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.5
+    "weightKg": 87.8
   },
   {
     "id": "bm-00278",
     "clientId": "c-005",
     "date": "2026-07-13",
-    "weightKg": 87.4,
-    "bodyFatPct": 20.6,
-    "waistCm": 83.6
+    "weightKg": 87.4
   },
   {
     "id": "bm-00279",
     "clientId": "c-005",
     "date": "2026-07-14",
-    "weightKg": 87.4,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.9
+    "weightKg": 87.4
   },
   {
     "id": "bm-00280",
     "clientId": "c-005",
     "date": "2026-07-15",
-    "weightKg": 87.4,
-    "bodyFatPct": 20.8,
-    "waistCm": 83.4
+    "weightKg": 87.4
   },
   {
     "id": "bm-00281",
     "clientId": "c-005",
     "date": "2026-07-17",
-    "weightKg": 87.3,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.3
+    "weightKg": 87.3
   },
   {
     "id": "bm-00282",
     "clientId": "c-005",
     "date": "2026-07-18",
-    "weightKg": 87.6,
-    "bodyFatPct": 20.6,
-    "waistCm": 82.9
+    "weightKg": 87.6
   },
   {
     "id": "bm-00283",
     "clientId": "c-005",
     "date": "2026-07-21",
-    "weightKg": 87.2,
-    "bodyFatPct": 20.6,
-    "waistCm": 82.9
+    "weightKg": 87.2
   },
   {
     "id": "bm-00284",
     "clientId": "c-005",
     "date": "2026-07-22",
-    "weightKg": 86.8,
-    "bodyFatPct": 20.4,
-    "waistCm": 82.6
+    "weightKg": 86.8
   },
   {
     "id": "bm-00285",
     "clientId": "c-005",
     "date": "2026-07-23",
-    "weightKg": 87,
-    "bodyFatPct": 20.5,
-    "waistCm": 82.9
+    "weightKg": 87
   },
   {
     "id": "bm-00286",
     "clientId": "c-005",
     "date": "2026-07-25",
-    "weightKg": 87,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.4
+    "weightKg": 87
   },
   {
     "id": "bm-00287",
     "clientId": "c-005",
     "date": "2026-07-27",
-    "weightKg": 87.5,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.8
+    "weightKg": 87.5
   },
   {
     "id": "bm-00288",
     "clientId": "c-005",
     "date": "2026-07-28",
-    "weightKg": 87.5,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.5
+    "weightKg": 87.5
   },
   {
     "id": "bm-00289",
     "clientId": "c-005",
     "date": "2026-07-29",
-    "weightKg": 87.6,
-    "bodyFatPct": 20,
-    "waistCm": 83
+    "weightKg": 87.6
   },
   {
     "id": "bm-00290",
     "clientId": "c-005",
     "date": "2026-07-31",
-    "weightKg": 87.3,
-    "bodyFatPct": 19.9,
-    "waistCm": 83
+    "weightKg": 87.3
   },
   {
     "id": "bm-00291",
     "clientId": "c-005",
     "date": "2026-08-05",
-    "weightKg": 87.3,
-    "bodyFatPct": 19.3,
-    "waistCm": 82.8
+    "weightKg": 87.3
   },
   {
     "id": "bm-00292",
     "clientId": "c-005",
     "date": "2026-08-07",
-    "weightKg": 86.8,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.5
+    "weightKg": 86.8
   },
   {
     "id": "bm-00293",
     "clientId": "c-005",
     "date": "2026-08-11",
-    "weightKg": 86.7,
-    "bodyFatPct": 19.4,
-    "waistCm": 82
+    "weightKg": 86.7
   },
   {
     "id": "bm-00294",
     "clientId": "c-005",
     "date": "2026-08-12",
-    "weightKg": 87.2,
-    "bodyFatPct": 19.2,
-    "waistCm": 82.4
+    "weightKg": 87.2
   },
   {
     "id": "bm-00295",
     "clientId": "c-005",
     "date": "2026-08-14",
-    "weightKg": 87.2,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.4
+    "weightKg": 87.2
   },
   {
     "id": "bm-00296",
     "clientId": "c-005",
     "date": "2026-08-16",
-    "weightKg": 87.2,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.6
+    "weightKg": 87.2
   },
   {
     "id": "bm-00297",
     "clientId": "c-005",
     "date": "2026-08-19",
-    "weightKg": 86.9,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.5
+    "weightKg": 86.9
   },
   {
     "id": "bm-00298",
     "clientId": "c-005",
     "date": "2026-08-20",
-    "weightKg": 87.2,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.4
+    "weightKg": 87.2
   },
   {
     "id": "bm-00299",
     "clientId": "c-005",
     "date": "2026-08-25",
-    "weightKg": 86.4,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.5
+    "weightKg": 86.4
   },
   {
     "id": "bm-00300",
     "clientId": "c-005",
     "date": "2026-08-26",
-    "weightKg": 86.7,
-    "bodyFatPct": 19.3,
-    "waistCm": 81.8
+    "weightKg": 86.7
   },
   {
     "id": "bm-00301",
     "clientId": "c-005",
     "date": "2026-08-27",
-    "weightKg": 86.4,
-    "bodyFatPct": 19,
-    "waistCm": 80.6
+    "weightKg": 86.4
   },
   {
     "id": "bm-00302",
     "clientId": "c-005",
     "date": "2026-08-29",
-    "weightKg": 87.1,
-    "bodyFatPct": 18.6,
-    "waistCm": 80.8
+    "weightKg": 87.1
   },
   {
     "id": "bm-00303",
     "clientId": "c-006",
     "date": "2026-06-02",
-    "weightKg": 68.7,
-    "bodyFatPct": 22.3,
-    "waistCm": 86.3
+    "weightKg": 68.7
   },
   {
     "id": "bm-00304",
     "clientId": "c-006",
     "date": "2026-06-04",
-    "weightKg": 69,
-    "bodyFatPct": 22.2,
-    "waistCm": 86
+    "weightKg": 69
   },
   {
     "id": "bm-00305",
     "clientId": "c-006",
     "date": "2026-06-05",
-    "weightKg": 68.4,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.3
+    "weightKg": 68.4
   },
   {
     "id": "bm-00306",
     "clientId": "c-006",
     "date": "2026-06-06",
-    "weightKg": 68.9,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.8
+    "weightKg": 68.9
   },
   {
     "id": "bm-00307",
     "clientId": "c-006",
     "date": "2026-06-07",
-    "weightKg": 69.1,
-    "bodyFatPct": 21.9,
-    "waistCm": 86.1
+    "weightKg": 69.1
   },
   {
     "id": "bm-00308",
     "clientId": "c-006",
     "date": "2026-06-08",
-    "weightKg": 68.6,
-    "bodyFatPct": 21.6,
-    "waistCm": 85.8
+    "weightKg": 68.6
   },
   {
     "id": "bm-00309",
     "clientId": "c-006",
     "date": "2026-06-09",
-    "weightKg": 68.8,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.2
+    "weightKg": 68.8
   },
   {
     "id": "bm-00310",
     "clientId": "c-006",
     "date": "2026-06-10",
-    "weightKg": 68.4,
-    "bodyFatPct": 22,
-    "waistCm": 84.9
+    "weightKg": 68.4
   },
   {
     "id": "bm-00311",
     "clientId": "c-006",
     "date": "2026-06-11",
-    "weightKg": 68.5,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.2
+    "weightKg": 68.5
   },
   {
     "id": "bm-00312",
     "clientId": "c-006",
     "date": "2026-06-13",
-    "weightKg": 68.2,
-    "bodyFatPct": 21.8,
-    "waistCm": 84.7
+    "weightKg": 68.2
   },
   {
     "id": "bm-00313",
     "clientId": "c-006",
     "date": "2026-06-15",
-    "weightKg": 68.4,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.8
+    "weightKg": 68.4
   },
   {
     "id": "bm-00314",
     "clientId": "c-006",
     "date": "2026-06-17",
-    "weightKg": 68.2,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.2
+    "weightKg": 68.2
   },
   {
     "id": "bm-00315",
     "clientId": "c-006",
     "date": "2026-06-18",
-    "weightKg": 68.4,
-    "bodyFatPct": 21.2,
-    "waistCm": 85.4
+    "weightKg": 68.4
   },
   {
     "id": "bm-00316",
     "clientId": "c-006",
     "date": "2026-06-19",
-    "weightKg": 68.1,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.4
+    "weightKg": 68.1
   },
   {
     "id": "bm-00317",
     "clientId": "c-006",
     "date": "2026-06-20",
-    "weightKg": 67.9,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.1
+    "weightKg": 67.9
   },
   {
     "id": "bm-00318",
     "clientId": "c-006",
     "date": "2026-06-22",
-    "weightKg": 68.1,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.5
+    "weightKg": 68.1
   },
   {
     "id": "bm-00319",
     "clientId": "c-006",
     "date": "2026-06-23",
-    "weightKg": 68.1,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.6
+    "weightKg": 68.1
   },
   {
     "id": "bm-00320",
     "clientId": "c-006",
     "date": "2026-06-24",
-    "weightKg": 68.3,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.9
+    "weightKg": 68.3
   },
   {
     "id": "bm-00321",
     "clientId": "c-006",
     "date": "2026-06-26",
-    "weightKg": 67.8,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.9
+    "weightKg": 67.8
   },
   {
     "id": "bm-00322",
     "clientId": "c-006",
     "date": "2026-06-28",
-    "weightKg": 68.5,
-    "bodyFatPct": 21,
-    "waistCm": 84.6
+    "weightKg": 68.5
   },
   {
     "id": "bm-00323",
     "clientId": "c-006",
     "date": "2026-06-29",
-    "weightKg": 68.6,
-    "bodyFatPct": 21,
-    "waistCm": 85
+    "weightKg": 68.6
   },
   {
     "id": "bm-00324",
     "clientId": "c-006",
     "date": "2026-06-30",
-    "weightKg": 68.4,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.9
+    "weightKg": 68.4
   },
   {
     "id": "bm-00325",
     "clientId": "c-006",
     "date": "2026-07-01",
-    "weightKg": 68.5,
-    "bodyFatPct": 20.5,
-    "waistCm": 84.7
+    "weightKg": 68.5
   },
   {
     "id": "bm-00326",
     "clientId": "c-006",
     "date": "2026-07-02",
-    "weightKg": 67.6,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.5
+    "weightKg": 67.6
   },
   {
     "id": "bm-00327",
     "clientId": "c-006",
     "date": "2026-07-03",
-    "weightKg": 68.1,
-    "bodyFatPct": 20.8,
-    "waistCm": 83.8
+    "weightKg": 68.1
   },
   {
     "id": "bm-00328",
     "clientId": "c-006",
     "date": "2026-07-04",
-    "weightKg": 67.6,
-    "bodyFatPct": 20.5,
-    "waistCm": 84.2
+    "weightKg": 67.6
   },
   {
     "id": "bm-00329",
     "clientId": "c-006",
     "date": "2026-07-05",
-    "weightKg": 67.8,
-    "bodyFatPct": 21,
-    "waistCm": 83.6
+    "weightKg": 67.8
   },
   {
     "id": "bm-00330",
     "clientId": "c-006",
     "date": "2026-07-06",
-    "weightKg": 68,
-    "bodyFatPct": 20.4,
-    "waistCm": 84.6
+    "weightKg": 68
   },
   {
     "id": "bm-00331",
     "clientId": "c-006",
     "date": "2026-07-07",
-    "weightKg": 67.8,
-    "bodyFatPct": 20.6,
-    "waistCm": 83.9
+    "weightKg": 67.8
   },
   {
     "id": "bm-00332",
     "clientId": "c-006",
     "date": "2026-07-08",
-    "weightKg": 67.7,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.7
+    "weightKg": 67.7
   },
   {
     "id": "bm-00333",
     "clientId": "c-006",
     "date": "2026-07-09",
-    "weightKg": 67.5,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.5
+    "weightKg": 67.5
   },
   {
     "id": "bm-00334",
     "clientId": "c-006",
     "date": "2026-07-10",
-    "weightKg": 68.1,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.6
+    "weightKg": 68.1
   },
   {
     "id": "bm-00335",
     "clientId": "c-006",
     "date": "2026-07-11",
-    "weightKg": 68,
-    "bodyFatPct": 20.4,
-    "waistCm": 84
+    "weightKg": 68
   },
   {
     "id": "bm-00336",
     "clientId": "c-006",
     "date": "2026-07-12",
-    "weightKg": 67.9,
-    "bodyFatPct": 20.6,
-    "waistCm": 83.5
+    "weightKg": 67.9
   },
   {
     "id": "bm-00337",
     "clientId": "c-006",
     "date": "2026-07-13",
-    "weightKg": 67.4,
-    "bodyFatPct": 20.8,
-    "waistCm": 83
+    "weightKg": 67.4
   },
   {
     "id": "bm-00338",
     "clientId": "c-006",
     "date": "2026-07-14",
-    "weightKg": 67.5,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.9
+    "weightKg": 67.5
   },
   {
     "id": "bm-00339",
     "clientId": "c-006",
     "date": "2026-07-15",
-    "weightKg": 68.1,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.4
+    "weightKg": 68.1
   },
   {
     "id": "bm-00340",
     "clientId": "c-006",
     "date": "2026-07-16",
-    "weightKg": 68,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.1
+    "weightKg": 68
   },
   {
     "id": "bm-00341",
     "clientId": "c-006",
     "date": "2026-07-18",
-    "weightKg": 67.6,
-    "bodyFatPct": 20.6,
-    "waistCm": 83.4
+    "weightKg": 67.6
   },
   {
     "id": "bm-00342",
     "clientId": "c-006",
     "date": "2026-07-19",
-    "weightKg": 67.5,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.5
+    "weightKg": 67.5
   },
   {
     "id": "bm-00343",
     "clientId": "c-006",
     "date": "2026-07-21",
-    "weightKg": 67.5,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.5
+    "weightKg": 67.5
   },
   {
     "id": "bm-00344",
     "clientId": "c-006",
     "date": "2026-07-22",
-    "weightKg": 67.2,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.8
+    "weightKg": 67.2
   },
   {
     "id": "bm-00345",
     "clientId": "c-006",
     "date": "2026-07-23",
-    "weightKg": 67.2,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.3
+    "weightKg": 67.2
   },
   {
     "id": "bm-00346",
     "clientId": "c-006",
     "date": "2026-07-24",
-    "weightKg": 67.1,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.7
+    "weightKg": 67.1
   },
   {
     "id": "bm-00347",
     "clientId": "c-006",
     "date": "2026-07-26",
-    "weightKg": 67,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.9
+    "weightKg": 67
   },
   {
     "id": "bm-00348",
     "clientId": "c-006",
     "date": "2026-07-27",
-    "weightKg": 67.3,
-    "bodyFatPct": 20.3,
-    "waistCm": 82.9
+    "weightKg": 67.3
   },
   {
     "id": "bm-00349",
     "clientId": "c-006",
     "date": "2026-07-28",
-    "weightKg": 67.4,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.5
+    "weightKg": 67.4
   },
   {
     "id": "bm-00350",
     "clientId": "c-006",
     "date": "2026-07-29",
-    "weightKg": 67.4,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.5
+    "weightKg": 67.4
   },
   {
     "id": "bm-00351",
     "clientId": "c-006",
     "date": "2026-07-30",
-    "weightKg": 66.9,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.1
+    "weightKg": 66.9
   },
   {
     "id": "bm-00352",
     "clientId": "c-006",
     "date": "2026-07-31",
-    "weightKg": 67,
-    "bodyFatPct": 20.2,
-    "waistCm": 82.7
+    "weightKg": 67
   },
   {
     "id": "bm-00353",
     "clientId": "c-006",
     "date": "2026-08-01",
-    "weightKg": 67.6,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.9
+    "weightKg": 67.6
   },
   {
     "id": "bm-00354",
     "clientId": "c-006",
     "date": "2026-08-02",
-    "weightKg": 67,
-    "bodyFatPct": 20.1,
-    "waistCm": 81.9
+    "weightKg": 67
   },
   {
     "id": "bm-00355",
     "clientId": "c-006",
     "date": "2026-08-03",
-    "weightKg": 67,
-    "bodyFatPct": 20,
-    "waistCm": 82
+    "weightKg": 67
   },
   {
     "id": "bm-00356",
     "clientId": "c-006",
     "date": "2026-08-05",
-    "weightKg": 66.7,
-    "bodyFatPct": 20,
-    "waistCm": 82.8
+    "weightKg": 66.7
   },
   {
     "id": "bm-00357",
     "clientId": "c-006",
     "date": "2026-08-06",
-    "weightKg": 67.2,
-    "bodyFatPct": 19.4,
-    "waistCm": 82
+    "weightKg": 67.2
   },
   {
     "id": "bm-00358",
     "clientId": "c-006",
     "date": "2026-08-07",
-    "weightKg": 67.2,
-    "bodyFatPct": 19.8,
-    "waistCm": 81.9
+    "weightKg": 67.2
   },
   {
     "id": "bm-00359",
     "clientId": "c-006",
     "date": "2026-08-08",
-    "weightKg": 67,
-    "bodyFatPct": 19.4,
-    "waistCm": 82.4
+    "weightKg": 67
   },
   {
     "id": "bm-00360",
     "clientId": "c-006",
     "date": "2026-08-09",
-    "weightKg": 67.2,
-    "bodyFatPct": 19.7,
-    "waistCm": 82.3
+    "weightKg": 67.2
   },
   {
     "id": "bm-00361",
     "clientId": "c-006",
     "date": "2026-08-10",
-    "weightKg": 67.4,
-    "bodyFatPct": 19.2,
-    "waistCm": 82.4
+    "weightKg": 67.4
   },
   {
     "id": "bm-00362",
     "clientId": "c-006",
     "date": "2026-08-11",
-    "weightKg": 67,
-    "bodyFatPct": 19.8,
-    "waistCm": 81.7
+    "weightKg": 67
   },
   {
     "id": "bm-00363",
     "clientId": "c-006",
     "date": "2026-08-12",
-    "weightKg": 67,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.4
+    "weightKg": 67
   },
   {
     "id": "bm-00364",
     "clientId": "c-006",
     "date": "2026-08-13",
-    "weightKg": 67.3,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.2
+    "weightKg": 67.3
   },
   {
     "id": "bm-00365",
     "clientId": "c-006",
     "date": "2026-08-14",
-    "weightKg": 67.1,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.9
+    "weightKg": 67.1
   },
   {
     "id": "bm-00366",
     "clientId": "c-006",
     "date": "2026-08-15",
-    "weightKg": 67,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.2
+    "weightKg": 67
   },
   {
     "id": "bm-00367",
     "clientId": "c-006",
     "date": "2026-08-16",
-    "weightKg": 66.7,
-    "bodyFatPct": 19.6,
-    "waistCm": 81.4
+    "weightKg": 66.7
   },
   {
     "id": "bm-00368",
     "clientId": "c-006",
     "date": "2026-08-17",
-    "weightKg": 66.5,
-    "bodyFatPct": 19.4,
-    "waistCm": 81.9
+    "weightKg": 66.5
   },
   {
     "id": "bm-00369",
     "clientId": "c-006",
     "date": "2026-08-18",
-    "weightKg": 66.4,
-    "bodyFatPct": 19.5,
-    "waistCm": 82.1
+    "weightKg": 66.4
   },
   {
     "id": "bm-00370",
     "clientId": "c-006",
     "date": "2026-08-19",
-    "weightKg": 67,
-    "bodyFatPct": 19.4,
-    "waistCm": 82
+    "weightKg": 67
   },
   {
     "id": "bm-00371",
     "clientId": "c-006",
     "date": "2026-08-20",
-    "weightKg": 67.1,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.3
+    "weightKg": 67.1
   },
   {
     "id": "bm-00372",
     "clientId": "c-006",
     "date": "2026-08-21",
-    "weightKg": 66.8,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.8
+    "weightKg": 66.8
   },
   {
     "id": "bm-00373",
     "clientId": "c-006",
     "date": "2026-08-22",
-    "weightKg": 66.6,
-    "bodyFatPct": 19.2,
-    "waistCm": 81
+    "weightKg": 66.6
   },
   {
     "id": "bm-00374",
     "clientId": "c-006",
     "date": "2026-08-26",
-    "weightKg": 66.9,
-    "bodyFatPct": 18.7,
-    "waistCm": 80.7
+    "weightKg": 66.9
   },
   {
     "id": "bm-00375",
     "clientId": "c-006",
     "date": "2026-08-27",
-    "weightKg": 66.8,
-    "bodyFatPct": 19.1,
-    "waistCm": 80.7
+    "weightKg": 66.8
   },
   {
     "id": "bm-00376",
     "clientId": "c-006",
     "date": "2026-08-29",
-    "weightKg": 66.8,
-    "bodyFatPct": 19,
-    "waistCm": 80.9
+    "weightKg": 66.8
   },
   {
     "id": "bm-00377",
     "clientId": "c-007",
     "date": "2026-06-03",
-    "weightKg": 95.4,
-    "bodyFatPct": 21.9,
-    "waistCm": 86.3
+    "weightKg": 95.4
   },
   {
     "id": "bm-00378",
     "clientId": "c-007",
     "date": "2026-06-06",
-    "weightKg": 94.9,
-    "bodyFatPct": 22.1,
-    "waistCm": 85.7
+    "weightKg": 94.9
   },
   {
     "id": "bm-00379",
     "clientId": "c-007",
     "date": "2026-06-07",
-    "weightKg": 94.5,
-    "bodyFatPct": 22.2,
-    "waistCm": 85.6
+    "weightKg": 94.5
   },
   {
     "id": "bm-00380",
     "clientId": "c-007",
     "date": "2026-06-09",
-    "weightKg": 94.6,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.8
+    "weightKg": 94.6
   },
   {
     "id": "bm-00381",
     "clientId": "c-007",
     "date": "2026-06-10",
-    "weightKg": 94.1,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.2
+    "weightKg": 94.1
   },
   {
     "id": "bm-00382",
     "clientId": "c-007",
     "date": "2026-06-11",
-    "weightKg": 94.7,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.4
+    "weightKg": 94.7
   },
   {
     "id": "bm-00383",
     "clientId": "c-007",
     "date": "2026-06-12",
-    "weightKg": 94.8,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.4
+    "weightKg": 94.8
   },
   {
     "id": "bm-00384",
     "clientId": "c-007",
     "date": "2026-06-13",
-    "weightKg": 94.8,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.7
+    "weightKg": 94.8
   },
   {
     "id": "bm-00385",
     "clientId": "c-007",
     "date": "2026-06-16",
-    "weightKg": 93.7,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.1
+    "weightKg": 93.7
   },
   {
     "id": "bm-00386",
     "clientId": "c-007",
     "date": "2026-06-20",
-    "weightKg": 93.4,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.5
+    "weightKg": 93.4
   },
   {
     "id": "bm-00387",
     "clientId": "c-007",
     "date": "2026-06-21",
-    "weightKg": 93.7,
-    "bodyFatPct": 21.5,
-    "waistCm": 84.7
+    "weightKg": 93.7
   },
   {
     "id": "bm-00388",
     "clientId": "c-007",
     "date": "2026-06-22",
-    "weightKg": 93.7,
-    "bodyFatPct": 21,
-    "waistCm": 84.2
+    "weightKg": 93.7
   },
   {
     "id": "bm-00389",
     "clientId": "c-007",
     "date": "2026-06-24",
-    "weightKg": 93.8,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.5
+    "weightKg": 93.8
   },
   {
     "id": "bm-00390",
     "clientId": "c-007",
     "date": "2026-06-25",
-    "weightKg": 93.4,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.9
+    "weightKg": 93.4
   },
   {
     "id": "bm-00391",
     "clientId": "c-007",
     "date": "2026-06-26",
-    "weightKg": 92.9,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.9
+    "weightKg": 92.9
   },
   {
     "id": "bm-00392",
     "clientId": "c-007",
     "date": "2026-06-28",
-    "weightKg": 93.2,
-    "bodyFatPct": 20.7,
-    "waistCm": 84.2
+    "weightKg": 93.2
   },
   {
     "id": "bm-00393",
     "clientId": "c-007",
     "date": "2026-06-29",
-    "weightKg": 93.2,
-    "bodyFatPct": 20.7,
-    "waistCm": 83.8
+    "weightKg": 93.2
   },
   {
     "id": "bm-00394",
     "clientId": "c-007",
     "date": "2026-07-01",
-    "weightKg": 93.3,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.6
+    "weightKg": 93.3
   },
   {
     "id": "bm-00395",
     "clientId": "c-007",
     "date": "2026-07-04",
-    "weightKg": 92.5,
-    "bodyFatPct": 20.6,
-    "waistCm": 84.1
+    "weightKg": 92.5
   },
   {
     "id": "bm-00396",
     "clientId": "c-007",
     "date": "2026-07-06",
-    "weightKg": 92.5,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.4
+    "weightKg": 92.5
   },
   {
     "id": "bm-00397",
     "clientId": "c-007",
     "date": "2026-07-09",
-    "weightKg": 92.5,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.8
+    "weightKg": 92.5
   },
   {
     "id": "bm-00398",
     "clientId": "c-007",
     "date": "2026-07-12",
-    "weightKg": 91.9,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.6
+    "weightKg": 91.9
   },
   {
     "id": "bm-00399",
     "clientId": "c-007",
     "date": "2026-07-15",
-    "weightKg": 92.2,
-    "bodyFatPct": 20.1,
-    "waistCm": 83.6
+    "weightKg": 92.2
   },
   {
     "id": "bm-00400",
     "clientId": "c-007",
     "date": "2026-07-18",
-    "weightKg": 92,
-    "bodyFatPct": 20.4,
-    "waistCm": 82.9
+    "weightKg": 92
   },
   {
     "id": "bm-00401",
     "clientId": "c-007",
     "date": "2026-07-20",
-    "weightKg": 91.9,
-    "bodyFatPct": 20.3,
-    "waistCm": 82.7
+    "weightKg": 91.9
   },
   {
     "id": "bm-00402",
     "clientId": "c-007",
     "date": "2026-07-23",
-    "weightKg": 91.6,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.5
+    "weightKg": 91.6
   },
   {
     "id": "bm-00403",
     "clientId": "c-007",
     "date": "2026-07-25",
-    "weightKg": 91.1,
-    "bodyFatPct": 20,
-    "waistCm": 82.5
+    "weightKg": 91.1
   },
   {
     "id": "bm-00404",
     "clientId": "c-007",
     "date": "2026-07-26",
-    "weightKg": 90.9,
-    "bodyFatPct": 20,
-    "waistCm": 83.5
+    "weightKg": 90.9
   },
   {
     "id": "bm-00405",
     "clientId": "c-007",
     "date": "2026-07-27",
-    "weightKg": 91.2,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.3
+    "weightKg": 91.2
   },
   {
     "id": "bm-00406",
     "clientId": "c-007",
     "date": "2026-07-29",
-    "weightKg": 90.6,
-    "bodyFatPct": 19.7,
-    "waistCm": 83.1
+    "weightKg": 90.6
   },
   {
     "id": "bm-00407",
     "clientId": "c-007",
     "date": "2026-07-30",
-    "weightKg": 90.7,
-    "bodyFatPct": 20.2,
-    "waistCm": 82.4
+    "weightKg": 90.7
   },
   {
     "id": "bm-00408",
     "clientId": "c-007",
     "date": "2026-08-02",
-    "weightKg": 90.6,
-    "bodyFatPct": 19.8,
-    "waistCm": 83
+    "weightKg": 90.6
   },
   {
     "id": "bm-00409",
     "clientId": "c-007",
     "date": "2026-08-03",
-    "weightKg": 90.3,
-    "bodyFatPct": 19.4,
-    "waistCm": 82.9
+    "weightKg": 90.3
   },
   {
     "id": "bm-00410",
     "clientId": "c-007",
     "date": "2026-08-04",
-    "weightKg": 90.1,
-    "bodyFatPct": 20,
-    "waistCm": 82.4
+    "weightKg": 90.1
   },
   {
     "id": "bm-00411",
     "clientId": "c-007",
     "date": "2026-08-06",
-    "weightKg": 90.5,
-    "bodyFatPct": 20,
-    "waistCm": 82.7
+    "weightKg": 90.5
   },
   {
     "id": "bm-00412",
     "clientId": "c-007",
     "date": "2026-08-10",
-    "weightKg": 91,
-    "bodyFatPct": 19.8,
-    "waistCm": 82.6
+    "weightKg": 91
   },
   {
     "id": "bm-00413",
     "clientId": "c-007",
     "date": "2026-08-13",
-    "weightKg": 90.8,
-    "bodyFatPct": 19.3,
-    "waistCm": 82
+    "weightKg": 90.8
   },
   {
     "id": "bm-00414",
     "clientId": "c-007",
     "date": "2026-08-14",
-    "weightKg": 91.3,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.8
+    "weightKg": 91.3
   },
   {
     "id": "bm-00415",
     "clientId": "c-007",
     "date": "2026-08-16",
-    "weightKg": 90.6,
-    "bodyFatPct": 19.1,
-    "waistCm": 81.3
+    "weightKg": 90.6
   },
   {
     "id": "bm-00416",
     "clientId": "c-007",
     "date": "2026-08-17",
-    "weightKg": 91,
-    "bodyFatPct": 19.1,
-    "waistCm": 82.2
+    "weightKg": 91
   },
   {
     "id": "bm-00417",
     "clientId": "c-007",
     "date": "2026-08-22",
-    "weightKg": 90.3,
-    "bodyFatPct": 18.7,
-    "waistCm": 81.9
+    "weightKg": 90.3
   },
   {
     "id": "bm-00418",
     "clientId": "c-007",
     "date": "2026-08-26",
-    "weightKg": 90.7,
-    "bodyFatPct": 18.9,
-    "waistCm": 80.8
+    "weightKg": 90.7
   },
   {
     "id": "bm-00419",
     "clientId": "c-007",
     "date": "2026-08-27",
-    "weightKg": 90.6,
-    "bodyFatPct": 18.5,
-    "waistCm": 80.6
+    "weightKg": 90.6
   },
   {
     "id": "bm-00420",
     "clientId": "c-007",
     "date": "2026-08-28",
-    "weightKg": 90.1,
-    "bodyFatPct": 19,
-    "waistCm": 81.3
+    "weightKg": 90.1
   },
   {
     "id": "bm-00421",
     "clientId": "c-007",
     "date": "2026-08-29",
-    "weightKg": 90.6,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.1
+    "weightKg": 90.6
   },
   {
     "id": "bm-00422",
     "clientId": "c-008",
     "date": "2026-06-01",
-    "weightKg": 61.3,
-    "bodyFatPct": 22.2,
-    "waistCm": 86.5
+    "weightKg": 61.3
   },
   {
     "id": "bm-00423",
     "clientId": "c-008",
     "date": "2026-06-02",
-    "weightKg": 60.8,
-    "bodyFatPct": 22.3,
-    "waistCm": 85.6
+    "weightKg": 60.8
   },
   {
     "id": "bm-00424",
     "clientId": "c-008",
     "date": "2026-06-03",
-    "weightKg": 61.5,
-    "bodyFatPct": 22.3,
-    "waistCm": 86.1
+    "weightKg": 61.5
   },
   {
     "id": "bm-00425",
     "clientId": "c-008",
     "date": "2026-06-04",
-    "weightKg": 61.6,
-    "bodyFatPct": 21.8,
-    "waistCm": 86
+    "weightKg": 61.6
   },
   {
     "id": "bm-00426",
     "clientId": "c-008",
     "date": "2026-06-05",
-    "weightKg": 61,
-    "bodyFatPct": 22.2,
-    "waistCm": 85.9
+    "weightKg": 61
   },
   {
     "id": "bm-00427",
     "clientId": "c-008",
     "date": "2026-06-06",
-    "weightKg": 61.6,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.1
+    "weightKg": 61.6
   },
   {
     "id": "bm-00428",
     "clientId": "c-008",
     "date": "2026-06-07",
-    "weightKg": 60.9,
-    "bodyFatPct": 21.4,
-    "waistCm": 85.6
+    "weightKg": 60.9
   },
   {
     "id": "bm-00429",
     "clientId": "c-008",
     "date": "2026-06-08",
-    "weightKg": 60.8,
-    "bodyFatPct": 21.4,
-    "waistCm": 85.4
+    "weightKg": 60.8
   },
   {
     "id": "bm-00430",
     "clientId": "c-008",
     "date": "2026-06-09",
-    "weightKg": 61.4,
-    "bodyFatPct": 21.6,
-    "waistCm": 86
+    "weightKg": 61.4
   },
   {
     "id": "bm-00431",
     "clientId": "c-008",
     "date": "2026-06-10",
-    "weightKg": 61.5,
-    "bodyFatPct": 21.8,
-    "waistCm": 85.9
+    "weightKg": 61.5
   },
   {
     "id": "bm-00432",
     "clientId": "c-008",
     "date": "2026-06-11",
-    "weightKg": 61.3,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.1
+    "weightKg": 61.3
   },
   {
     "id": "bm-00433",
     "clientId": "c-008",
     "date": "2026-06-12",
-    "weightKg": 61.5,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.6
+    "weightKg": 61.5
   },
   {
     "id": "bm-00434",
     "clientId": "c-008",
     "date": "2026-06-13",
-    "weightKg": 61.4,
-    "bodyFatPct": 21.6,
-    "waistCm": 84.9
+    "weightKg": 61.4
   },
   {
     "id": "bm-00435",
     "clientId": "c-008",
     "date": "2026-06-14",
-    "weightKg": 61.3,
-    "bodyFatPct": 21.5,
-    "waistCm": 84.9
+    "weightKg": 61.3
   },
   {
     "id": "bm-00436",
     "clientId": "c-008",
     "date": "2026-06-15",
-    "weightKg": 61.6,
-    "bodyFatPct": 21.2,
-    "waistCm": 85.5
+    "weightKg": 61.6
   },
   {
     "id": "bm-00437",
     "clientId": "c-008",
     "date": "2026-06-16",
-    "weightKg": 61.6,
-    "bodyFatPct": 21.7,
-    "waistCm": 85.7
+    "weightKg": 61.6
   },
   {
     "id": "bm-00438",
     "clientId": "c-008",
     "date": "2026-06-17",
-    "weightKg": 61.5,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.1
+    "weightKg": 61.5
   },
   {
     "id": "bm-00439",
     "clientId": "c-008",
     "date": "2026-06-18",
-    "weightKg": 61.5,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.3
+    "weightKg": 61.5
   },
   {
     "id": "bm-00440",
     "clientId": "c-008",
     "date": "2026-06-19",
-    "weightKg": 61.2,
-    "bodyFatPct": 21.4,
-    "waistCm": 84.5
+    "weightKg": 61.2
   },
   {
     "id": "bm-00441",
     "clientId": "c-008",
     "date": "2026-06-20",
-    "weightKg": 61.5,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.5
+    "weightKg": 61.5
   },
   {
     "id": "bm-00442",
     "clientId": "c-008",
     "date": "2026-06-21",
-    "weightKg": 61.6,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.3
+    "weightKg": 61.6
   },
   {
     "id": "bm-00443",
     "clientId": "c-008",
     "date": "2026-06-22",
-    "weightKg": 61.4,
-    "bodyFatPct": 21.1,
-    "waistCm": 85
+    "weightKg": 61.4
   },
   {
     "id": "bm-00444",
     "clientId": "c-008",
     "date": "2026-06-23",
-    "weightKg": 61.2,
-    "bodyFatPct": 21.5,
-    "waistCm": 85.2
+    "weightKg": 61.2
   },
   {
     "id": "bm-00445",
     "clientId": "c-008",
     "date": "2026-06-24",
-    "weightKg": 61.4,
-    "bodyFatPct": 21,
-    "waistCm": 85
+    "weightKg": 61.4
   },
   {
     "id": "bm-00446",
     "clientId": "c-008",
     "date": "2026-06-25",
-    "weightKg": 61.2,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.9
+    "weightKg": 61.2
   },
   {
     "id": "bm-00447",
     "clientId": "c-008",
     "date": "2026-06-26",
-    "weightKg": 61.3,
-    "bodyFatPct": 21.3,
-    "waistCm": 85.1
+    "weightKg": 61.3
   },
   {
     "id": "bm-00448",
     "clientId": "c-008",
     "date": "2026-06-27",
-    "weightKg": 61.2,
-    "bodyFatPct": 21.3,
-    "waistCm": 84.3
+    "weightKg": 61.2
   },
   {
     "id": "bm-00449",
     "clientId": "c-008",
     "date": "2026-06-28",
-    "weightKg": 61.5,
-    "bodyFatPct": 21,
-    "waistCm": 84.7
+    "weightKg": 61.5
   },
   {
     "id": "bm-00450",
     "clientId": "c-008",
     "date": "2026-06-30",
-    "weightKg": 61.3,
-    "bodyFatPct": 21.2,
-    "waistCm": 83.8
+    "weightKg": 61.3
   },
   {
     "id": "bm-00451",
     "clientId": "c-008",
     "date": "2026-07-01",
-    "weightKg": 61.1,
-    "bodyFatPct": 20.6,
-    "waistCm": 84.2
+    "weightKg": 61.1
   },
   {
     "id": "bm-00452",
     "clientId": "c-008",
     "date": "2026-07-02",
-    "weightKg": 61.3,
-    "bodyFatPct": 20.5,
-    "waistCm": 84.4
+    "weightKg": 61.3
   },
   {
     "id": "bm-00453",
     "clientId": "c-008",
     "date": "2026-07-03",
-    "weightKg": 61.2,
-    "bodyFatPct": 21.2,
-    "waistCm": 84.8
+    "weightKg": 61.2
   },
   {
     "id": "bm-00454",
     "clientId": "c-008",
     "date": "2026-07-04",
-    "weightKg": 61.6,
-    "bodyFatPct": 21.1,
-    "waistCm": 84.2
+    "weightKg": 61.6
   },
   {
     "id": "bm-00455",
     "clientId": "c-008",
     "date": "2026-07-05",
-    "weightKg": 61.4,
-    "bodyFatPct": 20.9,
-    "waistCm": 84.1
+    "weightKg": 61.4
   },
   {
     "id": "bm-00456",
     "clientId": "c-008",
     "date": "2026-07-06",
-    "weightKg": 61.4,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.6
+    "weightKg": 61.4
   },
   {
     "id": "bm-00457",
     "clientId": "c-008",
     "date": "2026-07-07",
-    "weightKg": 61.2,
-    "bodyFatPct": 20.8,
-    "waistCm": 84.4
+    "weightKg": 61.2
   },
   {
     "id": "bm-00458",
     "clientId": "c-008",
     "date": "2026-07-08",
-    "weightKg": 61.8,
-    "bodyFatPct": 20.9,
-    "waistCm": 83.6
+    "weightKg": 61.8
   },
   {
     "id": "bm-00459",
     "clientId": "c-008",
     "date": "2026-07-10",
-    "weightKg": 61.8,
-    "bodyFatPct": 20.2,
-    "waistCm": 83.5
+    "weightKg": 61.8
   },
   {
     "id": "bm-00460",
     "clientId": "c-008",
     "date": "2026-07-11",
-    "weightKg": 61.8,
-    "bodyFatPct": 20.5,
-    "waistCm": 83.2
+    "weightKg": 61.8
   },
   {
     "id": "bm-00461",
     "clientId": "c-008",
     "date": "2026-07-12",
-    "weightKg": 61.3,
-    "bodyFatPct": 20.2,
-    "waistCm": 84.1
+    "weightKg": 61.3
   },
   {
     "id": "bm-00462",
     "clientId": "c-008",
     "date": "2026-07-13",
-    "weightKg": 61.2,
-    "bodyFatPct": 20.3,
-    "waistCm": 83.9
+    "weightKg": 61.2
   },
   {
     "id": "bm-00463",
     "clientId": "c-008",
     "date": "2026-07-14",
-    "weightKg": 61.4,
-    "bodyFatPct": 20.8,
-    "waistCm": 84
+    "weightKg": 61.4
   },
   {
     "id": "bm-00464",
     "clientId": "c-008",
     "date": "2026-07-15",
-    "weightKg": 61.5,
-    "bodyFatPct": 20.6,
-    "waistCm": 84
+    "weightKg": 61.5
   },
   {
     "id": "bm-00465",
     "clientId": "c-008",
     "date": "2026-07-16",
-    "weightKg": 61,
-    "bodyFatPct": 20,
-    "waistCm": 82.9
+    "weightKg": 61
   },
   {
     "id": "bm-00466",
     "clientId": "c-008",
     "date": "2026-07-17",
-    "weightKg": 61.9,
-    "bodyFatPct": 20.6,
-    "waistCm": 82.9
+    "weightKg": 61.9
   },
   {
     "id": "bm-00467",
     "clientId": "c-008",
     "date": "2026-07-18",
-    "weightKg": 61.4,
-    "bodyFatPct": 20,
-    "waistCm": 83.7
+    "weightKg": 61.4
   },
   {
     "id": "bm-00468",
     "clientId": "c-008",
     "date": "2026-07-19",
-    "weightKg": 61.9,
-    "bodyFatPct": 20,
-    "waistCm": 82.8
+    "weightKg": 61.9
   },
   {
     "id": "bm-00469",
     "clientId": "c-008",
     "date": "2026-07-20",
-    "weightKg": 61.2,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.9
+    "weightKg": 61.2
   },
   {
     "id": "bm-00470",
     "clientId": "c-008",
     "date": "2026-07-21",
-    "weightKg": 61.2,
-    "bodyFatPct": 20.3,
-    "waistCm": 83
+    "weightKg": 61.2
   },
   {
     "id": "bm-00471",
     "clientId": "c-008",
     "date": "2026-07-22",
-    "weightKg": 61.2,
-    "bodyFatPct": 19.8,
-    "waistCm": 83.7
+    "weightKg": 61.2
   },
   {
     "id": "bm-00472",
     "clientId": "c-008",
     "date": "2026-07-24",
-    "weightKg": 61.5,
-    "bodyFatPct": 20.4,
-    "waistCm": 83.5
+    "weightKg": 61.5
   },
   {
     "id": "bm-00473",
     "clientId": "c-008",
     "date": "2026-07-25",
-    "weightKg": 61.6,
-    "bodyFatPct": 20.2,
-    "waistCm": 82.5
+    "weightKg": 61.6
   },
   {
     "id": "bm-00474",
     "clientId": "c-008",
     "date": "2026-07-26",
-    "weightKg": 61.7,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.4
+    "weightKg": 61.7
   },
   {
     "id": "bm-00475",
     "clientId": "c-008",
     "date": "2026-07-27",
-    "weightKg": 61.6,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.9
+    "weightKg": 61.6
   },
   {
     "id": "bm-00476",
     "clientId": "c-008",
     "date": "2026-07-28",
-    "weightKg": 61.9,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.6
+    "weightKg": 61.9
   },
   {
     "id": "bm-00477",
     "clientId": "c-008",
     "date": "2026-07-29",
-    "weightKg": 61.2,
-    "bodyFatPct": 19.9,
-    "waistCm": 83.2
+    "weightKg": 61.2
   },
   {
     "id": "bm-00478",
     "clientId": "c-008",
     "date": "2026-07-30",
-    "weightKg": 61.9,
-    "bodyFatPct": 19.6,
-    "waistCm": 83.2
+    "weightKg": 61.9
   },
   {
     "id": "bm-00479",
     "clientId": "c-008",
     "date": "2026-07-31",
-    "weightKg": 61.3,
-    "bodyFatPct": 20.1,
-    "waistCm": 82.4
+    "weightKg": 61.3
   },
   {
     "id": "bm-00480",
     "clientId": "c-008",
     "date": "2026-08-01",
-    "weightKg": 61.4,
-    "bodyFatPct": 19.6,
-    "waistCm": 83
+    "weightKg": 61.4
   },
   {
     "id": "bm-00481",
     "clientId": "c-008",
     "date": "2026-08-02",
-    "weightKg": 61.2,
-    "bodyFatPct": 20,
-    "waistCm": 82.7
+    "weightKg": 61.2
   },
   {
     "id": "bm-00482",
     "clientId": "c-008",
     "date": "2026-08-03",
-    "weightKg": 61.1,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.3
+    "weightKg": 61.1
   },
   {
     "id": "bm-00483",
     "clientId": "c-008",
     "date": "2026-08-04",
-    "weightKg": 61.3,
-    "bodyFatPct": 19.7,
-    "waistCm": 81.8
+    "weightKg": 61.3
   },
   {
     "id": "bm-00484",
     "clientId": "c-008",
     "date": "2026-08-05",
-    "weightKg": 61.4,
-    "bodyFatPct": 19.9,
-    "waistCm": 82.3
+    "weightKg": 61.4
   },
   {
     "id": "bm-00485",
     "clientId": "c-008",
     "date": "2026-08-08",
-    "weightKg": 61.1,
-    "bodyFatPct": 19.2,
-    "waistCm": 82.5
+    "weightKg": 61.1
   },
   {
     "id": "bm-00486",
     "clientId": "c-008",
     "date": "2026-08-09",
-    "weightKg": 61.9,
-    "bodyFatPct": 19.6,
-    "waistCm": 82.2
+    "weightKg": 61.9
   },
   {
     "id": "bm-00487",
     "clientId": "c-008",
     "date": "2026-08-10",
-    "weightKg": 62,
-    "bodyFatPct": 19.3,
-    "waistCm": 82.2
+    "weightKg": 62
   },
   {
     "id": "bm-00488",
     "clientId": "c-008",
     "date": "2026-08-11",
-    "weightKg": 62,
-    "bodyFatPct": 19.4,
-    "waistCm": 81.4
+    "weightKg": 62
   },
   {
     "id": "bm-00489",
     "clientId": "c-008",
     "date": "2026-08-13",
-    "weightKg": 61.9,
-    "bodyFatPct": 19.1,
-    "waistCm": 82.1
+    "weightKg": 61.9
   },
   {
     "id": "bm-00490",
     "clientId": "c-008",
     "date": "2026-08-14",
-    "weightKg": 61.4,
-    "bodyFatPct": 19.5,
-    "waistCm": 81.3
+    "weightKg": 61.4
   },
   {
     "id": "bm-00491",
     "clientId": "c-008",
     "date": "2026-08-15",
-    "weightKg": 61.5,
-    "bodyFatPct": 19.6,
-    "waistCm": 81.5
+    "weightKg": 61.5
   },
   {
     "id": "bm-00492",
     "clientId": "c-008",
     "date": "2026-08-16",
-    "weightKg": 61.8,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.8
+    "weightKg": 61.8
   },
   {
     "id": "bm-00493",
     "clientId": "c-008",
     "date": "2026-08-17",
-    "weightKg": 61.3,
-    "bodyFatPct": 19.5,
-    "waistCm": 81.5
+    "weightKg": 61.3
   },
   {
     "id": "bm-00494",
     "clientId": "c-008",
     "date": "2026-08-18",
-    "weightKg": 61.4,
-    "bodyFatPct": 19.6,
-    "waistCm": 81.8
+    "weightKg": 61.4
   },
   {
     "id": "bm-00495",
     "clientId": "c-008",
     "date": "2026-08-19",
-    "weightKg": 61.4,
-    "bodyFatPct": 19.4,
-    "waistCm": 81.5
+    "weightKg": 61.4
   },
   {
     "id": "bm-00496",
     "clientId": "c-008",
     "date": "2026-08-20",
-    "weightKg": 61.2,
-    "bodyFatPct": 19.4,
-    "waistCm": 81.3
+    "weightKg": 61.2
   },
   {
     "id": "bm-00497",
     "clientId": "c-008",
     "date": "2026-08-21",
-    "weightKg": 62,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.4
+    "weightKg": 62
   },
   {
     "id": "bm-00498",
     "clientId": "c-008",
     "date": "2026-08-22",
-    "weightKg": 61.8,
-    "bodyFatPct": 19,
-    "waistCm": 81.1
+    "weightKg": 61.8
   },
   {
     "id": "bm-00499",
     "clientId": "c-008",
     "date": "2026-08-24",
-    "weightKg": 61.8,
-    "bodyFatPct": 18.6,
-    "waistCm": 81.4
+    "weightKg": 61.8
   },
   {
     "id": "bm-00500",
     "clientId": "c-008",
     "date": "2026-08-25",
-    "weightKg": 61.9,
-    "bodyFatPct": 18.8,
-    "waistCm": 81.3
+    "weightKg": 61.9
   },
   {
     "id": "bm-00501",
     "clientId": "c-008",
     "date": "2026-08-26",
-    "weightKg": 61.9,
-    "bodyFatPct": 18.7,
-    "waistCm": 81.3
+    "weightKg": 61.9
   },
   {
     "id": "bm-00502",
     "clientId": "c-008",
     "date": "2026-08-27",
-    "weightKg": 62.1,
-    "bodyFatPct": 18.9,
-    "waistCm": 81
+    "weightKg": 62.1
   },
   {
     "id": "bm-00503",
     "clientId": "c-008",
     "date": "2026-08-28",
-    "weightKg": 61.9,
-    "bodyFatPct": 18.9,
-    "waistCm": 81.3
+    "weightKg": 61.9
   },
   {
     "id": "bm-00504",
     "clientId": "c-008",
     "date": "2026-08-29",
-    "weightKg": 61.4,
-    "bodyFatPct": 19.2,
-    "waistCm": 81.5
+    "weightKg": 61.4
   }
 ]

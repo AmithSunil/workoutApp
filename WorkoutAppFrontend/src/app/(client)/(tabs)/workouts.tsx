@@ -3,12 +3,13 @@ import { useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import { useGetClientRoutinesQuery } from '@/api/endpoints/routinesApi';
-import { useGetWorkoutLogsQuery, useGetWorkoutSessionsQuery } from '@/api/endpoints/workoutsApi';
+import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { BarSeries, type BarDatum } from '@/components/charts';
 import { RoutineCard } from '@/components/routines';
-import { SessionCard } from '@/components/workouts/SessionCard';
+import { TodayCard } from '@/components/workouts/TodayCard';
 import { WorkoutLogRow } from '@/components/workouts/WorkoutLogRow';
 import {
+  Button,
   Card,
   EmptyState,
   Screen,
@@ -19,28 +20,44 @@ import {
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
+import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { spacing } from '@/theme';
-import { TODAY, diffInDays, startOfWeek, addDays, weekdayInitial } from '@/utils/date';
+import {
+  TODAY,
+  WEEKDAY_LABEL,
+  addDays,
+  diffInDays,
+  startOfWeek,
+  weekdayInitial,
+  weekdayOf,
+} from '@/utils/date';
 import { volume } from '@/utils/format';
 
 type Tab = 'upcoming' | 'history';
 
-/** Training hub: what's next, and an auditable record of what's been done. */
+/** Training hub: what's on today, and an auditable record of what's been done. */
 export default function WorkoutsScreen() {
   const router = useRouter();
   const { clientId } = useSession();
   const [tab, setTab] = useState<Tab>('upcoming');
 
-  const sessions = useGetWorkoutSessionsQuery({ clientId: clientId ?? '' }, { skip: !clientId });
+  // A coach who tracks nutrition only writes no programme, so the client does.
+  const selfPlanned = !useTracking().workout;
+
   const logs = useGetWorkoutLogsQuery({ clientId: clientId ?? '', limit: 40 }, { skip: !clientId });
   const routines = useGetClientRoutinesQuery({ clientId: clientId ?? '' }, { skip: !clientId });
 
-  const todaySession = sessions.data?.find((s) => s.scheduledFor === TODAY);
-  const upcoming = useMemo(
-    () => (sessions.data ?? []).filter((s) => s.scheduledFor > TODAY).slice(0, 6),
-    [sessions.data]
-  );
+  // The newest assignment is the current programme: a routine runs until the
+  // trainer assigns a different one, and `GET /assignments` is newest-first.
+  const current = routines.data?.[0];
+  const today = weekdayOf();
+  const todayDay = current?.days.find((day) => day.weekday === today) ?? null;
+  // One workout per day: once today is logged the Today section shows it, and
+  // every route into the logger becomes an edit of that log.
+  const todayLog = (logs.data ?? []).find((l) => l.date === TODAY);
+  const editToday = () =>
+    router.push(current ? routes.client.train(current.assignmentId) : routes.client.trainCustom());
 
   const weekLogs = useMemo(
     () => (logs.data ?? []).filter((l) => diffInDays(TODAY, l.date) < 7),
@@ -57,25 +74,25 @@ export default function WorkoutsScreen() {
         key: date,
         label: weekdayInitial(date),
         value: log ? Math.round(log.totalVolumeKg / 100) : 0,
-        caption: log ? `${log.rpe}` : '',
+        caption: log ? `${log.durationMinutes}m` : '',
       };
     });
   }, [logs.data]);
 
   const totalVolume = weekLogs.reduce((sum, l) => sum + l.totalVolumeKg, 0);
-  const avgRpe = weekLogs.length
-    ? (weekLogs.reduce((s, l) => s + l.rpe, 0) / weekLogs.length).toFixed(1)
-    : '—';
+  const avgMinutes = weekLogs.length
+    ? Math.round(weekLogs.reduce((s, l) => s + l.durationMinutes, 0) / weekLogs.length)
+    : 0;
 
   return (
     <Screen
       title="Workouts"
-      subtitle="Your programme, written by your coach"
+      subtitle={selfPlanned ? 'Your routine, planned by you' : 'Your routine, written by your coach'}
       refreshControl={
         <RefreshControl
-          refreshing={sessions.isFetching || logs.isFetching}
+          refreshing={routines.isFetching || logs.isFetching}
           onRefresh={() => {
-            void sessions.refetch();
+            void routines.refetch();
             void logs.refetch();
           }}
         />
@@ -84,10 +101,9 @@ export default function WorkoutsScreen() {
         <StatTile label="Sessions / 7d" value={`${weekLogs.length}`} icon="checkmark-done" tone="primary" />
         <StatTile label="Volume / 7d" value={volume(totalVolume)} icon="stats-chart" tone="success" />
         <StatTile
-          label="Avg RPE"
-          value={avgRpe}
-          icon="speedometer"
-          tone={Number(avgRpe) >= 8.5 ? 'danger' : 'default'}
+          label="Avg session"
+          value={avgMinutes ? `${avgMinutes}m` : '—'}
+          icon="time-outline"
         />
       </View>
 
@@ -96,7 +112,7 @@ export default function WorkoutsScreen() {
           <View>
             <Text variant="h2">This week's load</Text>
             <Text variant="micro" tone="tertiary">
-              Volume in hundreds of kg · number below each bar is RPE
+              Volume in hundreds of kg · minutes below each bar
             </Text>
           </View>
         </View>
@@ -114,9 +130,75 @@ export default function WorkoutsScreen() {
 
       {tab === 'upcoming' ? (
         <>
+          <SectionHeader
+            title="Today"
+            caption={todayLog ? 'Done' : todayDay ? WEEKDAY_LABEL[today] : 'Rest day'}
+          />
+          {routines.isLoading || logs.isLoading ? (
+            <SkeletonCard lines={3} />
+          ) : todayLog ? (
+            <>
+              <WorkoutLogRow
+                log={todayLog}
+                onPress={() => router.push(routes.workoutLog(todayLog.id))}
+              />
+              <Button
+                label="Edit today's workout"
+                icon="create-outline"
+                variant="secondary"
+                fullWidth
+                onPress={editToday}
+              />
+            </>
+          ) : todayDay && current ? (
+            <TodayCard
+              day={todayDay}
+              routineTitle={current.title}
+              onStart={editToday}
+              onPress={() => router.push(routes.client.routine(current.assignmentId))}
+            />
+          ) : (
+            <Card>
+              <EmptyState
+                icon={current ? 'bed-outline' : 'calendar-outline'}
+                title={current ? 'Rest day' : 'No routine yet'}
+                message={
+                  current
+                    ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
+                    : selfPlanned
+                      ? 'Plan a routine below and your training week takes shape here.'
+                      : "Your coach hasn't given you a routine yet. Message them if you're unsure."
+                }
+                compact
+              />
+            </Card>
+          )}
+
+          {todayLog ? null : (
+            <Button
+              label="Train something else today"
+              icon="swap-horizontal"
+              variant="secondary"
+              fullWidth
+              onPress={() => router.push(routes.client.trainCustom())}
+            />
+          )}
+
+          {selfPlanned ? (
+            <Button
+              label="Plan a routine"
+              icon="add"
+              fullWidth
+              onPress={() => router.push(routes.client.routineBuilder())}
+            />
+          ) : null}
+
           {(routines.data ?? []).length > 0 ? (
             <>
-              <SectionHeader title="Your routines" caption="Written for you by your coach" />
+              <SectionHeader
+                title="Your routines"
+                caption={selfPlanned ? 'Planned by you' : 'Written for you by your coach'}
+              />
               {(routines.data ?? []).map((assigned) => (
                 <RoutineCard
                   key={assigned.assignmentId}
@@ -128,39 +210,6 @@ export default function WorkoutsScreen() {
               ))}
             </>
           ) : null}
-
-          {todaySession ? (
-            <>
-              <SectionHeader title="Today" caption="Due now" />
-              <SessionCard
-                session={todaySession}
-                featured
-                onStart={() => router.push(routes.client.session(todaySession.id))}
-              />
-            </>
-          ) : null}
-
-          <SectionHeader title="Coming up" caption="Next sessions in your block" />
-          {sessions.isLoading ? (
-            <SkeletonCard lines={3} />
-          ) : upcoming.length === 0 ? (
-            <Card>
-              <EmptyState
-                icon="calendar-outline"
-                title="Nothing scheduled yet"
-                message="Your coach hasn't published the next block. Message them if you're unsure."
-                compact
-              />
-            </Card>
-          ) : (
-            upcoming.map((session) => (
-              <SessionCard
-                key={session.id}
-                session={session}
-                onStart={() => router.push(routes.client.session(session.id))}
-              />
-            ))
-          )}
         </>
       ) : (
         <>
@@ -172,7 +221,7 @@ export default function WorkoutsScreen() {
               <EmptyState
                 icon="barbell-outline"
                 title="No sessions logged"
-                message="Start a workout from your programme and it will appear here."
+                message="Start a workout from your routine and it will appear here."
                 compact
               />
             </Card>

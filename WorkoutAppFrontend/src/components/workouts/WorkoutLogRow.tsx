@@ -4,31 +4,24 @@ import { StyleSheet, View } from 'react-native';
 import { Card, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { WorkoutLog } from '@/types/models';
-import { friendlyDate } from '@/utils/date';
+import { friendlyDate, monthDay } from '@/utils/date';
 import { plural, volume } from '@/utils/format';
-
-import { rpeColor } from './RpeSlider';
 
 export interface WorkoutLogRowProps {
   log: WorkoutLog;
   onPress?: () => void;
-  /** Trainer-side flag: draws attention to sessions logged above RPE 8. */
-  flagHighStrain?: boolean;
 }
 
-export function WorkoutLogRow({ log, onPress, flagHighStrain = true }: WorkoutLogRowProps) {
-  const high = flagHighStrain && log.rpe >= 9;
-  const tint = rpeColor(log.rpe);
+export function WorkoutLogRow({ log, onPress }: WorkoutLogRowProps) {
+  const [month, day] = monthDay(log.date).split(' ');
 
   return (
     <Card variant="flat" padded={false} onPress={onPress} style={styles.card}>
       <View style={styles.row}>
-        <View style={[styles.rpe, { backgroundColor: tint }]}>
-          <Text variant="h2" color={colors.textInverse}>
-            {log.rpe}
-          </Text>
-          <Text variant="micro" color={colors.textInverse}>
-            RPE
+        <View style={styles.date}>
+          <Text variant="h2">{day}</Text>
+          <Text variant="micro" tone="tertiary">
+            {month.toUpperCase()}
           </Text>
         </View>
 
@@ -46,14 +39,6 @@ export function WorkoutLogRow({ log, onPress, flagHighStrain = true }: WorkoutLo
         </View>
 
         <View style={styles.right}>
-          {high ? (
-            <View style={styles.flag}>
-              <Ionicons name="flame" size={11} color={colors.danger} />
-              <Text variant="micro" tone="danger">
-                High
-              </Text>
-            </View>
-          ) : null}
           {onPress ? <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} /> : null}
         </View>
       </View>
@@ -81,10 +66,11 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     padding: spacing.md,
   },
-  rpe: {
+  date: {
     width: 46,
     height: 46,
     borderRadius: radius.sm,
+    backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -95,15 +81,6 @@ const styles = StyleSheet.create({
   right: {
     alignItems: 'flex-end',
     gap: spacing.xs,
-  },
-  flag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    backgroundColor: colors.dangerSoft,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
   },
   note: {
     flexDirection: 'row',

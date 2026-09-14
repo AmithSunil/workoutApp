@@ -4,6 +4,7 @@ import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { Avatar, Button, EmptyState, Sheet, Text } from '@/components/ui';
 import { colors, radius, spacing, statusColor } from '@/theme';
 import type { ClientProfile } from '@/types/models';
+import { GOAL_LABEL } from '@/utils/goal';
 
 export interface AssignSheetProps {
   visible: boolean;
@@ -16,6 +17,8 @@ export interface AssignSheetProps {
   saving?: boolean;
   /** Wording differs between assigning a new routine and editing an assignment. */
   confirmLabel?: string;
+  /** Shown above the confirm button when the save was refused. */
+  error?: string | null;
 }
 
 /**
@@ -32,6 +35,7 @@ export function AssignSheet({
   onConfirm,
   saving,
   confirmLabel,
+  error,
 }: AssignSheetProps) {
   const count = selectedIds.length;
 
@@ -74,7 +78,7 @@ export function AssignSheet({
                   variant="micro"
                   color={statusColor(item.compliance.status)}
                   numberOfLines={1}>
-                  {item.goal} · {item.compliance.score}% adherence
+                  {GOAL_LABEL[item.goal]} · {item.compliance.score}% adherence
                 </Text>
               </View>
               <View style={[styles.check, selected && styles.checkSelected]}>
@@ -86,6 +90,12 @@ export function AssignSheet({
           );
         }}
       />
+
+      {error ? (
+        <Text variant="caption" tone="danger">
+          {error}
+        </Text>
+      ) : null}
 
       <Button
         label={confirmLabel ?? (count === 0 ? 'Save assignment' : `Save assignment (${count})`)}

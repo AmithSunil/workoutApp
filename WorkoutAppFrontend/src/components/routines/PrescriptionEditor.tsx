@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { Card, Text } from '@/components/ui';
-import { RPE_DESCRIPTORS, rpeColor } from '@/components/workouts/RpeSlider';
 import { colors, radius, spacing } from '@/theme';
 import { restLabel } from '@/utils/format';
 
@@ -34,8 +33,6 @@ export function PrescriptionEditor({
   onMoveUp,
   onMoveDown,
 }: PrescriptionEditorProps) {
-  const tint = rpeColor(exercise.targetRpe);
-
   return (
     <Card>
       <View style={styles.header}>
@@ -138,24 +135,6 @@ export function PrescriptionEditor({
             contextLabel={exercise.name}
           />
         </View>
-        <View style={styles.cellWide}>
-          <Stepper
-            label="Target RPE"
-            value={exercise.targetRpe}
-            min={LIMITS.rpe.min}
-            max={LIMITS.rpe.max}
-            accent={tint}
-            onChange={(targetRpe) => onChange({ targetRpe })}
-            contextLabel={exercise.name}
-          />
-        </View>
-      </View>
-
-      <View style={[styles.descriptor, { borderColor: tint }]}>
-        <View style={[styles.descriptorDot, { backgroundColor: tint }]} />
-        <Text variant="micro" tone="secondary" numberOfLines={1}>
-          {RPE_DESCRIPTORS[exercise.targetRpe]}
-        </Text>
       </View>
 
       <TextInput
@@ -214,22 +193,6 @@ const styles = StyleSheet.create({
   cellWide: {
     flexGrow: 1,
     flexBasis: 140,
-  },
-  descriptor: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 5,
-    marginTop: spacing.md,
-    alignSelf: 'flex-start',
-  },
-  descriptorDot: {
-    width: 7,
-    height: 7,
-    borderRadius: radius.pill,
   },
   notes: {
     marginTop: spacing.md,

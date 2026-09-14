@@ -35,20 +35,18 @@ import type {
   RoutineDay,
   RoutineExercise,
   Thread,
+  TrackingMode,
   TrainerProfile,
   TrainerSummary,
   WorkoutLog,
-  WorkoutSession,
 } from '@/types/models';
 
 /* ------------------------------------------------------------------ scalars */
 
 type Nullable<T> = T | null;
 
-/** Postgres `numeric` carries its scale into JSON; normalise and keep nulls. */
+/** Postgres `numeric` carries its scale into JSON; normalise it. */
 const num = (v: unknown): number => Number(v ?? 0);
-const numOrUndefined = (v: unknown): number | undefined =>
-  v === null || v === undefined ? undefined : Number(v);
 
 /** `timestamptz` → the `…Z` ISO form the rest of the app assumes. */
 const iso = (v: Nullable<string>): string => (v ? new Date(v).toISOString() : '');
@@ -71,6 +69,7 @@ export interface TrainerProfileRow extends UserRow {
   id: string;
   headline: string;
   client_ids: string[];
+  tracks: Nullable<TrackingMode>;
 }
 
 export interface ClientProfileRow {
@@ -149,33 +148,6 @@ export interface NutritionDayRow {
   food_entries: FoodEntryRow[];
 }
 
-export interface PrescribedSetRow {
-  position: number;
-  reps: number;
-  target_weight_kg: Nullable<number>;
-}
-
-export interface SessionExerciseRow {
-  id: string;
-  exercise_id: string;
-  name: string;
-  muscle_group: Exercise['muscleGroup'];
-  notes: Nullable<string>;
-  position: number;
-  prescribed_sets: PrescribedSetRow[];
-}
-
-export interface WorkoutSessionRow {
-  id: string;
-  client_id: string;
-  title: string;
-  scheduled_for: string;
-  estimated_minutes: number;
-  focus: Exercise['muscleGroup'];
-  status: WorkoutSession['status'];
-  session_exercises: SessionExerciseRow[];
-}
-
 export interface LoggedSetRow {
   id: string;
   position: number;
@@ -196,11 +168,11 @@ export interface LoggedExerciseRow {
 export interface WorkoutLogRow {
   id: string;
   client_id: string;
+  /** Legacy column: training is prescribed by routines now, so this is null. */
   session_id: Nullable<string>;
   title: string;
   date: string;
   duration_minutes: number;
-  rpe: number;
   total_volume_kg: number;
   notes: Nullable<string>;
   completed_at: string;
@@ -216,7 +188,6 @@ export interface RoutineExerciseRow {
   rep_min: number;
   rep_max: number;
   rest_seconds: number;
-  target_rpe: number;
   notes: Nullable<string>;
   position: number;
 }
@@ -259,8 +230,6 @@ export interface BodyMetricRow {
   client_id: string;
   date: string;
   weight_kg: number;
-  body_fat_pct: Nullable<number>;
-  waist_cm: Nullable<number>;
 }
 
 export interface ProgressPhotoRow {
@@ -327,7 +296,6 @@ export interface CheckInRow {
   target_calories: number;
   sessions_completed: number;
   sessions_planned: number;
-  avg_rpe: number;
   client_note: string;
 }
 
@@ -349,6 +317,7 @@ export const toTrainerProfile = (r: TrainerProfileRow): TrainerProfile => ({
   avatarUrl: r.avatar_url,
   headline: r.headline,
   clientIds: r.client_ids,
+  tracks: r.tracks ?? null,
 });
 
 export const toClientProfile = (r: ClientProfileRow): ClientProfile => ({
@@ -442,36 +411,12 @@ export const toNutritionDay = (r: NutritionDayRow): NutritionDay => ({
     .map(toFoodEntry),
 });
 
-export const toWorkoutSession = (r: WorkoutSessionRow): WorkoutSession => ({
-  id: r.id,
-  clientId: r.client_id,
-  title: r.title,
-  scheduledFor: r.scheduled_for,
-  estimatedMinutes: r.estimated_minutes,
-  focus: r.focus,
-  status: r.status,
-  exercises: [...(r.session_exercises ?? [])].sort(byPosition).map((x) => ({
-    id: x.id,
-    exerciseId: x.exercise_id,
-    name: x.name,
-    muscleGroup: x.muscle_group,
-    notes: opt(x.notes),
-    sets: [...(x.prescribed_sets ?? [])].sort(byPosition).map((s) => ({
-      reps: s.reps,
-      targetWeightKg: s.target_weight_kg === null ? null : Number(s.target_weight_kg),
-    })),
-  })),
-});
-
 export const toWorkoutLog = (r: WorkoutLogRow): WorkoutLog => ({
   id: r.id,
   clientId: r.client_id,
-  // An ad-hoc workout has no scheduled session; the model declares a string.
-  sessionId: r.session_id ?? '',
   title: r.title,
   date: r.date,
   durationMinutes: r.duration_minutes,
-  rpe: num(r.rpe),
   totalVolumeKg: num(r.total_volume_kg),
   notes: opt(r.notes),
   completedAt: iso(r.completed_at),
@@ -498,7 +443,6 @@ const toRoutineExercise = (r: RoutineExerciseRow): RoutineExercise => ({
   repMin: r.rep_min,
   repMax: r.rep_max,
   restSeconds: r.rest_seconds,
-  targetRpe: num(r.target_rpe),
   notes: opt(r.notes),
 });
 
@@ -553,8 +497,6 @@ export const toBodyMetric = (r: BodyMetricRow): BodyMetric => ({
   clientId: r.client_id,
   date: r.date,
   weightKg: num(r.weight_kg),
-  bodyFatPct: numOrUndefined(r.body_fat_pct),
-  waistCm: numOrUndefined(r.waist_cm),
 });
 
 export const toProgressPhoto = (r: ProgressPhotoRow): ProgressPhoto => ({
@@ -645,7 +587,6 @@ export const toCheckIn = (r: CheckInRow): CheckIn => ({
   targetCalories: r.target_calories,
   sessionsCompleted: r.sessions_completed,
   sessionsPlanned: r.sessions_planned,
-  avgRpe: num(r.avg_rpe),
   clientNote: r.client_note,
 });
 

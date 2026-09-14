@@ -170,9 +170,9 @@ Read-side renderers (`routine_json`, `assigned_routine_json`, `workout_log_json`
 own right when a nested read is easier than an embed.
 
 Side effects worth knowing, all server-side so they cannot be skipped by a
-client: saving a log marks its session `completed` and raises a `high-rpe` alert
-at RPE 9+; food entries recompute `nutrition_days.consumed_*`; sending a message
-bumps the *recipient's* unread counter and refreshes the thread preview.
+client: saving a log marks its session `completed`; food entries recompute
+`nutrition_days.consumed_*`; sending a message bumps the *recipient's* unread
+counter and refreshes the thread preview.
 
 ## Verifying
 

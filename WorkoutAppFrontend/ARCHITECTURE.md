@@ -71,7 +71,7 @@ component stays as it is. `api/handlers.ts`, `api/mockDb.ts` and `src/mock-api/`
 are then deleted.
 
 Because writes mutate the in-memory db, they behave like a real server: log a
-meal and the trainer's compliance numbers move; finish a session at RPE 9 and a
+meal and the trainer's compliance numbers move; miss four days of logging and a
 red-flag alert appears on the triage dashboard.
 
 ## Routines vs sessions
@@ -79,11 +79,10 @@ red-flag alert appears on the triage dashboard.
 Two things describe training, and they are deliberately separate:
 
 - A **`WorkoutSession`** is dated. It is a concrete instance the client starts,
-  logs and completes, and it drives the compliance and strain numbers.
+  logs and completes, and it drives the compliance numbers.
 - A **`Routine`** carries **no dates at all**. It is a weekly template the
   trainer writes once — days pinned to *weekdays*, each with exercises stating
-  target sets, a rep *range*, rest and target RPE — and assigns to any number of
-  clients.
+  target sets, a rep *range* and rest — and assigns to any number of clients.
 
 A weekday with no `RoutineDay` is a rest day: the absence *is* the rest day, so
 a four-day split is simply four entries and the week reads as a shape.

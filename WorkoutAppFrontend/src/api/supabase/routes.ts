@@ -18,7 +18,8 @@
  * to know who is asking.
  */
 import { supabase } from '@/utils/supabase';
-import type { ISODate } from '@/types/models';
+import type { ClientGoalPatch } from '../handlers';
+import type { ISODate, MacroTargets, TrainerProfile } from '@/types/models';
 import { TODAY, addDays, diffInDays, startOfWeek } from '@/utils/date';
 
 import { ApiHttpError, fromPostgrest } from './httpError';
@@ -40,7 +41,6 @@ import {
   toTrainerProfile,
   toTrainerSummary,
   toWorkoutLog,
-  toWorkoutSession,
   fromAttachment,
   type AiSuggestionRow,
   type AlertRow,
@@ -59,7 +59,6 @@ import {
   type TrainerProfileRow,
   type TrainerSummaryRow,
   type WorkoutLogRow,
-  type WorkoutSessionRow,
 } from './rows';
 
 export interface SupabaseRequest {
@@ -111,7 +110,6 @@ const int = (v: unknown, fallback: number): number => {
 /* -------------------------------------------------------------- selects */
 
 const CLIENT = '*,users(name,email,avatar_url)';
-const SESSION = '*,session_exercises(*,prescribed_sets(*))';
 const LOG = '*,logged_exercises(*,logged_sets(*))';
 const NUTRITION = '*,food_entries(*)';
 const HABIT = '*,habit_completions(date)';
@@ -123,6 +121,21 @@ const ASSIGNMENT =
 
 const clients = () =>
   rows<ClientProfileRow>(supabase.from('client_profiles').select(CLIENT).order('id'));
+
+/** `MacroTargets` flattened onto the target_* columns both tables share. */
+const macroColumns = (t: MacroTargets) => ({
+  target_calories: t.calories,
+  target_protein: t.protein,
+  target_carbs: t.carbs,
+  target_fat: t.fat,
+});
+
+const trainerProfile = () =>
+  row<TrainerProfileRow>(
+    supabase.from('v_trainer_profiles').select('*').limit(1).single(),
+    'No trainer profile is visible to this account',
+  );
+
 
 /* ---------------------------------------------------------------- routes */
 
@@ -136,26 +149,32 @@ export const supabaseRoutes: Array<{
     method: 'GET',
     pattern: '/session/roles',
     handler: async () => {
-      const [trainerRow, clientRows] = await Promise.all([
-        row<TrainerProfileRow>(
-          supabase.from('v_trainer_profiles').select('*').limit(1).single(),
-          'No trainer profile is visible to this account',
-        ),
-        clients(),
-      ]);
+      const [trainerRow, clientRows] = await Promise.all([trainerProfile(), clients()]);
       return { trainer: toTrainerProfile(trainerRow), clients: clientRows.map(toClientProfile) };
     },
   },
   {
     method: 'GET',
     pattern: '/trainer',
-    handler: async () =>
-      toTrainerProfile(
-        await row<TrainerProfileRow>(
-          supabase.from('v_trainer_profiles').select('*').limit(1).single(),
-          'No trainer profile is visible to this account',
-        ),
-      ),
+    handler: async () => toTrainerProfile(await trainerProfile()),
+  },
+  {
+    // The coach's own profile is a single row, so this stays plain PostgREST.
+    // The id comes from the view read rather than the request, so a caller can
+    // only ever patch the trainer row RLS already showed them.
+    method: 'PATCH',
+    pattern: '/trainer',
+    handler: async ({ body }) => {
+      const patch = body as Partial<Pick<TrainerProfile, 'tracks' | 'headline'>>;
+      const current = await trainerProfile();
+      await row(
+        supabase.from('trainer_profiles').update(patch).eq('id', current.id).select('id').single(),
+        `Trainer ${current.id} not found`,
+      );
+      // `trainer_profiles` carries neither the user columns nor the derived
+      // client_ids, so the patched view row is assembled rather than re-read.
+      return toTrainerProfile({ ...current, ...patch });
+    },
   },
   {
     method: 'GET',
@@ -172,6 +191,48 @@ export const supabaseRoutes: Array<{
           `Client ${params.id} not found`,
         ),
       ),
+  },
+  {
+    // The coach setting this client's goals. A single-row write, so plain
+    // PostgREST; `client_profiles_trainer_writes` in the pending RLS set
+    // already restricts it to their own clients.
+    method: 'PATCH',
+    pattern: '/clients/:id',
+    handler: async ({ body, params }) => {
+      const patch = body as ClientGoalPatch;
+      const t = patch.targets;
+      const updated = await row<ClientProfileRow>(
+        supabase
+          .from('client_profiles')
+          .update({
+            ...(patch.goal === undefined ? {} : { goal: patch.goal }),
+            ...(patch.targetWeightKg === undefined
+              ? {}
+              : { target_weight_kg: patch.targetWeightKg }),
+            ...(t ? macroColumns(t) : {}),
+          })
+          .eq('id', params.id)
+          .select(CLIENT)
+          .single(),
+        `Client ${params.id} not found`,
+      );
+
+      // nutrition_days snapshot the targets live on the day they were created,
+      // so a past day keeps what the client was actually held to; today and
+      // anything already opened ahead of it follow the new numbers.
+      if (t) {
+        await rows(
+          supabase
+            .from('nutrition_days')
+            .update(macroColumns(t))
+            .eq('client_id', params.id)
+            .gte('date', TODAY)
+            .select('id'),
+        );
+      }
+
+      return toClientProfile(updated);
+    },
   },
 
   /* ------------------------------------------------------------ nutrition */
@@ -257,31 +318,6 @@ export const supabaseRoutes: Array<{
   },
   {
     method: 'GET',
-    pattern: '/workouts/sessions',
-    handler: async ({ query }) =>
-      (
-        await rows<WorkoutSessionRow>(
-          supabase
-            .from('workout_sessions')
-            .select(SESSION)
-            .eq('client_id', str(query.clientId))
-            .order('scheduled_for'),
-        )
-      ).map(toWorkoutSession),
-  },
-  {
-    method: 'GET',
-    pattern: '/workouts/sessions/:id',
-    handler: async ({ params }) =>
-      toWorkoutSession(
-        await row<WorkoutSessionRow>(
-          supabase.from('workout_sessions').select(SESSION).eq('id', params.id).single(),
-          'Session not found',
-        ),
-      ),
-  },
-  {
-    method: 'GET',
     pattern: '/workouts/logs',
     handler: async ({ query }) =>
       (
@@ -307,8 +343,8 @@ export const supabaseRoutes: Array<{
       ),
   },
   {
-    // Spans four tables and raises a high-RPE alert, so it is one RPC rather
-    // than a client-side sequence that could half-succeed.
+    // Spans four tables, so it is one RPC rather than a client-side sequence
+    // that could half-succeed.
     method: 'POST',
     pattern: '/workouts/logs',
     handler: ({ body }) => rpc('create_workout_log', { p_input: body }),
@@ -453,8 +489,6 @@ export const supabaseRoutes: Array<{
         clientId: string;
         date: ISODate;
         weightKg: number;
-        bodyFatPct?: number;
-        waistCm?: number;
       };
       // One weigh-in per day: re-logging replaces, which is what the unique
       // constraint on (client_id, date) already says.
@@ -467,8 +501,6 @@ export const supabaseRoutes: Array<{
                 client_id: input.clientId,
                 date: input.date,
                 weight_kg: input.weightKg,
-                body_fat_pct: input.bodyFatPct ?? null,
-                waist_cm: input.waistCm ?? null,
               },
               { onConflict: 'client_id,date' },
             )
@@ -533,6 +565,32 @@ export const supabaseRoutes: Array<{
           'Could not create the habit',
         ),
       );
+    },
+  },
+
+  {
+    // Single-row writes, so plain PostgREST like the insert above.
+    method: 'PATCH',
+    pattern: '/habits/:id',
+    handler: async ({ params, body }) => {
+      const patch = body as Partial<{ title: string; icon: string }>;
+      return toHabit(
+        await row<HabitRow>(
+          supabase.from('habits').update(patch).eq('id', params.id).select(HABIT).single(),
+          `Habit ${params.id} not found`,
+        ),
+      );
+    },
+  },
+  {
+    method: 'DELETE',
+    pattern: '/habits/:id',
+    handler: async ({ params }) => {
+      await row(
+        supabase.from('habits').delete().eq('id', params.id).select('id').single(),
+        `Habit ${params.id} not found`,
+      );
+      return { id: params.id };
     },
   },
 
@@ -707,10 +765,10 @@ export const supabaseRoutes: Array<{
             .eq('client_id', params.id)
             .gte('date', from),
         ),
-        rows<{ date: string; rpe: number }>(
+        rows<{ date: string }>(
           supabase
             .from('workout_logs')
-            .select('date,rpe')
+            .select('date')
             .eq('client_id', params.id)
             .gte('date', from),
         ),
@@ -734,7 +792,6 @@ export const supabaseRoutes: Array<{
           targetProtein: client.target_protein,
           sessionsCompleted: sessions.length,
           sessionsPlanned: 5,
-          avgRpe: Number(mean(sessions.map((l) => Number(l.rpe))).toFixed(1)),
         };
       });
     },
@@ -756,8 +813,8 @@ export const supabaseRoutes: Array<{
             .eq('client_id', params.id)
             .order('date'),
         ),
-        rows<{ date: string; rpe: number }>(
-          supabase.from('workout_logs').select('date,rpe').eq('client_id', params.id),
+        rows<{ date: string }>(
+          supabase.from('workout_logs').select('date').eq('client_id', params.id),
         ),
         rows<{ date: string; consumed_calories: number }>(
           supabase
@@ -792,7 +849,6 @@ export const supabaseRoutes: Array<{
         weightChange30d:
           latest && monthAgo ? Number((latest.weightKg - monthAgo.weightKg).toFixed(1)) : 0,
         sessionsLast7: recentLogs.length,
-        avgRpeLast7: Number(mean(recentLogs.map((l) => Number(l.rpe))).toFixed(1)),
         loggedDaysLast7: recentDays.length,
         avgCaloriesLast7: Math.round(mean(recentDays.map((n) => n.consumed_calories))),
         openAlerts,

@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View, type ScrollViewProps } from 'r
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from './Text';
+import { routes } from '@/navigation/routes';
 import { colors, radius, spacing } from '@/theme';
 
 export const TAB_BAR_HEIGHT = 64;
@@ -48,7 +49,7 @@ export function Screen({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Go back"
-            onPress={() => router.back()}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace(routes.home()))}
             hitSlop={12}
             style={styles.back}>
             <Ionicons name="chevron-back" size={22} color={colors.text} />

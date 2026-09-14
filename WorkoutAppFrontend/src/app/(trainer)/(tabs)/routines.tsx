@@ -88,7 +88,7 @@ export default function RoutinesScreen() {
           <EmptyState
             icon="clipboard-outline"
             title="No routines yet"
-            message="Build a training week — pick the days, add exercises with target sets, reps, rest and RPE — then assign it to as many clients as you like."
+            message="Build a training week — pick the days, add exercises with target sets, reps and rest — then assign it to as many clients as you like."
             actionLabel="Build your first routine"
             onAction={() => router.push(routes.trainer.routineBuilder())}
           />

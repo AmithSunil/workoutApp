@@ -20,11 +20,11 @@ import type {
   MacroTargets,
   Message,
   NutritionDay,
-  RedFlagAlert,
   Routine,
   RoutineAssignment,
   RoutineDay,
   RoutineExercise,
+  TrainerProfile,
   TrainerSummary,
   Weekday,
   WorkoutLog,
@@ -154,6 +154,22 @@ const createAssignment = (routineId: string, clientId: string): RoutineAssignmen
   return assignment;
 };
 
+/**
+ * A client is never left with an empty app: their last routine stays until a
+ * different one is assigned. Unassigning is for swapping, not for emptying.
+ */
+const assertNotLastRoutine = (doomed: RoutineAssignment[]): void => {
+  const stranded = doomed.some(
+    (a) => !db.routineAssignments.some((o) => o.clientId === a.clientId && !doomed.includes(o))
+  );
+  if (stranded) {
+    throw new MockHttpError(
+      409,
+      'That would leave a client with no routine. Assign another one first.'
+    );
+  }
+};
+
 const ensureNutritionDay = (clientId: string, date: ISODate): NutritionDay => {
   let day = db.nutritionDays.find((d) => d.clientId === clientId && d.date === date);
   if (!day) {
@@ -220,9 +236,6 @@ const weeklyCompliance = (clientId: string, weeks: number) => {
       targetProtein: client.targets.protein,
       sessionsCompleted: sessions.length,
       sessionsPlanned: 5,
-      avgRpe: sessions.length
-        ? Number((sessions.reduce((s, l) => s + l.rpe, 0) / sessions.length).toFixed(1))
-        : 0,
     };
   });
 };
@@ -236,8 +249,31 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
   /* ------------------------------------------------------------- identity */
   { method: 'GET', pattern: '/session/roles', handler: () => ({ trainer: db.trainer, clients: db.clients }) },
   { method: 'GET', pattern: '/trainer', handler: () => db.trainer },
+  {
+    method: 'PATCH',
+    pattern: '/trainer',
+    handler: ({ body }) => {
+      Object.assign(db.trainer, body as Partial<TrainerProfile>);
+      return db.trainer;
+    },
+  },
   { method: 'GET', pattern: '/clients', handler: () => db.clients.map((c) => ({ ...c, compliance: { ...c.compliance, status: deriveStatus(c) } })) },
   { method: 'GET', pattern: '/clients/:id', handler: ({ params }) => requireClient(params.id) },
+  {
+    method: 'PATCH',
+    pattern: '/clients/:id',
+    handler: ({ params, body }) => {
+      const client = requireClient(params.id);
+      Object.assign(client, body as ClientGoalPatch);
+      // nutrition_days snapshot the targets live on the day they were created,
+      // so a past day keeps what the client was actually held to; today and
+      // anything already opened ahead of it follow the new numbers.
+      for (const day of db.nutritionDays) {
+        if (day.clientId === client.id && day.date >= TODAY) day.targets = { ...client.targets };
+      }
+      return client;
+    },
+  },
 
   /* ------------------------------------------------------------- nutrition */
   {
@@ -316,23 +352,6 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
   { method: 'GET', pattern: '/exercises', handler: () => db.exercises },
   {
     method: 'GET',
-    pattern: '/workouts/sessions',
-    handler: ({ query }) =>
-      db.sessions
-        .filter((s) => s.clientId === String(query.clientId))
-        .sort((a, b) => (a.scheduledFor < b.scheduledFor ? -1 : 1)),
-  },
-  {
-    method: 'GET',
-    pattern: '/workouts/sessions/:id',
-    handler: ({ params }) => {
-      const session = db.sessions.find((s) => s.id === params.id);
-      if (!session) throw new MockHttpError(404, 'Session not found');
-      return session;
-    },
-  },
-  {
-    method: 'GET',
     pattern: '/workouts/logs',
     handler: ({ query }) => {
       const clientId = String(query.clientId);
@@ -354,24 +373,17 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     pattern: '/workouts/logs',
     handler: ({ body }) => {
       const input = body as Omit<WorkoutLog, 'id' | 'completedAt'>;
-      const log: WorkoutLog = { ...input, id: nextId('wl'), completedAt: new Date().toISOString() };
-      db.workoutLogs.unshift(log);
-      const session = db.sessions.find((s) => s.id === log.sessionId);
-      if (session) session.status = 'completed';
-      // A finished session raises strain alerts the trainer will see immediately.
-      if (log.rpe >= 9) {
-        const alert: RedFlagAlert = {
-          id: nextId('al'),
-          clientId: log.clientId,
-          kind: 'high-rpe',
-          severity: 'warning',
-          title: `RPE ${log.rpe} on ${log.title}`,
-          detail: 'Logged above the prescribed intensity — review before the next session.',
-          raisedAt: new Date().toISOString(),
-          resolved: false,
-        };
-        db.alerts.unshift(alert);
-      }
+      // One workout per day: saving again edits the day's log rather than
+      // adding a second one, and keeps its id so links to it still resolve.
+      const existing = db.workoutLogs.find(
+        (l) => l.clientId === input.clientId && l.date === input.date
+      );
+      const log: WorkoutLog = {
+        ...input,
+        id: existing?.id ?? nextId('wl'),
+        completedAt: new Date().toISOString(),
+      };
+      db.workoutLogs = [log, ...db.workoutLogs.filter((l) => l.id !== log.id)];
       return log;
     },
   },
@@ -452,6 +464,9 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
 
       // Drop the ones unticked, keep the rest exactly as they are so an
       // existing customisation survives an edit to the client list.
+      assertNotLastRoutine(
+        db.routineAssignments.filter((a) => a.routineId === routine.id && !wanted.has(a.clientId))
+      );
       db.routineAssignments = db.routineAssignments.filter(
         (a) => a.routineId !== routine.id || wanted.has(a.clientId)
       );
@@ -553,6 +568,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     pattern: '/assignments/:id',
     handler: ({ params }) => {
       const assignment = requireAssignment(params.id);
+      assertNotLastRoutine([assignment]);
       db.routineAssignments = db.routineAssignments.filter((a) => a.id !== assignment.id);
       return { id: assignment.id };
     },
@@ -613,9 +629,44 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     pattern: '/habits',
     handler: ({ body }) => {
       const input = body as Pick<Habit, 'clientId' | 'title' | 'icon' | 'createdBy'>;
-      const habit: Habit = { ...input, id: nextId('h'), cadence: 'daily', completedDates: [] };
+      const title = input.title?.trim();
+      if (!title) throw new MockHttpError(400, 'A habit needs a title');
+      const habit: Habit = {
+        ...input,
+        title,
+        id: nextId('h'),
+        cadence: 'daily',
+        completedDates: [],
+      };
       db.habits.push(habit);
       return habit;
+    },
+  },
+
+  {
+    method: 'PATCH',
+    pattern: '/habits/:id',
+    handler: ({ params, body }) => {
+      const habit = db.habits.find((h) => h.id === params.id);
+      if (!habit) throw new MockHttpError(404, 'Habit not found');
+      const patch = body as Partial<Pick<Habit, 'title' | 'icon'>>;
+      if (patch.title !== undefined) {
+        const title = patch.title.trim();
+        if (!title) throw new MockHttpError(400, 'A habit needs a title');
+        habit.title = title;
+      }
+      if (patch.icon !== undefined) habit.icon = patch.icon;
+      return habit;
+    },
+  },
+  {
+    method: 'DELETE',
+    pattern: '/habits/:id',
+    handler: ({ params }) => {
+      const i = db.habits.findIndex((h) => h.id === params.id);
+      if (i === -1) throw new MockHttpError(404, 'Habit not found');
+      db.habits.splice(i, 1);
+      return { id: params.id };
     },
   },
 
@@ -749,12 +800,6 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
         weightChange30d:
           latest && monthAgo ? Number((latest.weightKg - monthAgo.weightKg).toFixed(1)) : 0,
         sessionsLast7: logs.filter((l) => diffInDays(TODAY, l.date) < 7).length,
-        avgRpeLast7: (() => {
-          const recent = logs.filter((l) => diffInDays(TODAY, l.date) < 7);
-          return recent.length
-            ? Number((recent.reduce((s, l) => s + l.rpe, 0) / recent.length).toFixed(1))
-            : 0;
-        })(),
         loggedDaysLast7: nutrition.filter((n) => diffInDays(TODAY, n.date) < 7).length,
         avgCaloriesLast7: (() => {
           const recent = nutrition.filter((n) => diffInDays(TODAY, n.date) < 7);
@@ -781,12 +826,17 @@ export interface RoutineInput {
   assignedClientIds?: string[];
 }
 
+/**
+ * What a coach may change about a client: where they are headed and what they
+ * eat to get there. Compliance, height and the joined date are not theirs.
+ */
+export type ClientGoalPatch = Partial<Pick<ClientProfile, 'goal' | 'targetWeightKg' | 'targets'>>;
+
 export interface ClientOverview {
   client: ClientProfile;
   latestWeightKg: number;
   weightChange30d: number;
   sessionsLast7: number;
-  avgRpeLast7: number;
   loggedDaysLast7: number;
   avgCaloriesLast7: number;
   openAlerts: number;
@@ -801,5 +851,4 @@ export interface WeeklyComplianceRow {
   targetProtein: number;
   sessionsCompleted: number;
   sessionsPlanned: number;
-  avgRpe: number;
 }

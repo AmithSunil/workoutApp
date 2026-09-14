@@ -1,44 +1,32 @@
-import { useRouter } from 'expo-router';
-import { Alert, Pressable } from 'react-native';
+import { useRouter, type Href } from 'expo-router';
+import { Pressable } from 'react-native';
 
-import { signOutEverywhere } from '@/auth';
 import { Avatar } from '@/components/ui';
-import { routes } from '@/navigation/routes';
 
 export interface ProfileButtonProps {
   name: string;
   avatarUrl?: string;
   size?: number;
+  /** The account screen this avatar opens. */
+  href: Href;
 }
 
 /**
- * Header avatar that doubles as the sign-out affordance.
+ * Header avatar, linking to the signed-in user's own account screen.
  *
- * It only ends the Supabase session. Clearing the session slice, the cached
- * identity and the RTK Query cache is the auth listener's job — doing it here
- * too would mean two places that have to agree on what signing out means.
+ * Signing out lives on that screen rather than behind this button: `Alert` is
+ * a no-op on web, so a confirm dialog here left the avatar doing nothing at all
+ * in the browser.
  */
-export function ProfileButton({ name, avatarUrl, size = 40 }: ProfileButtonProps) {
+export function ProfileButton({ name, avatarUrl, size = 40, href }: ProfileButtonProps) {
   const router = useRouter();
-
-  const onPress = () =>
-    Alert.alert(name, 'Sign out of this account?', [
-      { text: 'Stay signed in', style: 'cancel' },
-      {
-        text: 'Sign out',
-        style: 'destructive',
-        onPress: () => {
-          void signOutEverywhere().then(() => router.replace(routes.signIn()));
-        },
-      },
-    ]);
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => router.push(href)}
       hitSlop={8}
       accessibilityRole="button"
-      accessibilityLabel="Profile and sign out">
+      accessibilityLabel="Profile">
       <Avatar name={name} uri={avatarUrl} size={size} />
     </Pressable>
   );

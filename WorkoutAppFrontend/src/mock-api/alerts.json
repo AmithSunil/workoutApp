@@ -40,33 +40,13 @@
     "resolved": false
   },
   {
-    "id": "al-0005",
-    "clientId": "c-005",
-    "kind": "high-rpe",
-    "severity": "critical",
-    "title": "Three sessions at RPE 9+",
-    "detail": "Strain trending up while volume is flat — deload candidate.",
-    "raisedAt": "2026-08-29T07:13:00.000Z",
-    "resolved": false
-  },
-  {
     "id": "al-0006",
     "clientId": "c-002",
     "kind": "check-in-due",
     "severity": "info",
     "title": "Check-in submitted, awaiting review",
-    "detail": "Week of Aug 24 — 6 days since last review.",
+    "detail": "Week of Aug 24 \u2014 6 days since last review.",
     "raisedAt": "2026-08-29T06:50:00.000Z",
-    "resolved": false
-  },
-  {
-    "id": "al-0007",
-    "clientId": "c-002",
-    "kind": "high-rpe",
-    "severity": "warning",
-    "title": "RPE spike on lower body",
-    "detail": "Reported 9 on a session prescribed at 7.",
-    "raisedAt": "2026-08-26T07:34:00.000Z",
     "resolved": false
   },
   {

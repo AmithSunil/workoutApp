@@ -3,10 +3,9 @@
     "id": "wl-00144",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-28",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-28",
     "durationMinutes": 56,
-    "rpe": 6,
     "totalVolumeKg": 4303,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -153,10 +152,9 @@
     "id": "wl-00116",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-28",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-28",
     "durationMinutes": 57,
-    "rpe": 8,
     "totalVolumeKg": 4389,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -303,10 +301,9 @@
     "id": "wl-00075",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-28",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-28",
     "durationMinutes": 67,
-    "rpe": 7,
     "totalVolumeKg": 4563,
     "exercises": [
       {
@@ -452,10 +449,9 @@
     "id": "wl-00044",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-28",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-28",
     "durationMinutes": 60,
-    "rpe": 6,
     "totalVolumeKg": 5141,
     "exercises": [
       {
@@ -601,10 +597,9 @@
     "id": "wl-00143",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-27",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-27",
     "durationMinutes": 58,
-    "rpe": 8,
     "totalVolumeKg": 6210,
     "exercises": [
       {
@@ -756,10 +751,9 @@
     "id": "wl-00115",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-27",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-27",
     "durationMinutes": 56,
-    "rpe": 7,
     "totalVolumeKg": 6232,
     "exercises": [
       {
@@ -911,10 +905,9 @@
     "id": "wl-00096",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-27",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-27",
     "durationMinutes": 63,
-    "rpe": 8,
     "totalVolumeKg": 6176,
     "exercises": [
       {
@@ -1066,10 +1059,9 @@
     "id": "wl-00074",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-27",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-27",
     "durationMinutes": 53,
-    "rpe": 8,
     "totalVolumeKg": 6124,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -1222,10 +1214,9 @@
     "id": "wl-00043",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-27",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-27",
     "durationMinutes": 63,
-    "rpe": 6,
     "totalVolumeKg": 6467,
     "exercises": [
       {
@@ -1380,9 +1371,8 @@
     "title": "Conditioning & Core",
     "date": "2026-08-26",
     "durationMinutes": 35,
-    "rpe": 6,
     "totalVolumeKg": 1646,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00669",
@@ -1516,7 +1506,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-26",
     "durationMinutes": 35,
-    "rpe": 8,
     "totalVolumeKg": 1590,
     "exercises": [
       {
@@ -1651,7 +1640,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-26",
     "durationMinutes": 31,
-    "rpe": 10,
     "totalVolumeKg": 1644,
     "exercises": [
       {
@@ -1786,7 +1774,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-26",
     "durationMinutes": 28,
-    "rpe": 10,
     "totalVolumeKg": 1664,
     "exercises": [
       {
@@ -1921,7 +1908,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-26",
     "durationMinutes": 47,
-    "rpe": 6,
     "totalVolumeKg": 1641,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -2057,7 +2043,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-26",
     "durationMinutes": 40,
-    "rpe": 8,
     "totalVolumeKg": 1737,
     "exercises": [
       {
@@ -2189,10 +2174,9 @@
     "id": "wl-00141",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-25",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-25",
     "durationMinutes": 66,
-    "rpe": 6,
     "totalVolumeKg": 5628,
     "exercises": [
       {
@@ -2338,12 +2322,11 @@
     "id": "wl-00113",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-25",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-25",
     "durationMinutes": 62,
-    "rpe": 7,
     "totalVolumeKg": 5607,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00531",
@@ -2488,12 +2471,11 @@
     "id": "wl-00094",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-25",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-25",
     "durationMinutes": 49,
-    "rpe": 10,
     "totalVolumeKg": 5584,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00442",
@@ -2638,10 +2620,9 @@
     "id": "wl-00072",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-25",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-25",
     "durationMinutes": 64,
-    "rpe": 6,
     "totalVolumeKg": 5670,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -2788,10 +2769,9 @@
     "id": "wl-00054",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-25",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-25",
     "durationMinutes": 46,
-    "rpe": 8,
     "totalVolumeKg": 5502,
     "exercises": [
       {
@@ -2937,10 +2917,9 @@
     "id": "wl-00041",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-25",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-25",
     "durationMinutes": 54,
-    "rpe": 6,
     "totalVolumeKg": 5936,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -3087,10 +3066,9 @@
     "id": "wl-00140",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 62,
-    "rpe": 6,
     "totalVolumeKg": 6639,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -3237,10 +3215,9 @@
     "id": "wl-00122",
     "clientId": "c-007",
     "sessionId": "ws-c-007-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 69,
-    "rpe": 10,
     "totalVolumeKg": 6565,
     "exercises": [
       {
@@ -3386,10 +3363,9 @@
     "id": "wl-00112",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 63,
-    "rpe": 7,
     "totalVolumeKg": 6605,
     "exercises": [
       {
@@ -3535,10 +3511,9 @@
     "id": "wl-00093",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 59,
-    "rpe": 6,
     "totalVolumeKg": 6675,
     "exercises": [
       {
@@ -3684,10 +3659,9 @@
     "id": "wl-00071",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 74,
-    "rpe": 6,
     "totalVolumeKg": 6661,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -3834,10 +3808,9 @@
     "id": "wl-00053",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 63,
-    "rpe": 7,
     "totalVolumeKg": 6855,
     "exercises": [
       {
@@ -3983,10 +3956,9 @@
     "id": "wl-00040",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-24",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-24",
     "durationMinutes": 72,
-    "rpe": 8,
     "totalVolumeKg": 7068,
     "exercises": [
       {
@@ -4135,7 +4107,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-22",
     "durationMinutes": 40,
-    "rpe": 8,
     "totalVolumeKg": 1608,
     "exercises": [
       {
@@ -4270,7 +4241,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-22",
     "durationMinutes": 35,
-    "rpe": 10,
     "totalVolumeKg": 1620,
     "exercises": [
       {
@@ -4405,7 +4375,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-22",
     "durationMinutes": 27,
-    "rpe": 7,
     "totalVolumeKg": 1647,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -4541,7 +4510,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-22",
     "durationMinutes": 36,
-    "rpe": 7,
     "totalVolumeKg": 1763,
     "exercises": [
       {
@@ -4673,10 +4641,9 @@
     "id": "wl-00139",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-21",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-21",
     "durationMinutes": 54,
-    "rpe": 7,
     "totalVolumeKg": 4742,
     "exercises": [
       {
@@ -4822,10 +4789,9 @@
     "id": "wl-00110",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-21",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-21",
     "durationMinutes": 60,
-    "rpe": 7,
     "totalVolumeKg": 4439,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -4972,10 +4938,9 @@
     "id": "wl-00091",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-21",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-21",
     "durationMinutes": 50,
-    "rpe": 7,
     "totalVolumeKg": 4429,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -5122,10 +5087,9 @@
     "id": "wl-00070",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-21",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-21",
     "durationMinutes": 67,
-    "rpe": 8,
     "totalVolumeKg": 4553,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -5272,10 +5236,9 @@
     "id": "wl-00051",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-21",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-21",
     "durationMinutes": 59,
-    "rpe": 8,
     "totalVolumeKg": 4422,
     "exercises": [
       {
@@ -5421,10 +5384,9 @@
     "id": "wl-00038",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-21",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-21",
     "durationMinutes": 68,
-    "rpe": 8,
     "totalVolumeKg": 4471,
     "exercises": [
       {
@@ -5570,10 +5532,9 @@
     "id": "wl-00138",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-20",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-20",
     "durationMinutes": 63,
-    "rpe": 8,
     "totalVolumeKg": 6159,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -5726,10 +5687,9 @@
     "id": "wl-00069",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-20",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-20",
     "durationMinutes": 57,
-    "rpe": 6,
     "totalVolumeKg": 6351,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -5882,10 +5842,9 @@
     "id": "wl-00050",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-20",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-20",
     "durationMinutes": 67,
-    "rpe": 6,
     "totalVolumeKg": 6138,
     "exercises": [
       {
@@ -6037,10 +5996,9 @@
     "id": "wl-00037",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-20",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-20",
     "durationMinutes": 57,
-    "rpe": 8,
     "totalVolumeKg": 6285,
     "exercises": [
       {
@@ -6195,7 +6153,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-19",
     "durationMinutes": 42,
-    "rpe": 6,
     "totalVolumeKg": 1595,
     "exercises": [
       {
@@ -6330,9 +6287,8 @@
     "title": "Conditioning & Core",
     "date": "2026-08-19",
     "durationMinutes": 28,
-    "rpe": 7,
     "totalVolumeKg": 1653,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00513",
@@ -6466,7 +6422,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-19",
     "durationMinutes": 36,
-    "rpe": 9,
     "totalVolumeKg": 1625,
     "exercises": [
       {
@@ -6601,7 +6556,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-19",
     "durationMinutes": 32,
-    "rpe": 7,
     "totalVolumeKg": 1634,
     "exercises": [
       {
@@ -6736,7 +6690,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-19",
     "durationMinutes": 45,
-    "rpe": 7,
     "totalVolumeKg": 1718,
     "exercises": [
       {
@@ -6868,12 +6821,11 @@
     "id": "wl-00136",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-18",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-18",
     "durationMinutes": 54,
-    "rpe": 8,
     "totalVolumeKg": 5478,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00640",
@@ -7018,12 +6970,11 @@
     "id": "wl-00108",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-18",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-18",
     "durationMinutes": 62,
-    "rpe": 8,
     "totalVolumeKg": 5392,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00508",
@@ -7168,10 +7119,9 @@
     "id": "wl-00089",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-18",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-18",
     "durationMinutes": 52,
-    "rpe": 8,
     "totalVolumeKg": 5516,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -7318,10 +7268,9 @@
     "id": "wl-00067",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-18",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-18",
     "durationMinutes": 57,
-    "rpe": 6,
     "totalVolumeKg": 5779,
     "exercises": [
       {
@@ -7467,10 +7416,9 @@
     "id": "wl-00049",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-18",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-18",
     "durationMinutes": 66,
-    "rpe": 8,
     "totalVolumeKg": 5559,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -7617,10 +7565,9 @@
     "id": "wl-00035",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-18",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-18",
     "durationMinutes": 48,
-    "rpe": 6,
     "totalVolumeKg": 5744,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -7767,10 +7714,9 @@
     "id": "wl-00135",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-17",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-17",
     "durationMinutes": 73,
-    "rpe": 7,
     "totalVolumeKg": 6645,
     "exercises": [
       {
@@ -7916,10 +7862,9 @@
     "id": "wl-00066",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-17",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-17",
     "durationMinutes": 77,
-    "rpe": 8,
     "totalVolumeKg": 6532,
     "exercises": [
       {
@@ -8065,10 +8010,9 @@
     "id": "wl-00034",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-17",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-17",
     "durationMinutes": 65,
-    "rpe": 6,
     "totalVolumeKg": 7041,
     "exercises": [
       {
@@ -8217,7 +8161,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-15",
     "durationMinutes": 46,
-    "rpe": 6,
     "totalVolumeKg": 1605,
     "exercises": [
       {
@@ -8352,9 +8295,8 @@
     "title": "Conditioning & Core",
     "date": "2026-08-15",
     "durationMinutes": 38,
-    "rpe": 7,
     "totalVolumeKg": 1662,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00504",
@@ -8488,7 +8430,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-15",
     "durationMinutes": 26,
-    "rpe": 8,
     "totalVolumeKg": 1667,
     "exercises": [
       {
@@ -8620,10 +8561,9 @@
     "id": "wl-00133",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-14",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-14",
     "durationMinutes": 72,
-    "rpe": 7,
     "totalVolumeKg": 4532,
     "exercises": [
       {
@@ -8769,10 +8709,9 @@
     "id": "wl-00121",
     "clientId": "c-007",
     "sessionId": "ws-c-007-2026-08-14",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-14",
     "durationMinutes": 57,
-    "rpe": 8,
     "totalVolumeKg": 4874,
     "exercises": [
       {
@@ -8918,10 +8857,9 @@
     "id": "wl-00106",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-14",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-14",
     "durationMinutes": 57,
-    "rpe": 8,
     "totalVolumeKg": 4517,
     "exercises": [
       {
@@ -9067,10 +9005,9 @@
     "id": "wl-00088",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-14",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-14",
     "durationMinutes": 69,
-    "rpe": 8,
     "totalVolumeKg": 4389,
     "exercises": [
       {
@@ -9216,10 +9153,9 @@
     "id": "wl-00081",
     "clientId": "c-004",
     "sessionId": "ws-c-004-2026-08-14",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-14",
     "durationMinutes": 53,
-    "rpe": 10,
     "totalVolumeKg": 4400,
     "exercises": [
       {
@@ -9365,10 +9301,9 @@
     "id": "wl-00033",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-14",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-14",
     "durationMinutes": 69,
-    "rpe": 7,
     "totalVolumeKg": 4644,
     "exercises": [
       {
@@ -9514,10 +9449,9 @@
     "id": "wl-00132",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 61,
-    "rpe": 8,
     "totalVolumeKg": 5942,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -9670,10 +9604,9 @@
     "id": "wl-00105",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 67,
-    "rpe": 7,
     "totalVolumeKg": 5884,
     "exercises": [
       {
@@ -9825,10 +9758,9 @@
     "id": "wl-00087",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 65,
-    "rpe": 8,
     "totalVolumeKg": 6024,
     "exercises": [
       {
@@ -9980,10 +9912,9 @@
     "id": "wl-00080",
     "clientId": "c-004",
     "sessionId": "ws-c-004-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 50,
-    "rpe": 9,
     "totalVolumeKg": 6053,
     "exercises": [
       {
@@ -10135,10 +10066,9 @@
     "id": "wl-00064",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 51,
-    "rpe": 6,
     "totalVolumeKg": 5913,
     "exercises": [
       {
@@ -10290,10 +10220,9 @@
     "id": "wl-00048",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 64,
-    "rpe": 6,
     "totalVolumeKg": 6030,
     "exercises": [
       {
@@ -10445,10 +10374,9 @@
     "id": "wl-00032",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-13",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-13",
     "durationMinutes": 47,
-    "rpe": 7,
     "totalVolumeKg": 6202,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -10604,7 +10532,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-12",
     "durationMinutes": 47,
-    "rpe": 7,
     "totalVolumeKg": 1575,
     "exercises": [
       {
@@ -10739,7 +10666,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-12",
     "durationMinutes": 31,
-    "rpe": 6,
     "totalVolumeKg": 1712,
     "exercises": [
       {
@@ -10874,7 +10800,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-12",
     "durationMinutes": 31,
-    "rpe": 7,
     "totalVolumeKg": 1601,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -11010,7 +10935,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-12",
     "durationMinutes": 32,
-    "rpe": 7,
     "totalVolumeKg": 1686,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -11143,10 +11067,9 @@
     "id": "wl-00130",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-11",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-11",
     "durationMinutes": 62,
-    "rpe": 7,
     "totalVolumeKg": 5500,
     "exercises": [
       {
@@ -11292,10 +11215,9 @@
     "id": "wl-00120",
     "clientId": "c-007",
     "sessionId": "ws-c-007-2026-08-11",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-11",
     "durationMinutes": 50,
-    "rpe": 9,
     "totalVolumeKg": 5534,
     "exercises": [
       {
@@ -11441,10 +11363,9 @@
     "id": "wl-00104",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-11",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-11",
     "durationMinutes": 48,
-    "rpe": 6,
     "totalVolumeKg": 5630,
     "exercises": [
       {
@@ -11590,12 +11511,11 @@
     "id": "wl-00062",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-11",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-11",
     "durationMinutes": 62,
-    "rpe": 6,
     "totalVolumeKg": 5593,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00291",
@@ -11740,10 +11660,9 @@
     "id": "wl-00030",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-11",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-11",
     "durationMinutes": 58,
-    "rpe": 8,
     "totalVolumeKg": 5908,
     "exercises": [
       {
@@ -11889,10 +11808,9 @@
     "id": "wl-00129",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 70,
-    "rpe": 8,
     "totalVolumeKg": 6502,
     "exercises": [
       {
@@ -12038,10 +11956,9 @@
     "id": "wl-00103",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 63,
-    "rpe": 6,
     "totalVolumeKg": 6588,
     "exercises": [
       {
@@ -12187,10 +12104,9 @@
     "id": "wl-00086",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 62,
-    "rpe": 6,
     "totalVolumeKg": 6399,
     "exercises": [
       {
@@ -12336,10 +12252,9 @@
     "id": "wl-00078",
     "clientId": "c-004",
     "sessionId": "ws-c-004-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 77,
-    "rpe": 8,
     "totalVolumeKg": 6815,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -12486,10 +12401,9 @@
     "id": "wl-00061",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 69,
-    "rpe": 7,
     "totalVolumeKg": 6720,
     "exercises": [
       {
@@ -12635,10 +12549,9 @@
     "id": "wl-00047",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 57,
-    "rpe": 7,
     "totalVolumeKg": 6373,
     "exercises": [
       {
@@ -12784,10 +12697,9 @@
     "id": "wl-00029",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-10",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-10",
     "durationMinutes": 61,
-    "rpe": 8,
     "totalVolumeKg": 6979,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -12937,7 +12849,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-08",
     "durationMinutes": 46,
-    "rpe": 7,
     "totalVolumeKg": 1687,
     "exercises": [
       {
@@ -13072,7 +12983,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-08",
     "durationMinutes": 27,
-    "rpe": 9,
     "totalVolumeKg": 1592,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -13208,9 +13118,8 @@
     "title": "Conditioning & Core",
     "date": "2026-08-08",
     "durationMinutes": 47,
-    "rpe": 7,
     "totalVolumeKg": 1661,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00480",
@@ -13344,7 +13253,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-08",
     "durationMinutes": 37,
-    "rpe": 6,
     "totalVolumeKg": 1558,
     "exercises": [
       {
@@ -13479,7 +13387,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-08",
     "durationMinutes": 32,
-    "rpe": 7,
     "totalVolumeKg": 1611,
     "exercises": [
       {
@@ -13614,7 +13521,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-08",
     "durationMinutes": 42,
-    "rpe": 7,
     "totalVolumeKg": 1632,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -13747,10 +13653,9 @@
     "id": "wl-00127",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-07",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-07",
     "durationMinutes": 67,
-    "rpe": 8,
     "totalVolumeKg": 4778,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -13897,10 +13802,9 @@
     "id": "wl-00118",
     "clientId": "c-007",
     "sessionId": "ws-c-007-2026-08-07",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-07",
     "durationMinutes": 65,
-    "rpe": 9,
     "totalVolumeKg": 4246,
     "exercises": [
       {
@@ -14046,10 +13950,9 @@
     "id": "wl-00101",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-07",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-07",
     "durationMinutes": 51,
-    "rpe": 7,
     "totalVolumeKg": 4295,
     "exercises": [
       {
@@ -14195,10 +14098,9 @@
     "id": "wl-00084",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-07",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-07",
     "durationMinutes": 62,
-    "rpe": 10,
     "totalVolumeKg": 4201,
     "exercises": [
       {
@@ -14344,10 +14246,9 @@
     "id": "wl-00059",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-07",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-07",
     "durationMinutes": 66,
-    "rpe": 6,
     "totalVolumeKg": 4515,
     "exercises": [
       {
@@ -14493,10 +14394,9 @@
     "id": "wl-00027",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-07",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-08-07",
     "durationMinutes": 61,
-    "rpe": 8,
     "totalVolumeKg": 4907,
     "exercises": [
       {
@@ -14642,10 +14542,9 @@
     "id": "wl-00126",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-06",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-06",
     "durationMinutes": 63,
-    "rpe": 6,
     "totalVolumeKg": 5964,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -14798,10 +14697,9 @@
     "id": "wl-00100",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-06",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-06",
     "durationMinutes": 52,
-    "rpe": 6,
     "totalVolumeKg": 5992,
     "exercises": [
       {
@@ -14953,10 +14851,9 @@
     "id": "wl-00058",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-06",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-06",
     "durationMinutes": 45,
-    "rpe": 7,
     "totalVolumeKg": 6117,
     "exercises": [
       {
@@ -15108,12 +15005,11 @@
     "id": "wl-00026",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-06",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-08-06",
     "durationMinutes": 67,
-    "rpe": 7,
     "totalVolumeKg": 6194,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00119",
@@ -15267,7 +15163,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-05",
     "durationMinutes": 35,
-    "rpe": 7,
     "totalVolumeKg": 1553,
     "exercises": [
       {
@@ -15402,7 +15297,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-05",
     "durationMinutes": 37,
-    "rpe": 6,
     "totalVolumeKg": 1593,
     "exercises": [
       {
@@ -15537,7 +15431,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-05",
     "durationMinutes": 40,
-    "rpe": 7,
     "totalVolumeKg": 1634,
     "exercises": [
       {
@@ -15672,7 +15565,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-05",
     "durationMinutes": 34,
-    "rpe": 7,
     "totalVolumeKg": 1746,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -15805,10 +15697,9 @@
     "id": "wl-00124",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 50,
-    "rpe": 8,
     "totalVolumeKg": 5364,
     "exercises": [
       {
@@ -15954,10 +15845,9 @@
     "id": "wl-00098",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 54,
-    "rpe": 7,
     "totalVolumeKg": 5425,
     "exercises": [
       {
@@ -16103,10 +15993,9 @@
     "id": "wl-00083",
     "clientId": "c-005",
     "sessionId": "ws-c-005-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 50,
-    "rpe": 6,
     "totalVolumeKg": 5341,
     "exercises": [
       {
@@ -16252,10 +16141,9 @@
     "id": "wl-00077",
     "clientId": "c-004",
     "sessionId": "ws-c-004-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 57,
-    "rpe": 7,
     "totalVolumeKg": 5373,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -16402,10 +16290,9 @@
     "id": "wl-00056",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 53,
-    "rpe": 7,
     "totalVolumeKg": 5455,
     "exercises": [
       {
@@ -16551,10 +16438,9 @@
     "id": "wl-00046",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 61,
-    "rpe": 8,
     "totalVolumeKg": 5939,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -16701,10 +16587,9 @@
     "id": "wl-00024",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-04",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-08-04",
     "durationMinutes": 58,
-    "rpe": 7,
     "totalVolumeKg": 5750,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -16851,10 +16736,9 @@
     "id": "wl-00123",
     "clientId": "c-008",
     "sessionId": "ws-c-008-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 60,
-    "rpe": 6,
     "totalVolumeKg": 6221,
     "exercises": [
       {
@@ -17000,10 +16884,9 @@
     "id": "wl-00117",
     "clientId": "c-007",
     "sessionId": "ws-c-007-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 62,
-    "rpe": 10,
     "totalVolumeKg": 6277,
     "exercises": [
       {
@@ -17149,10 +17032,9 @@
     "id": "wl-00097",
     "clientId": "c-006",
     "sessionId": "ws-c-006-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 71,
-    "rpe": 6,
     "totalVolumeKg": 6341,
     "exercises": [
       {
@@ -17298,10 +17180,9 @@
     "id": "wl-00076",
     "clientId": "c-004",
     "sessionId": "ws-c-004-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 63,
-    "rpe": 7,
     "totalVolumeKg": 6619,
     "exercises": [
       {
@@ -17447,10 +17328,9 @@
     "id": "wl-00055",
     "clientId": "c-003",
     "sessionId": "ws-c-003-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 69,
-    "rpe": 8,
     "totalVolumeKg": 6617,
     "exercises": [
       {
@@ -17596,10 +17476,9 @@
     "id": "wl-00045",
     "clientId": "c-002",
     "sessionId": "ws-c-002-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 71,
-    "rpe": 7,
     "totalVolumeKg": 6435,
     "exercises": [
       {
@@ -17745,10 +17624,9 @@
     "id": "wl-00023",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-08-03",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-08-03",
     "durationMinutes": 57,
-    "rpe": 8,
     "totalVolumeKg": 6720,
     "exercises": [
       {
@@ -17897,7 +17775,6 @@
     "title": "Conditioning & Core",
     "date": "2026-08-01",
     "durationMinutes": 35,
-    "rpe": 6,
     "totalVolumeKg": 1585,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -18030,10 +17907,9 @@
     "id": "wl-00021",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-31",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-07-31",
     "durationMinutes": 59,
-    "rpe": 6,
     "totalVolumeKg": 4651,
     "exercises": [
       {
@@ -18179,10 +18055,9 @@
     "id": "wl-00020",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-30",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-07-30",
     "durationMinutes": 57,
-    "rpe": 7,
     "totalVolumeKg": 6430,
     "exercises": [
       {
@@ -18337,7 +18212,6 @@
     "title": "Conditioning & Core",
     "date": "2026-07-29",
     "durationMinutes": 46,
-    "rpe": 7,
     "totalVolumeKg": 1657,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -18470,10 +18344,9 @@
     "id": "wl-00018",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-28",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-07-28",
     "durationMinutes": 49,
-    "rpe": 7,
     "totalVolumeKg": 5643,
     "exercises": [
       {
@@ -18619,12 +18492,11 @@
     "id": "wl-00017",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-27",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-07-27",
     "durationMinutes": 76,
-    "rpe": 7,
     "totalVolumeKg": 7281,
-    "notes": "Short on sleep — grinder.",
+    "notes": "Short on sleep \u2014 grinder.",
     "exercises": [
       {
         "id": "le-00077",
@@ -18769,10 +18641,9 @@
     "id": "wl-00016",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-24",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-07-24",
     "durationMinutes": 60,
-    "rpe": 7,
     "totalVolumeKg": 4745,
     "exercises": [
       {
@@ -18918,10 +18789,9 @@
     "id": "wl-00015",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-23",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-07-23",
     "durationMinutes": 47,
-    "rpe": 7,
     "totalVolumeKg": 6139,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -19074,10 +18944,9 @@
     "id": "wl-00014",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-21",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-07-21",
     "durationMinutes": 58,
-    "rpe": 6,
     "totalVolumeKg": 5607,
     "notes": "Left knee a bit cranky on the last set.",
     "exercises": [
@@ -19224,10 +19093,9 @@
     "id": "wl-00013",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-20",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-07-20",
     "durationMinutes": 57,
-    "rpe": 8,
     "totalVolumeKg": 6551,
     "exercises": [
       {
@@ -19376,7 +19244,6 @@
     "title": "Conditioning & Core",
     "date": "2026-07-18",
     "durationMinutes": 46,
-    "rpe": 8,
     "totalVolumeKg": 1584,
     "notes": "Felt strong, bar speed good.",
     "exercises": [
@@ -19509,10 +19376,9 @@
     "id": "wl-00011",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-17",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-07-17",
     "durationMinutes": 66,
-    "rpe": 6,
     "totalVolumeKg": 4558,
     "notes": "Gym was packed, rushed the finisher.",
     "exercises": [
@@ -19659,10 +19525,9 @@
     "id": "wl-00010",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-16",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-07-16",
     "durationMinutes": 62,
-    "rpe": 6,
     "totalVolumeKg": 5935,
     "exercises": [
       {
@@ -19817,7 +19682,6 @@
     "title": "Conditioning & Core",
     "date": "2026-07-15",
     "durationMinutes": 45,
-    "rpe": 7,
     "totalVolumeKg": 1640,
     "exercises": [
       {
@@ -19949,10 +19813,9 @@
     "id": "wl-00008",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-14",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-07-14",
     "durationMinutes": 64,
-    "rpe": 6,
     "totalVolumeKg": 5500,
     "exercises": [
       {
@@ -20098,10 +19961,9 @@
     "id": "wl-00007",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-13",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-07-13",
     "durationMinutes": 65,
-    "rpe": 6,
     "totalVolumeKg": 6464,
     "exercises": [
       {
@@ -20250,7 +20112,6 @@
     "title": "Conditioning & Core",
     "date": "2026-07-11",
     "durationMinutes": 33,
-    "rpe": 8,
     "totalVolumeKg": 1619,
     "exercises": [
       {
@@ -20382,10 +20243,9 @@
     "id": "wl-00005",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-10",
-    "title": "Full Body — Power",
+    "title": "Full Body \u2014 Power",
     "date": "2026-07-10",
     "durationMinutes": 58,
-    "rpe": 8,
     "totalVolumeKg": 4881,
     "exercises": [
       {
@@ -20531,10 +20391,9 @@
     "id": "wl-00004",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-09",
-    "title": "Upper Body — Pull",
+    "title": "Upper Body \u2014 Pull",
     "date": "2026-07-09",
     "durationMinutes": 63,
-    "rpe": 6,
     "totalVolumeKg": 5982,
     "exercises": [
       {
@@ -20689,7 +20548,6 @@
     "title": "Conditioning & Core",
     "date": "2026-07-08",
     "durationMinutes": 47,
-    "rpe": 6,
     "totalVolumeKg": 1574,
     "notes": "Added a set, felt easy today.",
     "exercises": [
@@ -20822,10 +20680,9 @@
     "id": "wl-00002",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-07",
-    "title": "Upper Body — Push",
+    "title": "Upper Body \u2014 Push",
     "date": "2026-07-07",
     "durationMinutes": 56,
-    "rpe": 6,
     "totalVolumeKg": 5480,
     "exercises": [
       {
@@ -20971,10 +20828,9 @@
     "id": "wl-00001",
     "clientId": "c-001",
     "sessionId": "ws-c-001-2026-07-06",
-    "title": "Lower Body — Strength",
+    "title": "Lower Body \u2014 Strength",
     "date": "2026-07-06",
     "durationMinutes": 66,
-    "rpe": 7,
     "totalVolumeKg": 6712,
     "exercises": [
       {

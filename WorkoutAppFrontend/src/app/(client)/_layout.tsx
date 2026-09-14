@@ -25,8 +25,10 @@ export default function ClientLayout() {
         contentStyle: { backgroundColor: colors.background },
       }}>
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="profile" />
       <Stack.Screen name="chat" options={{ animation: 'slide_from_bottom' }} />
-      <Stack.Screen name="session/[id]" />
+      <Stack.Screen name="train/[id]" />
+      <Stack.Screen name="routine/new" />
       <Stack.Screen name="routine/[id]" />
     </Stack>
   );

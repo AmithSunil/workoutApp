@@ -1,0 +1,962 @@
+{
+  ".mcp.json": {
+    "mtime": 1788017134.0667987,
+    "seen": 1789201141.249935,
+    "ast_hash": "d000918ade7e4ae04fece79d47fba77d",
+    "semantic_hash": "d000918ade7e4ae04fece79d47fba77d"
+  },
+  ".vscode/settings.json": {
+    "mtime": 1788180757.514861,
+    "seen": 1789201141.249935,
+    "ast_hash": "e202790a7d36a22c432c013b4af88092",
+    "semantic_hash": "e202790a7d36a22c432c013b4af88092"
+  },
+  "WorkoutAppBackend/seed/seed.mjs": {
+    "mtime": 1789197783.2855318,
+    "seen": 1789201141.249935,
+    "ast_hash": "7ab0e9f8a50b1869539f8e941bf92e42",
+    "semantic_hash": "7ab0e9f8a50b1869539f8e941bf92e42"
+  },
+  "WorkoutAppBackend/seed/verify.mjs": {
+    "mtime": 1789197215.4300249,
+    "seen": 1789201141.249935,
+    "ast_hash": "d8e46c74fd7afd1d6b797b5b64a3c7af",
+    "semantic_hash": "d8e46c74fd7afd1d6b797b5b64a3c7af"
+  },
+  "WorkoutAppBackend/tests/rpcs.mjs": {
+    "mtime": 1789197215.4401805,
+    "seen": 1789201141.249935,
+    "ast_hash": "7be32f343c45906a6cc1eba83ad17cc2",
+    "semantic_hash": "7be32f343c45906a6cc1eba83ad17cc2"
+  },
+  "WorkoutAppFrontend/.claude/settings.json": {
+    "mtime": 1787995424.715926,
+    "seen": 1789201141.249935,
+    "ast_hash": "dc580fca35a0e98ed20777ede5e545a1",
+    "semantic_hash": "dc580fca35a0e98ed20777ede5e545a1"
+  },
+  "WorkoutAppFrontend/.vscode/extensions.json": {
+    "mtime": 1787995362.4691448,
+    "seen": 1789201141.249935,
+    "ast_hash": "b2354ba0225f5689d13651ec0fac0de0",
+    "semantic_hash": "b2354ba0225f5689d13651ec0fac0de0"
+  },
+  "WorkoutAppFrontend/.vscode/settings.json": {
+    "mtime": 1787995362.4821692,
+    "seen": 1789201141.249935,
+    "ast_hash": "6b9302c1f72c315e90233c7539c48c9f",
+    "semantic_hash": "6b9302c1f72c315e90233c7539c48c9f"
+  },
+  "WorkoutAppFrontend/android/app/build.gradle": {
+    "mtime": 1788001962.1265316,
+    "seen": 1789201141.249935,
+    "ast_hash": "6c9b0c07245f5d32e56486f81bc83b97",
+    "semantic_hash": "6c9b0c07245f5d32e56486f81bc83b97"
+  },
+  "WorkoutAppFrontend/android/app/src/main/java/com/anonymous/WorkoutAppFrontend/MainActivity.kt": {
+    "mtime": 1788001962.0165415,
+    "seen": 1789201141.249935,
+    "ast_hash": "3af2f1f3db76672daf2c2b83058353eb",
+    "semantic_hash": "3af2f1f3db76672daf2c2b83058353eb"
+  },
+  "WorkoutAppFrontend/android/app/src/main/java/com/anonymous/WorkoutAppFrontend/MainApplication.kt": {
+    "mtime": 1788001959.2993605,
+    "seen": 1789201141.249935,
+    "ast_hash": "2313b80efcde2b9894cc8ce401512f4e",
+    "semantic_hash": "2313b80efcde2b9894cc8ce401512f4e"
+  },
+  "WorkoutAppFrontend/android/build.gradle": {
+    "mtime": 1788001962.1254065,
+    "seen": 1789201141.249935,
+    "ast_hash": "55cec08c744fbe7b1f1294009fe3f65d",
+    "semantic_hash": "55cec08c744fbe7b1f1294009fe3f65d"
+  },
+  "WorkoutAppFrontend/android/gradlew": {
+    "mtime": 1788001957.6413987,
+    "seen": 1789201141.249935,
+    "ast_hash": "780b1d3e23a3b82154795f73df943a14",
+    "semantic_hash": "780b1d3e23a3b82154795f73df943a14"
+  },
+  "WorkoutAppFrontend/android/settings.gradle": {
+    "mtime": 1788001962.1234062,
+    "seen": 1789201141.249935,
+    "ast_hash": "540535c7e9a687cc4f29e613606e9b6f",
+    "semantic_hash": "540535c7e9a687cc4f29e613606e9b6f"
+  },
+  "WorkoutAppFrontend/app.json": {
+    "mtime": 1788081760.4595027,
+    "seen": 1789201141.249935,
+    "ast_hash": "b07bbdcea0573983f7b14ab228df8881",
+    "semantic_hash": "b07bbdcea0573983f7b14ab228df8881"
+  },
+  "WorkoutAppFrontend/assets/expo.icon/icon.json": {
+    "mtime": 1787995362.4691448,
+    "seen": 1789201141.249935,
+    "ast_hash": "35cb915a0bebbebbe69cf7815e174462",
+    "semantic_hash": "35cb915a0bebbebbe69cf7815e174462"
+  },
+  "WorkoutAppFrontend/eas.json": {
+    "mtime": 1788024201.9001906,
+    "seen": 1789201141.249935,
+    "ast_hash": "19f09a1c58ac5f0d4d94feb69bf9fe13",
+    "semantic_hash": "19f09a1c58ac5f0d4d94feb69bf9fe13"
+  },
+  "WorkoutAppFrontend/metro.config.js": {
+    "mtime": 1788008243.9144595,
+    "seen": 1789201141.249935,
+    "ast_hash": "8623a358165a1185db2a3c6ba9794059",
+    "semantic_hash": "8623a358165a1185db2a3c6ba9794059"
+  },
+  "WorkoutAppFrontend/package.json": {
+    "mtime": 1788164326.79408,
+    "seen": 1789201141.249935,
+    "ast_hash": "f9cbda29dec5f24b0cf0b7a717f41c72",
+    "semantic_hash": "f9cbda29dec5f24b0cf0b7a717f41c72"
+  },
+  "WorkoutAppFrontend/scripts/reset-project.js": {
+    "mtime": 1787995362.4691448,
+    "seen": 1789201141.249935,
+    "ast_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275",
+    "semantic_hash": "ca9d75cf60f51e7a2d67fd08ddfb8275"
+  },
+  "WorkoutAppFrontend/src/api/baseApi.ts": {
+    "mtime": 1788176035.667127,
+    "seen": 1789201141.249935,
+    "ast_hash": "55c87a99c27c06897ea8ee6450590212",
+    "semantic_hash": "55c87a99c27c06897ea8ee6450590212"
+  },
+  "WorkoutAppFrontend/src/api/endpoints/messagingApi.ts": {
+    "mtime": 1787999922.2934353,
+    "seen": 1789201141.249935,
+    "ast_hash": "a23f1ed8b097b14952d405e57999dad5",
+    "semantic_hash": "a23f1ed8b097b14952d405e57999dad5"
+  },
+  "WorkoutAppFrontend/src/api/endpoints/nutritionApi.ts": {
+    "mtime": 1787999922.2884512,
+    "seen": 1789201141.249935,
+    "ast_hash": "d53390b8b6e5e61a050fd9edfef3a95c",
+    "semantic_hash": "d53390b8b6e5e61a050fd9edfef3a95c"
+  },
+  "WorkoutAppFrontend/src/api/endpoints/progressApi.ts": {
+    "mtime": 1787999922.2834275,
+    "seen": 1789201141.249935,
+    "ast_hash": "d02ca43c4353cbaaa2fb187e8982af44",
+    "semantic_hash": "d02ca43c4353cbaaa2fb187e8982af44"
+  },
+  "WorkoutAppFrontend/src/api/endpoints/routinesApi.ts": {
+    "mtime": 1788019589.7991457,
+    "seen": 1789201141.249935,
+    "ast_hash": "cce43fc91c88aecd9a55cfb685889d6c",
+    "semantic_hash": "cce43fc91c88aecd9a55cfb685889d6c"
+  },
+  "WorkoutAppFrontend/src/api/endpoints/trainerApi.ts": {
+    "mtime": 1787999922.2788932,
+    "seen": 1789201141.249935,
+    "ast_hash": "17e5950bdee597d1988d903a48d1815e",
+    "semantic_hash": "17e5950bdee597d1988d903a48d1815e"
+  },
+  "WorkoutAppFrontend/src/api/endpoints/workoutsApi.ts": {
+    "mtime": 1787999922.299445,
+    "seen": 1789201141.249935,
+    "ast_hash": "480c3937150ad3c086eb224db9097c6b",
+    "semantic_hash": "480c3937150ad3c086eb224db9097c6b"
+  },
+  "WorkoutAppFrontend/src/api/handlers.ts": {
+    "mtime": 1789196784.5101137,
+    "seen": 1789201141.249935,
+    "ast_hash": "3fb20d55dcd5665269e8b047ae74cd9e",
+    "semantic_hash": "3fb20d55dcd5665269e8b047ae74cd9e"
+  },
+  "WorkoutAppFrontend/src/api/matchRoute.ts": {
+    "mtime": 1788176015.4200332,
+    "seen": 1789201141.249935,
+    "ast_hash": "47d7cde126a2b663401aeb8f532387b4",
+    "semantic_hash": "47d7cde126a2b663401aeb8f532387b4"
+  },
+  "WorkoutAppFrontend/src/api/mockBaseQuery.ts": {
+    "mtime": 1788176035.6189518,
+    "seen": 1789201141.249935,
+    "ast_hash": "71038dfb79d5bc54c7e963631f88a6f3",
+    "semantic_hash": "71038dfb79d5bc54c7e963631f88a6f3"
+  },
+  "WorkoutAppFrontend/src/api/mockDb.ts": {
+    "mtime": 1788019238.3795898,
+    "seen": 1789201141.249935,
+    "ast_hash": "80ecb6f6607f0750c7b86c9bad34bf9a",
+    "semantic_hash": "80ecb6f6607f0750c7b86c9bad34bf9a"
+  },
+  "WorkoutAppFrontend/src/api/supabaseBaseQuery.ts": {
+    "mtime": 1788176015.5160675,
+    "seen": 1789201141.249935,
+    "ast_hash": "97cc8684f70fcb0f47803470dc4814ee",
+    "semantic_hash": "97cc8684f70fcb0f47803470dc4814ee"
+  },
+  "WorkoutAppFrontend/src/api/supabase/httpError.ts": {
+    "mtime": 1788175652.1831913,
+    "seen": 1789201141.249935,
+    "ast_hash": "cfd12e3b70f8c72c2b5d17253c3acf0f",
+    "semantic_hash": "cfd12e3b70f8c72c2b5d17253c3acf0f"
+  },
+  "WorkoutAppFrontend/src/api/supabase/routes.ts": {
+    "mtime": 1789196784.5307238,
+    "seen": 1789201141.249935,
+    "ast_hash": "b780bc4b0eb23c91292ea436a716fdd3",
+    "semantic_hash": "b780bc4b0eb23c91292ea436a716fdd3"
+  },
+  "WorkoutAppFrontend/src/api/supabase/rows.ts": {
+    "mtime": 1789196764.379809,
+    "seen": 1789201141.249935,
+    "ast_hash": "f9af05f90a0f118b880940410c96af6c",
+    "semantic_hash": "f9af05f90a0f118b880940410c96af6c"
+  },
+  "WorkoutAppFrontend/src/api/types.ts": {
+    "mtime": 1788176015.6059644,
+    "seen": 1789201141.249935,
+    "ast_hash": "91e35a708ec8fac5df54be327d5d606c",
+    "semantic_hash": "91e35a708ec8fac5df54be327d5d606c"
+  },
+  "WorkoutAppFrontend/src/app/(client)/(tabs)/_layout.tsx": {
+    "mtime": 1787999922.2365427,
+    "seen": 1789201141.249935,
+    "ast_hash": "3bd2be3f3a8d54a02a82eb616473f4c7",
+    "semantic_hash": "3bd2be3f3a8d54a02a82eb616473f4c7"
+  },
+  "WorkoutAppFrontend/src/app/(client)/(tabs)/explore.tsx": {
+    "mtime": 1789196880.3772933,
+    "seen": 1789201141.249935,
+    "ast_hash": "c6bc8b61495236af8e3c2dbeaee72289",
+    "semantic_hash": "c6bc8b61495236af8e3c2dbeaee72289"
+  },
+  "WorkoutAppFrontend/src/app/(client)/(tabs)/log.tsx": {
+    "mtime": 1788081499.1045146,
+    "seen": 1789201141.249935,
+    "ast_hash": "45aebbb4b769251ec39c9612c4f2f02b",
+    "semantic_hash": "45aebbb4b769251ec39c9612c4f2f02b"
+  },
+  "WorkoutAppFrontend/src/app/(client)/(tabs)/progress.tsx": {
+    "mtime": 1788083570.325447,
+    "seen": 1789201141.249935,
+    "ast_hash": "5fceb070bff51cc3807a30ce02ed19ea",
+    "semantic_hash": "5fceb070bff51cc3807a30ce02ed19ea"
+  },
+  "WorkoutAppFrontend/src/app/(client)/(tabs)/workouts.tsx": {
+    "mtime": 1789196880.3772933,
+    "seen": 1789201141.249935,
+    "ast_hash": "5794f208a7ebbca242cb69e527a9dc47",
+    "semantic_hash": "5794f208a7ebbca242cb69e527a9dc47"
+  },
+  "WorkoutAppFrontend/src/app/(client)/_layout.tsx": {
+    "mtime": 1788174782.9099817,
+    "seen": 1789201141.249935,
+    "ast_hash": "4398825dbec94bc53ad33aa946b2f768",
+    "semantic_hash": "4398825dbec94bc53ad33aa946b2f768"
+  },
+  "WorkoutAppFrontend/src/app/(client)/chat.tsx": {
+    "mtime": 1788083570.1658447,
+    "seen": 1789201141.249935,
+    "ast_hash": "8085803d0a0ebec8c2cc75f82ae90800",
+    "semantic_hash": "8085803d0a0ebec8c2cc75f82ae90800"
+  },
+  "WorkoutAppFrontend/src/app/(client)/routine/[id].tsx": {
+    "mtime": 1789196902.016124,
+    "seen": 1789201141.249935,
+    "ast_hash": "2b49d9602442b60474efc6bb390a063c",
+    "semantic_hash": "2b49d9602442b60474efc6bb390a063c"
+  },
+  "WorkoutAppFrontend/src/app/(client)/session/[id].tsx": {
+    "mtime": 1789196784.556949,
+    "seen": 1789201141.249935,
+    "ast_hash": "52198c8dbd7b23668e14b7e08664a721",
+    "semantic_hash": "52198c8dbd7b23668e14b7e08664a721"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/(tabs)/_layout.tsx": {
+    "mtime": 1788013689.3888955,
+    "seen": 1789201141.249935,
+    "ast_hash": "8b7f93aed68fc0846672ae41b57d1ac2",
+    "semantic_hash": "8b7f93aed68fc0846672ae41b57d1ac2"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/(tabs)/dashboard.tsx": {
+    "mtime": 1788081500.0160148,
+    "seen": 1789201141.249935,
+    "ast_hash": "dbeb035cd502f84323773d9fc659c4b7",
+    "semantic_hash": "dbeb035cd502f84323773d9fc659c4b7"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/(tabs)/messages.tsx": {
+    "mtime": 1788083537.2191496,
+    "seen": 1789201141.249935,
+    "ast_hash": "5e0b2f61dac53b413b9a2c1412582af4",
+    "semantic_hash": "5e0b2f61dac53b413b9a2c1412582af4"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/(tabs)/roster.tsx": {
+    "mtime": 1788081500.2918608,
+    "seen": 1789201141.249935,
+    "ast_hash": "2fcbc0ee8adc0e71aaef4bd1d5fca2f4",
+    "semantic_hash": "2fcbc0ee8adc0e71aaef4bd1d5fca2f4"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/(tabs)/routines.tsx": {
+    "mtime": 1789196880.4242678,
+    "seen": 1789201141.249935,
+    "ast_hash": "c6a91e069511e14e532fef6398e22f36",
+    "semantic_hash": "c6a91e069511e14e532fef6398e22f36"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/_layout.tsx": {
+    "mtime": 1788174782.915986,
+    "seen": 1789201141.249935,
+    "ast_hash": "723743c8af77de8b669f770e8e550d8d",
+    "semantic_hash": "723743c8af77de8b669f770e8e550d8d"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/assignment/[id].tsx": {
+    "mtime": 1788020196.6338334,
+    "seen": 1789201141.249935,
+    "ast_hash": "9ea64fc2759f8759d8719d948667bed5",
+    "semantic_hash": "9ea64fc2759f8759d8719d948667bed5"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/client/[id].tsx": {
+    "mtime": 1789196901.968928,
+    "seen": 1789201141.249935,
+    "ast_hash": "274be6b5a308f9229119b937f7ea356b",
+    "semantic_hash": "274be6b5a308f9229119b937f7ea356b"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/routine/[id].tsx": {
+    "mtime": 1789196901.9845574,
+    "seen": 1789201141.249935,
+    "ast_hash": "88f7153f6aa777faf15fce9d76d60094",
+    "semantic_hash": "88f7153f6aa777faf15fce9d76d60094"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/routine/edit/[id].tsx": {
+    "mtime": 1788019649.588774,
+    "seen": 1789201141.249935,
+    "ast_hash": "16f571c275dd324f33590fb31c0e217d",
+    "semantic_hash": "16f571c275dd324f33590fb31c0e217d"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/routine/new.tsx": {
+    "mtime": 1788019610.8231914,
+    "seen": 1789201141.249935,
+    "ast_hash": "adb479cc0d5b27da7930b7f88a7d8cf2",
+    "semantic_hash": "adb479cc0d5b27da7930b7f88a7d8cf2"
+  },
+  "WorkoutAppFrontend/src/app/(trainer)/thread/[id].tsx": {
+    "mtime": 1789196807.4216788,
+    "seen": 1789201141.249935,
+    "ast_hash": "3dd8c565277f7f7e514818718342e432",
+    "semantic_hash": "3dd8c565277f7f7e514818718342e432"
+  },
+  "WorkoutAppFrontend/src/app/_layout.tsx": {
+    "mtime": 1788174679.269032,
+    "seen": 1789201141.249935,
+    "ast_hash": "9dac669cf56b80c7ad90457f5685acad",
+    "semantic_hash": "9dac669cf56b80c7ad90457f5685acad"
+  },
+  "WorkoutAppFrontend/src/app/index.tsx": {
+    "mtime": 1788174763.3195617,
+    "seen": 1789201141.249935,
+    "ast_hash": "ea5dc4470660acdd8528254e44ed4cb6",
+    "semantic_hash": "ea5dc4470660acdd8528254e44ed4cb6"
+  },
+  "WorkoutAppFrontend/src/app/sign-in.tsx": {
+    "mtime": 1788174763.314562,
+    "seen": 1789201141.249935,
+    "ast_hash": "f8083b4f263b39d17574f826870550f5",
+    "semantic_hash": "f8083b4f263b39d17574f826870550f5"
+  },
+  "WorkoutAppFrontend/src/app/workout-log/[id].tsx": {
+    "mtime": 1789196807.3772752,
+    "seen": 1789201141.249935,
+    "ast_hash": "76ff8cfcec2ffbda5dd72a97103c64de",
+    "semantic_hash": "76ff8cfcec2ffbda5dd72a97103c64de"
+  },
+  "WorkoutAppFrontend/src/auth/authService.ts": {
+    "mtime": 1788174573.7194066,
+    "seen": 1789201141.249935,
+    "ast_hash": "b4f91b31f3c3b56572f2642d6eb8d8c7",
+    "semantic_hash": "b4f91b31f3c3b56572f2642d6eb8d8c7"
+  },
+  "WorkoutAppFrontend/src/auth/errors.ts": {
+    "mtime": 1788174547.3779526,
+    "seen": 1789201141.249935,
+    "ast_hash": "75fdf57d8a16997e3a5f973b40df4279",
+    "semantic_hash": "75fdf57d8a16997e3a5f973b40df4279"
+  },
+  "WorkoutAppFrontend/src/auth/identity.ts": {
+    "mtime": 1788174559.1839616,
+    "seen": 1789201141.249935,
+    "ast_hash": "d98542ccc19d12adeb28cd7aac0644c0",
+    "semantic_hash": "d98542ccc19d12adeb28cd7aac0644c0"
+  },
+  "WorkoutAppFrontend/src/auth/index.ts": {
+    "mtime": 1788174642.7264433,
+    "seen": 1789201141.249935,
+    "ast_hash": "38b76e4d69e9e9a2cc40cc035f10a53e",
+    "semantic_hash": "38b76e4d69e9e9a2cc40cc035f10a53e"
+  },
+  "WorkoutAppFrontend/src/auth/useAuthSession.ts": {
+    "mtime": 1788174804.4646943,
+    "seen": 1789201141.249935,
+    "ast_hash": "8175eba6ac335d8472494f9aac8e7fef",
+    "semantic_hash": "8175eba6ac335d8472494f9aac8e7fef"
+  },
+  "WorkoutAppFrontend/src/components/auth/DevQuickSignIn.tsx": {
+    "mtime": 1788174734.4378831,
+    "seen": 1789201141.249935,
+    "ast_hash": "276b2d0ae067f6416b11ef50a50a6527",
+    "semantic_hash": "276b2d0ae067f6416b11ef50a50a6527"
+  },
+  "WorkoutAppFrontend/src/components/charts/BarSeries.tsx": {
+    "mtime": 1788081501.7894392,
+    "seen": 1789201141.249935,
+    "ast_hash": "67c38090b05de52852d5e497656bca99",
+    "semantic_hash": "67c38090b05de52852d5e497656bca99"
+  },
+  "WorkoutAppFrontend/src/components/charts/CalorieGauge.tsx": {
+    "mtime": 1788081865.2661011,
+    "seen": 1789201141.249935,
+    "ast_hash": "b669adf35f83ec0b25c6c6442f34bb35",
+    "semantic_hash": "b669adf35f83ec0b25c6c6442f34bb35"
+  },
+  "WorkoutAppFrontend/src/components/charts/LineChart.tsx": {
+    "mtime": 1788081837.5979605,
+    "seen": 1789201141.249935,
+    "ast_hash": "f98af2bf5f2614a11a07af5601cfa1e8",
+    "semantic_hash": "f98af2bf5f2614a11a07af5601cfa1e8"
+  },
+  "WorkoutAppFrontend/src/components/charts/MacroBars.tsx": {
+    "mtime": 1788083570.4089186,
+    "seen": 1789201141.249935,
+    "ast_hash": "351c1db80e365df9b8dc821c9db8fef3",
+    "semantic_hash": "351c1db80e365df9b8dc821c9db8fef3"
+  },
+  "WorkoutAppFrontend/src/components/charts/Sparkline.tsx": {
+    "mtime": 1788081503.8310587,
+    "seen": 1789201141.249935,
+    "ast_hash": "d6ddc95e36a3f0a371fe24f8924dfbd3",
+    "semantic_hash": "d6ddc95e36a3f0a371fe24f8924dfbd3"
+  },
+  "WorkoutAppFrontend/src/components/charts/index.ts": {
+    "mtime": 1787999922.0950272,
+    "seen": 1789201141.249935,
+    "ast_hash": "bb3261205234ff214e677f95ba57c8d3",
+    "semantic_hash": "bb3261205234ff214e677f95ba57c8d3"
+  },
+  "WorkoutAppFrontend/src/components/common/ChatFab.tsx": {
+    "mtime": 1788083537.3894799,
+    "seen": 1789201141.249935,
+    "ast_hash": "4a920cb998ee4a6c928ffc130508b1dd",
+    "semantic_hash": "4a920cb998ee4a6c928ffc130508b1dd"
+  },
+  "WorkoutAppFrontend/src/components/common/DateStrip.tsx": {
+    "mtime": 1788083537.427892,
+    "seen": 1789201141.249935,
+    "ast_hash": "648feb18bac46137f95131bd1f839e6d",
+    "semantic_hash": "648feb18bac46137f95131bd1f839e6d"
+  },
+  "WorkoutAppFrontend/src/components/common/ProfileButton.tsx": {
+    "mtime": 1788174819.5515594,
+    "seen": 1789201141.249935,
+    "ast_hash": "4e8d9053f0a0515274e2d7b934aadbac",
+    "semantic_hash": "4e8d9053f0a0515274e2d7b934aadbac"
+  },
+  "WorkoutAppFrontend/src/components/common/TrainerIndicator.tsx": {
+    "mtime": 1788083537.4770923,
+    "seen": 1789201141.249935,
+    "ast_hash": "53c34524ffd846423533824332ac7265",
+    "semantic_hash": "53c34524ffd846423533824332ac7265"
+  },
+  "WorkoutAppFrontend/src/components/messaging/AttachmentCard.tsx": {
+    "mtime": 1789196807.3929474,
+    "seen": 1789201141.249935,
+    "ast_hash": "8de2ddce5d7be0a1bd70c44b9d13a65d",
+    "semantic_hash": "8de2ddce5d7be0a1bd70c44b9d13a65d"
+  },
+  "WorkoutAppFrontend/src/components/messaging/Composer.tsx": {
+    "mtime": 1788083537.5356524,
+    "seen": 1789201141.249935,
+    "ast_hash": "ddb54b9d9f56796ad14c02f866b6941c",
+    "semantic_hash": "ddb54b9d9f56796ad14c02f866b6941c"
+  },
+  "WorkoutAppFrontend/src/components/messaging/MessageBubble.tsx": {
+    "mtime": 1788081506.3397012,
+    "seen": 1789201141.249935,
+    "ast_hash": "84e676edb25fbbb34676160fe6dc5af0",
+    "semantic_hash": "84e676edb25fbbb34676160fe6dc5af0"
+  },
+  "WorkoutAppFrontend/src/components/messaging/ThreadView.tsx": {
+    "mtime": 1788083570.5128932,
+    "seen": 1789201141.249935,
+    "ast_hash": "26bcc6896dfdc7c48a603c40cd89b36b",
+    "semantic_hash": "26bcc6896dfdc7c48a603c40cd89b36b"
+  },
+  "WorkoutAppFrontend/src/components/navigation/AppTabBar.tsx": {
+    "mtime": 1788083537.6222944,
+    "seen": 1789201141.249935,
+    "ast_hash": "a02f422d212bddfc61d3e2f2a7a93d4f",
+    "semantic_hash": "a02f422d212bddfc61d3e2f2a7a93d4f"
+  },
+  "WorkoutAppFrontend/src/components/nutrition/AiConfirmationCard.tsx": {
+    "mtime": 1788081507.3563573,
+    "seen": 1789201141.249935,
+    "ast_hash": "e714c2b1906d8c05ab9d4f562bc15339",
+    "semantic_hash": "e714c2b1906d8c05ab9d4f562bc15339"
+  },
+  "WorkoutAppFrontend/src/components/nutrition/FoodPickerSheet.tsx": {
+    "mtime": 1788083537.674137,
+    "seen": 1789201141.249935,
+    "ast_hash": "f4409df01ac08dfb187d2c97c9393daa",
+    "semantic_hash": "f4409df01ac08dfb187d2c97c9393daa"
+  },
+  "WorkoutAppFrontend/src/components/nutrition/MealSection.tsx": {
+    "mtime": 1788083537.7195594,
+    "seen": 1789201141.249935,
+    "ast_hash": "2ba1cdce465e00eb7a9f6cc2b070370e",
+    "semantic_hash": "2ba1cdce465e00eb7a9f6cc2b070370e"
+  },
+  "WorkoutAppFrontend/src/components/nutrition/QuickAddCarousel.tsx": {
+    "mtime": 1788083537.7611985,
+    "seen": 1789201141.249935,
+    "ast_hash": "463f1fc9b8522e931753263887bb4725",
+    "semantic_hash": "463f1fc9b8522e931753263887bb4725"
+  },
+  "WorkoutAppFrontend/src/components/progress/HabitChecklist.tsx": {
+    "mtime": 1788083537.8166952,
+    "seen": 1789201141.249935,
+    "ast_hash": "43671644b0bbd11a31e02861636c7c4a",
+    "semantic_hash": "43671644b0bbd11a31e02861636c7c4a"
+  },
+  "WorkoutAppFrontend/src/components/progress/LogWeightSheet.tsx": {
+    "mtime": 1788083537.85846,
+    "seen": 1789201141.249935,
+    "ast_hash": "d402097b5fa2ef98943c93b1151c502f",
+    "semantic_hash": "d402097b5fa2ef98943c93b1151c502f"
+  },
+  "WorkoutAppFrontend/src/components/progress/PhotoGallery.tsx": {
+    "mtime": 1788081837.5063677,
+    "seen": 1789201141.249935,
+    "ast_hash": "a39d6291d67dd67d6be3df2f32baab6d",
+    "semantic_hash": "a39d6291d67dd67d6be3df2f32baab6d"
+  },
+  "WorkoutAppFrontend/src/components/routines/AssignSheet.tsx": {
+    "mtime": 1788083537.9208791,
+    "seen": 1789201141.249935,
+    "ast_hash": "3c01eb13d2d0df5b057de1be0ba00c51",
+    "semantic_hash": "3c01eb13d2d0df5b057de1be0ba00c51"
+  },
+  "WorkoutAppFrontend/src/components/routines/ExercisePickerSheet.tsx": {
+    "mtime": 1788083537.9617,
+    "seen": 1789201141.249935,
+    "ast_hash": "3f623b03ce386647e6e0c1d3d1674e5c",
+    "semantic_hash": "3f623b03ce386647e6e0c1d3d1674e5c"
+  },
+  "WorkoutAppFrontend/src/components/routines/PrescriptionEditor.tsx": {
+    "mtime": 1789196852.7707021,
+    "seen": 1789201141.249935,
+    "ast_hash": "6b3ae8655360bec5dcec868ca1296d5b",
+    "semantic_hash": "6b3ae8655360bec5dcec868ca1296d5b"
+  },
+  "WorkoutAppFrontend/src/components/routines/RoutineBuilder.tsx": {
+    "mtime": 1788081514.1684303,
+    "seen": 1789201141.249935,
+    "ast_hash": "e04e16ee7ff2e6ae9cf6cebe2aaa37aa",
+    "semantic_hash": "e04e16ee7ff2e6ae9cf6cebe2aaa37aa"
+  },
+  "WorkoutAppFrontend/src/components/routines/RoutineCard.tsx": {
+    "mtime": 1788081516.2901378,
+    "seen": 1789201141.249935,
+    "ast_hash": "48e09e6e2d7725df185b07251494edf6",
+    "semantic_hash": "48e09e6e2d7725df185b07251494edf6"
+  },
+  "WorkoutAppFrontend/src/components/routines/RoutineDayEditor.tsx": {
+    "mtime": 1788081516.6055565,
+    "seen": 1789201141.249935,
+    "ast_hash": "f4158176bb60df9246f2fa4f5a58aa30",
+    "semantic_hash": "f4158176bb60df9246f2fa4f5a58aa30"
+  },
+  "WorkoutAppFrontend/src/components/routines/RoutineDayView.tsx": {
+    "mtime": 1788083570.8949192,
+    "seen": 1789201141.249935,
+    "ast_hash": "82a478ed932ca9c7692853224e8a752b",
+    "semantic_hash": "82a478ed932ca9c7692853224e8a752b"
+  },
+  "WorkoutAppFrontend/src/components/routines/RoutineExerciseRow.tsx": {
+    "mtime": 1789196852.7797935,
+    "seen": 1789201141.249935,
+    "ast_hash": "e2952015dfb2def3491a17da61ea2ff1",
+    "semantic_hash": "e2952015dfb2def3491a17da61ea2ff1"
+  },
+  "WorkoutAppFrontend/src/components/routines/RoutinePickerSheet.tsx": {
+    "mtime": 1788083538.115317,
+    "seen": 1789201141.249935,
+    "ast_hash": "d3ef8e4d539621f5ec5248ff0bf85a05",
+    "semantic_hash": "d3ef8e4d539621f5ec5248ff0bf85a05"
+  },
+  "WorkoutAppFrontend/src/components/routines/Stepper.tsx": {
+    "mtime": 1789196852.7838368,
+    "seen": 1789201141.249935,
+    "ast_hash": "4021673a6b3fa0fdd6339a468861b07e",
+    "semantic_hash": "4021673a6b3fa0fdd6339a468861b07e"
+  },
+  "WorkoutAppFrontend/src/components/routines/WeekdayStrip.tsx": {
+    "mtime": 1788083538.167288,
+    "seen": 1789201141.249935,
+    "ast_hash": "64d7d064869a7f39135b9274f83ba274",
+    "semantic_hash": "64d7d064869a7f39135b9274f83ba274"
+  },
+  "WorkoutAppFrontend/src/components/routines/draft.ts": {
+    "mtime": 1789196829.5085194,
+    "seen": 1789201141.249935,
+    "ast_hash": "84eb7834141dcf40a7bb6faf779bebee",
+    "semantic_hash": "84eb7834141dcf40a7bb6faf779bebee"
+  },
+  "WorkoutAppFrontend/src/components/routines/index.ts": {
+    "mtime": 1788019559.3725507,
+    "seen": 1789201141.249935,
+    "ast_hash": "ef0d8b194c09bdac341b2fbfb5770fdd",
+    "semantic_hash": "ef0d8b194c09bdac341b2fbfb5770fdd"
+  },
+  "WorkoutAppFrontend/src/components/trainer/AlertCard.tsx": {
+    "mtime": 1789196880.4086223,
+    "seen": 1789201141.249935,
+    "ast_hash": "05ccba4dd97a65ad814b814aaa48f5cb",
+    "semantic_hash": "05ccba4dd97a65ad814b814aaa48f5cb"
+  },
+  "WorkoutAppFrontend/src/components/trainer/CheckInCard.tsx": {
+    "mtime": 1789196880.4011438,
+    "seen": 1789201141.249935,
+    "ast_hash": "63d02299c4b1219b587c97d790e034ee",
+    "semantic_hash": "63d02299c4b1219b587c97d790e034ee"
+  },
+  "WorkoutAppFrontend/src/components/trainer/ClientRosterItem.tsx": {
+    "mtime": 1787999921.9724157,
+    "seen": 1789201141.249935,
+    "ast_hash": "e42fdc23025d1d8029cdfbfc99e0b1f7",
+    "semantic_hash": "e42fdc23025d1d8029cdfbfc99e0b1f7"
+  },
+  "WorkoutAppFrontend/src/components/trainer/ClientRosterRow.tsx": {
+    "mtime": 1788083571.6166706,
+    "seen": 1789201141.249935,
+    "ast_hash": "5f7e6517bd7904cb8e63c9ed8c6cf7c9",
+    "semantic_hash": "5f7e6517bd7904cb8e63c9ed8c6cf7c9"
+  },
+  "WorkoutAppFrontend/src/components/ui/Avatar.tsx": {
+    "mtime": 1788081837.5474963,
+    "seen": 1789201141.249935,
+    "ast_hash": "f280092fb427dfcd37de920d54b59194",
+    "semantic_hash": "f280092fb427dfcd37de920d54b59194"
+  },
+  "WorkoutAppFrontend/src/components/ui/Button.tsx": {
+    "mtime": 1788081805.9763517,
+    "seen": 1789201141.249935,
+    "ast_hash": "819050187cfb043f63a72b1d5347b8af",
+    "semantic_hash": "819050187cfb043f63a72b1d5347b8af"
+  },
+  "WorkoutAppFrontend/src/components/ui/Card.tsx": {
+    "mtime": 1788081806.183595,
+    "seen": 1789201141.249935,
+    "ast_hash": "8db1d0836572c52d4e2ec56fdfd033ea",
+    "semantic_hash": "8db1d0836572c52d4e2ec56fdfd033ea"
+  },
+  "WorkoutAppFrontend/src/components/ui/Chip.tsx": {
+    "mtime": 1788083538.2610536,
+    "seen": 1789201141.249935,
+    "ast_hash": "68ebf814c942cfdc23ac628595af94d4",
+    "semantic_hash": "68ebf814c942cfdc23ac628595af94d4"
+  },
+  "WorkoutAppFrontend/src/components/ui/Divider.tsx": {
+    "mtime": 1788081527.5483105,
+    "seen": 1789201141.249935,
+    "ast_hash": "470cebfcdd688d8e6114e2282733de73",
+    "semantic_hash": "470cebfcdd688d8e6114e2282733de73"
+  },
+  "WorkoutAppFrontend/src/components/ui/EmptyState.tsx": {
+    "mtime": 1788081529.6421208,
+    "seen": 1789201141.249935,
+    "ast_hash": "94462ae3873549b654c9d3c309b897c3",
+    "semantic_hash": "94462ae3873549b654c9d3c309b897c3"
+  },
+  "WorkoutAppFrontend/src/components/ui/Input.tsx": {
+    "mtime": 1788174661.7984195,
+    "seen": 1789201141.249935,
+    "ast_hash": "2b09d903948fee359628136a86e9952b",
+    "semantic_hash": "2b09d903948fee359628136a86e9952b"
+  },
+  "WorkoutAppFrontend/src/components/ui/ProgressBar.tsx": {
+    "mtime": 1788081529.8873844,
+    "seen": 1789201141.249935,
+    "ast_hash": "fe6427a4d201b27aeb421e551ecfbb4f",
+    "semantic_hash": "fe6427a4d201b27aeb421e551ecfbb4f"
+  },
+  "WorkoutAppFrontend/src/components/ui/Screen.tsx": {
+    "mtime": 1788083571.457288,
+    "seen": 1789201141.249935,
+    "ast_hash": "bb516980b6c7641ed39060027b4daf60",
+    "semantic_hash": "bb516980b6c7641ed39060027b4daf60"
+  },
+  "WorkoutAppFrontend/src/components/ui/SectionHeader.tsx": {
+    "mtime": 1788081533.623442,
+    "seen": 1789201141.249935,
+    "ast_hash": "51b6890aee869d9eb4f54c4d26a6764b",
+    "semantic_hash": "51b6890aee869d9eb4f54c4d26a6764b"
+  },
+  "WorkoutAppFrontend/src/components/ui/SegmentedControl.tsx": {
+    "mtime": 1788081806.8933864,
+    "seen": 1789201141.249935,
+    "ast_hash": "3fcf66e3f53a898c0f8b9c0f954d7d0d",
+    "semantic_hash": "3fcf66e3f53a898c0f8b9c0f954d7d0d"
+  },
+  "WorkoutAppFrontend/src/components/ui/Sheet.tsx": {
+    "mtime": 1788083538.3437178,
+    "seen": 1789201141.249935,
+    "ast_hash": "d9324fdc8e66d35e13e22c68c12c5385",
+    "semantic_hash": "d9324fdc8e66d35e13e22c68c12c5385"
+  },
+  "WorkoutAppFrontend/src/components/ui/Skeleton.tsx": {
+    "mtime": 1788083596.9043026,
+    "seen": 1789201141.249935,
+    "ast_hash": "824a8579f9ddbeebd7c1d41dcc3a7fa9",
+    "semantic_hash": "824a8579f9ddbeebd7c1d41dcc3a7fa9"
+  },
+  "WorkoutAppFrontend/src/components/ui/StatTile.tsx": {
+    "mtime": 1788083538.396471,
+    "seen": 1789201141.249935,
+    "ast_hash": "8f2a1681d0ac6698d02b68d0f179e32e",
+    "semantic_hash": "8f2a1681d0ac6698d02b68d0f179e32e"
+  },
+  "WorkoutAppFrontend/src/components/ui/StatusDot.tsx": {
+    "mtime": 1788081539.546045,
+    "seen": 1789201141.249935,
+    "ast_hash": "fff52f6dd67a04b2a34a645c0be2d975",
+    "semantic_hash": "fff52f6dd67a04b2a34a645c0be2d975"
+  },
+  "WorkoutAppFrontend/src/components/ui/Text.tsx": {
+    "mtime": 1788081748.5039816,
+    "seen": 1789201141.249935,
+    "ast_hash": "2ff158de0957464763df60f291a6e261",
+    "semantic_hash": "2ff158de0957464763df60f291a6e261"
+  },
+  "WorkoutAppFrontend/src/components/ui/index.ts": {
+    "mtime": 1788174666.0904498,
+    "seen": 1789201141.249935,
+    "ast_hash": "dd920f9f74e6c5fa4d0df1c277057116",
+    "semantic_hash": "dd920f9f74e6c5fa4d0df1c277057116"
+  },
+  "WorkoutAppFrontend/src/components/workouts/ExerciseLogCard.tsx": {
+    "mtime": 1788083538.4443288,
+    "seen": 1789201141.249935,
+    "ast_hash": "ea279eda345a440ed565fbeb43e70c01",
+    "semantic_hash": "ea279eda345a440ed565fbeb43e70c01"
+  },
+  "WorkoutAppFrontend/src/components/workouts/SessionCard.tsx": {
+    "mtime": 1788081541.4634233,
+    "seen": 1789201141.249935,
+    "ast_hash": "94e54977362a77e31fa1c0018e5c58ee",
+    "semantic_hash": "94e54977362a77e31fa1c0018e5c58ee"
+  },
+  "WorkoutAppFrontend/src/components/workouts/WorkoutLogRow.tsx": {
+    "mtime": 1789196829.4877,
+    "seen": 1789201141.249935,
+    "ast_hash": "2b0489dc36df5c0742ee75037382ad74",
+    "semantic_hash": "2b0489dc36df5c0742ee75037382ad74"
+  },
+  "WorkoutAppFrontend/src/hooks/useSession.ts": {
+    "mtime": 1788174819.5575597,
+    "seen": 1789201141.249935,
+    "ast_hash": "e19e0f4676b6d852f148c284903dff70",
+    "semantic_hash": "e19e0f4676b6d852f148c284903dff70"
+  },
+  "WorkoutAppFrontend/src/mock-api/aiSuggestions.json": {
+    "mtime": 1787999922.3263028,
+    "seen": 1789201141.249935,
+    "ast_hash": "b1d3121cd128be2ec6ccb51448e490d1",
+    "semantic_hash": "b1d3121cd128be2ec6ccb51448e490d1"
+  },
+  "WorkoutAppFrontend/src/mock-api/alerts.json": {
+    "mtime": 1789196935.812872,
+    "seen": 1789201141.249935,
+    "ast_hash": "5fbabdbb6cb398abfb3b352e99136a43",
+    "semantic_hash": "5fbabdbb6cb398abfb3b352e99136a43"
+  },
+  "WorkoutAppFrontend/src/mock-api/bodyMetrics.json": {
+    "mtime": 1787999922.3221993,
+    "seen": 1789201141.249935,
+    "ast_hash": "ff97cc955028d9071c2d060448b32617",
+    "semantic_hash": "ff97cc955028d9071c2d060448b32617"
+  },
+  "WorkoutAppFrontend/src/mock-api/checkIns.json": {
+    "mtime": 1789196935.7969,
+    "seen": 1789201141.249935,
+    "ast_hash": "806b5c5401a71342e25de15059385077",
+    "semantic_hash": "806b5c5401a71342e25de15059385077"
+  },
+  "WorkoutAppFrontend/src/mock-api/exercises.json": {
+    "mtime": 1787999922.495886,
+    "seen": 1789201141.249935,
+    "ast_hash": "4749c07d9e9c0124162f5bbb3781990b",
+    "semantic_hash": "4749c07d9e9c0124162f5bbb3781990b"
+  },
+  "WorkoutAppFrontend/src/mock-api/foods.json": {
+    "mtime": 1787999922.398526,
+    "seen": 1789201141.249935,
+    "ast_hash": "6a9023ad38a2124aa55dae0e405dd7ca",
+    "semantic_hash": "6a9023ad38a2124aa55dae0e405dd7ca"
+  },
+  "WorkoutAppFrontend/src/mock-api/habits.json": {
+    "mtime": 1787999922.3652482,
+    "seen": 1789201141.249935,
+    "ast_hash": "cde0c95f647a934ff8c62e8fab22729a",
+    "semantic_hash": "cde0c95f647a934ff8c62e8fab22729a"
+  },
+  "WorkoutAppFrontend/src/mock-api/messages.json": {
+    "mtime": 1787999922.3852954,
+    "seen": 1789201141.249935,
+    "ast_hash": "dbfe9e7c2b387666e6c7c1048c6c5405",
+    "semantic_hash": "dbfe9e7c2b387666e6c7c1048c6c5405"
+  },
+  "WorkoutAppFrontend/src/mock-api/nutritionLogs.json": {
+    "mtime": 1787999922.358074,
+    "seen": 1789201141.249935,
+    "ast_hash": "6c9f2398b521f996ff390d7606b6d699",
+    "semantic_hash": "6c9f2398b521f996ff390d7606b6d699"
+  },
+  "WorkoutAppFrontend/src/mock-api/progressPhotos.json": {
+    "mtime": 1787999922.380787,
+    "seen": 1789201141.249935,
+    "ast_hash": "d9c78b234bd9ef6dba87210e0249a145",
+    "semantic_hash": "d9c78b234bd9ef6dba87210e0249a145"
+  },
+  "WorkoutAppFrontend/src/mock-api/threads.json": {
+    "mtime": 1787999922.3912964,
+    "seen": 1789201141.249935,
+    "ast_hash": "e76b2a6cdd76af163a656bb2ba744442",
+    "semantic_hash": "e76b2a6cdd76af163a656bb2ba744442"
+  },
+  "WorkoutAppFrontend/src/mock-api/users.json": {
+    "mtime": 1787999922.3742776,
+    "seen": 1789201141.249935,
+    "ast_hash": "7069b1b1aa84df17328e1bce136ec575",
+    "semantic_hash": "7069b1b1aa84df17328e1bce136ec575"
+  },
+  "WorkoutAppFrontend/src/mock-api/workoutLogs.json": {
+    "mtime": 1789196935.7969,
+    "seen": 1789201141.249935,
+    "ast_hash": "7cead617b80f229158d5cb133e89f66d",
+    "semantic_hash": "7cead617b80f229158d5cb133e89f66d"
+  },
+  "WorkoutAppFrontend/src/mock-api/workoutSessions.json": {
+    "mtime": 1787999922.5654788,
+    "seen": 1789201141.249935,
+    "ast_hash": "db736b75b9766e27bebdba3fda3692e7",
+    "semantic_hash": "db736b75b9766e27bebdba3fda3692e7"
+  },
+  "WorkoutAppFrontend/src/navigation/routes.ts": {
+    "mtime": 1788174694.6665428,
+    "seen": 1789201141.249935,
+    "ast_hash": "8cd9d045a806d84e432fcef549be4662",
+    "semantic_hash": "8cd9d045a806d84e432fcef549be4662"
+  },
+  "WorkoutAppFrontend/src/store/hooks.ts": {
+    "mtime": 1787999922.6031964,
+    "seen": 1789201141.249935,
+    "ast_hash": "7f443f1a5dcca2e0f51af02c79b7499f",
+    "semantic_hash": "7f443f1a5dcca2e0f51af02c79b7499f"
+  },
+  "WorkoutAppFrontend/src/store/index.ts": {
+    "mtime": 1787999922.5980976,
+    "seen": 1789201141.249935,
+    "ast_hash": "a7c8400129f3c78dd96d0166cec4d358",
+    "semantic_hash": "a7c8400129f3c78dd96d0166cec4d358"
+  },
+  "WorkoutAppFrontend/src/store/persistence.ts": {
+    "mtime": 1788174606.7979326,
+    "seen": 1789201141.249935,
+    "ast_hash": "174f01bfa92dc6338f018f0c400c6dd0",
+    "semantic_hash": "174f01bfa92dc6338f018f0c400c6dd0"
+  },
+  "WorkoutAppFrontend/src/store/slices/sessionSlice.ts": {
+    "mtime": 1788174606.8119323,
+    "seen": 1789201141.249935,
+    "ast_hash": "4e7755a56c1337c27801ae01fef085b2",
+    "semantic_hash": "4e7755a56c1337c27801ae01fef085b2"
+  },
+  "WorkoutAppFrontend/src/store/slices/uiSlice.ts": {
+    "mtime": 1787999922.5920804,
+    "seen": 1789201141.249935,
+    "ast_hash": "ab237c32148441ef0bbe0f97ede91e7f",
+    "semantic_hash": "ab237c32148441ef0bbe0f97ede91e7f"
+  },
+  "WorkoutAppFrontend/src/store/slices/workoutDraftSlice.ts": {
+    "mtime": 1789196784.5413992,
+    "seen": 1789201141.249935,
+    "ast_hash": "b509ece9b3cb40d015bc322060439862",
+    "semantic_hash": "b509ece9b3cb40d015bc322060439862"
+  },
+  "WorkoutAppFrontend/src/theme/index.ts": {
+    "mtime": 1788081748.440335,
+    "seen": 1789201141.249935,
+    "ast_hash": "feffc7dacf3b6208ed3f1a0badd1e4a0",
+    "semantic_hash": "feffc7dacf3b6208ed3f1a0badd1e4a0"
+  },
+  "WorkoutAppFrontend/src/theme/tokens.ts": {
+    "mtime": 1788083455.4205492,
+    "seen": 1789201141.249935,
+    "ast_hash": "6f5ca21ea1f15a2591a0b4f33c9951dd",
+    "semantic_hash": "6f5ca21ea1f15a2591a0b4f33c9951dd"
+  },
+  "WorkoutAppFrontend/src/types/models.ts": {
+    "mtime": 1789196764.3486881,
+    "seen": 1789201141.249935,
+    "ast_hash": "5ceb7ef51725039dc2594b6fb1b2ef76",
+    "semantic_hash": "5ceb7ef51725039dc2594b6fb1b2ef76"
+  },
+  "WorkoutAppFrontend/src/utils/date.ts": {
+    "mtime": 1788019238.3761077,
+    "seen": 1789201141.249935,
+    "ast_hash": "8ee3b5787ba0102a5178d1797f34b51e",
+    "semantic_hash": "8ee3b5787ba0102a5178d1797f34b51e"
+  },
+  "WorkoutAppFrontend/src/utils/format.ts": {
+    "mtime": 1788013409.5166364,
+    "seen": 1789201141.249935,
+    "ast_hash": "636af4c5dfa3b01e36e6d5ab8fba9ad4",
+    "semantic_hash": "636af4c5dfa3b01e36e6d5ab8fba9ad4"
+  },
+  "WorkoutAppFrontend/src/utils/supabase.ts": {
+    "mtime": 1788164359.004472,
+    "seen": 1789201141.249935,
+    "ast_hash": "0faac626e929dd54cfc3f5a1b1a8a89f",
+    "semantic_hash": "0faac626e929dd54cfc3f5a1b1a8a89f"
+  },
+  "WorkoutAppFrontend/tools/generate-mock-data.js": {
+    "mtime": 1789196947.3854296,
+    "seen": 1789201141.249935,
+    "ast_hash": "1fbe8c901cb95416a28ca7afdb2c3202",
+    "semantic_hash": "1fbe8c901cb95416a28ca7afdb2c3202"
+  },
+  "WorkoutAppFrontend/tools/screenshot.js": {
+    "mtime": 1789196953.9507751,
+    "seen": 1789201141.249935,
+    "ast_hash": "f26524b26c391cba45c2a4d8b535870c",
+    "semantic_hash": "f26524b26c391cba45c2a4d8b535870c"
+  },
+  "WorkoutAppFrontend/tools/serve.js": {
+    "mtime": 1788013306.2746553,
+    "seen": 1789201141.249935,
+    "ast_hash": "7f3c57ed8b04c1fce85f0a6968bc4b53",
+    "semantic_hash": "7f3c57ed8b04c1fce85f0a6968bc4b53"
+  },
+  "WorkoutAppFrontend/tools/verify.js": {
+    "mtime": 1788013306.266349,
+    "seen": 1789201141.249935,
+    "ast_hash": "c934db6fc1208711d2ad64b394d29992",
+    "semantic_hash": "c934db6fc1208711d2ad64b394d29992"
+  },
+  "WorkoutAppFrontend/tsconfig.json": {
+    "mtime": 1787999922.660887,
+    "seen": 1789201141.249935,
+    "ast_hash": "5ca078d217ed80d0de1108431fb899d6",
+    "semantic_hash": "5ca078d217ed80d0de1108431fb899d6"
+  },
+  "settings.json": {
+    "mtime": 1788017403.8011525,
+    "seen": 1789201141.249935,
+    "ast_hash": "1fa1640606e052594fa165786de05773",
+    "semantic_hash": "1fa1640606e052594fa165786de05773"
+  }
+}

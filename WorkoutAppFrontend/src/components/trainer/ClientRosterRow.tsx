@@ -6,6 +6,7 @@ import { Avatar, Card, Text } from '@/components/ui';
 import { colors, radius, spacing, statusColor, statusLabel } from '@/theme';
 import type { ClientProfile } from '@/types/models';
 import { timeAgo } from '@/utils/date';
+import { GOAL_LABEL } from '@/utils/goal';
 
 export interface ClientRosterRowProps {
   client: ClientProfile;
@@ -13,13 +14,6 @@ export interface ClientRosterRowProps {
   trend?: number[];
   onPress: () => void;
 }
-
-const GOAL_LABEL: Record<ClientProfile['goal'], string> = {
-  cut: 'Fat loss',
-  bulk: 'Muscle gain',
-  recomp: 'Recomp',
-  performance: 'Performance',
-};
 
 export function ClientRosterRow({ client, trend, onPress }: ClientRosterRowProps) {
   const status = client.compliance.status;

@@ -20,6 +20,7 @@ export default function TrainerLayout() {
         contentStyle: { backgroundColor: colors.background },
       }}>
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="profile" />
       <Stack.Screen name="client/[id]" />
       <Stack.Screen name="routine/new" />
       <Stack.Screen name="routine/[id]" />

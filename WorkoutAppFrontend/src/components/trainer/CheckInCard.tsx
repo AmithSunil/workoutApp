@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { Avatar, Button, Card, Text } from '@/components/ui';
+import { useTracking } from '@/hooks/useTracking';
 import { colors, radius, spacing } from '@/theme';
 import type { CheckIn, ClientProfile } from '@/types/models';
 import { monthDay } from '@/utils/date';
@@ -17,6 +18,7 @@ export interface CheckInCardProps {
 
 /** Weekly check-in summary — the unit of work in a coach's review queue. */
 export function CheckInCard({ checkIn, client, onReview, onOpenClient, busy }: CheckInCardProps) {
+  const tracking = useTracking();
   const caloriePct = pct(checkIn.avgCalories, checkIn.targetCalories);
   const onTarget = Math.abs(caloriePct - 100) <= 8;
 
@@ -49,22 +51,21 @@ export function CheckInCard({ checkIn, client, onReview, onOpenClient, busy }: C
           value={`${signed(checkIn.weightChangeKg)} kg`}
           tone={checkIn.weightChangeKg === 0 ? 'secondary' : 'default'}
         />
-        <Metric
-          label="Avg kcal"
-          value={kcal(checkIn.avgCalories)}
-          hint={`${caloriePct}%`}
-          tone={onTarget ? 'success' : 'warning'}
-        />
-        <Metric
-          label="Sessions"
-          value={`${checkIn.sessionsCompleted}/${checkIn.sessionsPlanned}`}
-          tone={checkIn.sessionsCompleted >= checkIn.sessionsPlanned - 1 ? 'success' : 'warning'}
-        />
-        <Metric
-          label="Avg RPE"
-          value={checkIn.avgRpe ? checkIn.avgRpe.toFixed(1) : '—'}
-          tone={checkIn.avgRpe >= 8.5 ? 'danger' : 'secondary'}
-        />
+        {tracking.nutrition ? (
+          <Metric
+            label="Avg kcal"
+            value={kcal(checkIn.avgCalories)}
+            hint={`${caloriePct}%`}
+            tone={onTarget ? 'success' : 'warning'}
+          />
+        ) : null}
+        {tracking.workout ? (
+          <Metric
+            label="Sessions"
+            value={`${checkIn.sessionsCompleted}/${checkIn.sessionsPlanned}`}
+            tone={checkIn.sessionsCompleted >= checkIn.sessionsPlanned - 1 ? 'success' : 'warning'}
+          />
+        ) : null}
       </View>
 
       {checkIn.clientNote ? (

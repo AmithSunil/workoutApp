@@ -1,6 +1,6 @@
 import { baseApi } from '../baseApi';
 
-import type { ClientOverview, WeeklyComplianceRow } from '../handlers';
+import type { ClientGoalPatch, ClientOverview, WeeklyComplianceRow } from '../handlers';
 import type {
   CheckIn,
   ClientProfile,
@@ -17,6 +17,12 @@ export const trainerApi = baseApi.injectEndpoints({
 
     getTrainer: build.query<TrainerProfile, void>({
       query: () => ({ url: '/trainer' }),
+      providesTags: ['Trainer'],
+    }),
+
+    updateTrainer: build.mutation<TrainerProfile, Partial<Pick<TrainerProfile, 'tracks'>>>({
+      query: (body) => ({ url: '/trainer', method: 'PATCH', body }),
+      invalidatesTags: ['Trainer'],
     }),
 
     getClients: build.query<ClientProfile[], void>({
@@ -27,6 +33,19 @@ export const trainerApi = baseApi.injectEndpoints({
     getClient: build.query<ClientProfile, string>({
       query: (id) => ({ url: `/clients/${id}` }),
       providesTags: (_r, _e, id) => [{ type: 'Client', id }],
+    }),
+
+    updateClient: build.mutation<ClientProfile, { id: string; patch: ClientGoalPatch }>({
+      query: ({ id, patch }) => ({ url: `/clients/${id}`, method: 'PATCH', body: patch }),
+      // New macro targets rewrite today's nutrition day, and the compliance
+      // rows are all measured against the target — both go stale on a save.
+      invalidatesTags: (_r, _e, { id }) => [
+        { type: 'Client', id },
+        { type: 'ClientOverview', id },
+        'ClientList',
+        'NutritionDay',
+        'Compliance',
+      ],
     }),
 
     getTrainerSummary: build.query<TrainerSummary, void>({
@@ -72,8 +91,10 @@ export const trainerApi = baseApi.injectEndpoints({
 export const {
   useGetRolesQuery,
   useGetTrainerQuery,
+  useUpdateTrainerMutation,
   useGetClientsQuery,
   useGetClientQuery,
+  useUpdateClientMutation,
   useGetTrainerSummaryQuery,
   useGetAlertsQuery,
   useResolveAlertMutation,

@@ -291,8 +291,6 @@ body_metrics:
   - clientId: string (foreign key → client_profiles.id)
   - date: ISO Date
   - weightKg: number
-  - bodyFatPct: number | null
-  - waistCm: number | null
   - createdAt: ISO DateTime
   - updatedAt: ISO DateTime
 

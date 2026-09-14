@@ -1,12 +1,11 @@
 import type { ISODate, ISODateTime, Weekday } from '@/types/models';
 
-/**
- * The mock dataset is anchored to a fixed "today" so screenshots and demos are
- * reproducible. Swap `TODAY` for `new Date()` when a live backend is wired in.
- */
-export const TODAY: ISODate = '2026-08-29';
+/** Local calendar date — never `toISOString()`, which shifts to UTC and loses a day east of Greenwich. */
+export const toISODate = (d: Date): ISODate =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-export const toISODate = (d: Date): ISODate => d.toISOString().slice(0, 10);
+/** The device's current date, read at app start. */
+export const TODAY: ISODate = toISODate(new Date());
 
 export const parseISODate = (date: ISODate): Date => {
   const [y, m, d] = date.split('-').map(Number);
@@ -53,7 +52,7 @@ export const friendlyDate = (date: ISODate, today: ISODate = TODAY): string => {
 };
 
 /** "4m", "3h", "2d" — compact relative stamp for chat and alert rows. */
-export const relativeTime = (iso: ISODateTime, now: ISODateTime = `${TODAY}T18:30:00.000Z`): string => {
+export const relativeTime = (iso: ISODateTime, now: ISODateTime = new Date().toISOString()): string => {
   const minutes = Math.max(0, Math.round((Date.parse(now) - Date.parse(iso)) / 60_000));
   if (minutes < 1) return 'now';
   if (minutes < 60) return `${minutes}m`;
@@ -112,6 +111,10 @@ export const WEEKDAY_ABBR: Record<Weekday, string> = {
 };
 
 export const weekdayIndex = (weekday: Weekday): number => WEEK_ORDER.indexOf(weekday);
+
+/** Which routine day a date falls on. Monday-first, like `WEEK_ORDER`. */
+export const weekdayOf = (date: ISODate = TODAY): Weekday =>
+  WEEK_ORDER[(parseISODate(date).getDay() + 6) % 7];
 
 /** Comparator that puts a routine's days in the order the week runs. */
 export const byWeekday = <T extends { weekday: Weekday }>(a: T, b: T): number =>

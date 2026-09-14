@@ -204,7 +204,6 @@ const logs = logsJson.map((l) => {
     title: l.title,
     date: l.date,
     duration_minutes: l.durationMinutes,
-    rpe: l.rpe,
     total_volume_kg: l.totalVolumeKg ?? 0,
     notes: l.notes ?? null,
     completed_at: l.completedAt,
@@ -300,8 +299,6 @@ const bodyMetrics = dedupe(
       client_id: m.clientId,
       date: m.date,
       weight_kg: m.weightKg,
-      body_fat_pct: m.bodyFatPct ?? null,
-      waist_cm: m.waistCm ?? null,
     })),
   (m) => `${m.client_id}|${m.date}`,
   'body_metrics',
@@ -414,7 +411,6 @@ const checkIns = dedupe(
       target_calories: c.targetCalories,
       sessions_completed: c.sessionsCompleted,
       sessions_planned: c.sessionsPlanned,
-      avg_rpe: c.avgRpe,
       client_note: c.clientNote ?? '',
     })),
   (c) => `${c.client_id}|${c.week_of}`,
@@ -476,8 +472,13 @@ function toSql([name, rows, conflict = 'id']) {
   const keys = conflict.split(',');
   const update = cols.filter((c) => !keys.includes(c)).map((c) => `${c}=excluded.${c}`).join(',');
   const values = rows.map((r) => `(${cols.map((c) => literal(r[c])).join(',')})`).join(',\n');
+  // A table whose only columns are its conflict keys (habit_completions) has
+  // nothing to SET, and `do update set ;` is a syntax error -- the upsert is a
+  // no-op there anyway.
   return `insert into ${name} (${cols.join(',')}) values\n${values}\n`
-       + `on conflict (${conflict}) do update set ${update};\n\n`;
+       + (update
+           ? `on conflict (${conflict}) do update set ${update};\n\n`
+           : `on conflict (${conflict}) do nothing;\n\n`);
 }
 
 if (EMIT) {

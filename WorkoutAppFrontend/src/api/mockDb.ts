@@ -18,7 +18,6 @@ import nutritionSeed from '@/mock-api/nutritionLogs.json';
 import photosSeed from '@/mock-api/progressPhotos.json';
 import threadsSeed from '@/mock-api/threads.json';
 import usersSeed from '@/mock-api/users.json';
-import sessionsSeed from '@/mock-api/workoutSessions.json';
 import logsSeed from '@/mock-api/workoutLogs.json';
 
 import type {
@@ -38,7 +37,6 @@ import type {
   Thread,
   TrainerProfile,
   WorkoutLog,
-  WorkoutSession,
 } from '@/types/models';
 
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
@@ -49,7 +47,6 @@ export interface MockDb {
   foods: FoodItem[];
   exercises: Exercise[];
   nutritionDays: NutritionDay[];
-  sessions: WorkoutSession[];
   routines: Routine[];
   routineAssignments: RoutineAssignment[];
   workoutLogs: WorkoutLog[];
@@ -71,7 +68,6 @@ export const db: MockDb = {
   foods: clone(foodsSeed) as unknown as FoodItem[],
   exercises: clone(exercisesSeed) as unknown as Exercise[],
   nutritionDays: clone(nutritionSeed) as unknown as NutritionDay[],
-  sessions: clone(sessionsSeed) as unknown as WorkoutSession[],
   // Routines ship unseeded — the library starts empty and fills as the
   // trainer builds templates. Add a `mock-api/routines.json` seed here the
   // same way as the others if the demo should open with a stocked library.

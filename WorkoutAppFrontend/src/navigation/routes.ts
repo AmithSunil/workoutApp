@@ -11,16 +11,30 @@ import type { UserRole } from '@/types/models';
  */
 const href = (path: string): Href => path as unknown as Href;
 
+/**
+ * Stands in for an assignment id on the training screen: a one-off workout the
+ * client picks themselves, for a day they want to train something else. It
+ * changes nothing about the routine — only what gets logged today.
+ */
+export const CUSTOM_TRAIN_ID = 'custom';
+
 export const routes = {
   signIn: () => href('/sign-in'),
+  /** The redirect gate — where "back" lands when there is no history. */
+  home: () => href('/'),
 
   client: {
     explore: () => href('/(client)/(tabs)/explore'),
+    profile: () => href('/(client)/profile'),
+    routineBuilder: () => href('/(client)/routine/new'),
     log: () => href('/(client)/(tabs)/log'),
     workouts: () => href('/(client)/(tabs)/workouts'),
     progress: () => href('/(client)/(tabs)/progress'),
     chat: () => href('/(client)/chat'),
-    session: (sessionId: string) => href(`/(client)/session/${sessionId}`),
+    /** Today's workout: the day of this assignment that falls on today. */
+    train: (assignmentId: string) => href(`/(client)/train/${assignmentId}`),
+    /** Today only: an empty workout the client fills from the exercise library. */
+    trainCustom: () => href(`/(client)/train/${CUSTOM_TRAIN_ID}`),
     /** Keyed by assignment id — a client only ever opens their own copy. */
     routine: (assignmentId: string) => href(`/(client)/routine/${assignmentId}`),
   },
@@ -30,6 +44,7 @@ export const routes = {
     roster: () => href('/(trainer)/(tabs)/roster'),
     messages: () => href('/(trainer)/(tabs)/messages'),
     routines: () => href('/(trainer)/(tabs)/routines'),
+    profile: () => href('/(trainer)/profile'),
     routineBuilder: () => href('/(trainer)/routine/new'),
     routineDetail: (routineId: string) => href(`/(trainer)/routine/${routineId}`),
     routineEdit: (routineId: string) => href(`/(trainer)/routine/edit/${routineId}`),

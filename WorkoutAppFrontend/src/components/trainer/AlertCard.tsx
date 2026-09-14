@@ -16,7 +16,6 @@ export interface AlertCardProps {
 
 const KIND_ICON: Record<AlertKind, keyof typeof Ionicons.glyphMap> = {
   'missed-logs': 'calendar-clear-outline',
-  'high-rpe': 'flame-outline',
   'weight-stall': 'trending-down-outline',
   'calorie-deficit-miss': 'restaurant-outline',
   'check-in-due': 'clipboard-outline',

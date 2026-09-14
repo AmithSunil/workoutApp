@@ -3,45 +3,49 @@ import { StyleSheet, View } from 'react-native';
 
 import { Button, Card, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
-import type { WorkoutSession } from '@/types/models';
-import { friendlyDate } from '@/utils/date';
+import type { RoutineDay } from '@/types/models';
+import { WEEKDAY_LABEL } from '@/utils/date';
 import { plural } from '@/utils/format';
 
-export interface SessionCardProps {
-  session: WorkoutSession;
+export interface TodayCardProps {
+  /** Today's day of the client's routine. */
+  day: RoutineDay;
+  /** The routine it comes from, shown above the day's own name. */
+  routineTitle: string;
+  /** Today is already logged. One workout per day, so the CTA becomes an edit. */
+  done?: boolean;
   onStart?: () => void;
   onPress?: () => void;
-  /** Highlights the session as the one due today. */
-  featured?: boolean;
 }
 
-const STATUS_META = {
-  scheduled: { label: 'Scheduled', color: colors.textSecondary, icon: 'calendar-outline' },
-  'in-progress': { label: 'In progress', color: colors.primary, icon: 'play-circle-outline' },
-  completed: { label: 'Completed', color: colors.success, icon: 'checkmark-circle' },
-  missed: { label: 'Missed', color: colors.danger, icon: 'alert-circle-outline' },
-} as const;
-
-export function SessionCard({ session, onStart, onPress, featured }: SessionCardProps) {
-  const meta = STATUS_META[session.status];
-  const totalSets = session.exercises.reduce((sum, e) => sum + e.sets.length, 0);
+/**
+ * Today's training, read straight off the client's routine.
+ *
+ * There are no dated sessions: the routine is the week and it repeats until the
+ * trainer changes it, so "today" is just the day whose weekday matches.
+ */
+export function TodayCard({ day, routineTitle, done, onStart, onPress }: TodayCardProps) {
+  const sets = day.exercises.reduce((sum, e) => sum + e.sets, 0);
 
   return (
-    <Card onPress={onPress} style={featured ? styles.featured : undefined}>
+    <Card onPress={onPress} style={styles.featured}>
       <View style={styles.header}>
         <View style={styles.headerText}>
           <View style={styles.statusRow}>
-            <Ionicons name={meta.icon} size={12} color={meta.color} />
-            <Text variant="micro" color={meta.color}>
-              {meta.label.toUpperCase()} · {friendlyDate(session.scheduledFor).toUpperCase()}
+            <Ionicons
+              name={done ? 'checkmark-circle' : 'today-outline'}
+              size={12}
+              color={done ? colors.success : colors.primary}
+            />
+            <Text variant="micro" color={done ? colors.success : colors.primary}>
+              {done ? 'LOGGED TODAY' : `${WEEKDAY_LABEL[day.weekday].toUpperCase()} · TODAY`}
             </Text>
           </View>
           <Text variant="h1" numberOfLines={1} style={styles.title}>
-            {session.title}
+            {day.name || WEEKDAY_LABEL[day.weekday]}
           </Text>
           <Text variant="caption" tone="secondary">
-            {plural(session.exercises.length, 'exercise')} · {totalSets} sets ·{' '}
-            {session.estimatedMinutes} min
+            {routineTitle} · {plural(day.exercises.length, 'exercise')} · {sets} sets
           </Text>
         </View>
         <View style={styles.focus}>
@@ -50,26 +54,27 @@ export function SessionCard({ session, onStart, onPress, featured }: SessionCard
       </View>
 
       <View style={styles.preview}>
-        {session.exercises.slice(0, 4).map((ex) => (
+        {day.exercises.slice(0, 4).map((ex) => (
           <View key={ex.id} style={styles.pill}>
             <Text variant="micro" tone="secondary" numberOfLines={1}>
               {ex.name}
             </Text>
           </View>
         ))}
-        {session.exercises.length > 4 ? (
+        {day.exercises.length > 4 ? (
           <View style={styles.pill}>
             <Text variant="micro" tone="tertiary">
-              +{session.exercises.length - 4}
+              +{day.exercises.length - 4}
             </Text>
           </View>
         ) : null}
       </View>
 
-      {onStart && session.status !== 'completed' ? (
+      {onStart ? (
         <Button
-          label={session.status === 'in-progress' ? 'Resume session' : 'Start session'}
+          label={done ? "Edit today's workout" : 'Start workout'}
           icon="play"
+          variant={done ? 'secondary' : 'primary'}
           fullWidth
           onPress={onStart}
           style={styles.cta}

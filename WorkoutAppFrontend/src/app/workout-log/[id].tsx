@@ -3,7 +3,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { useGetWorkoutLogQuery } from '@/api/endpoints/workoutsApi';
-import { RPE_DESCRIPTORS, rpeColor } from '@/components/workouts/RpeSlider';
 import { Card, Divider, Screen, SkeletonCard, StatTile, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import { longDate } from '@/utils/date';
@@ -25,7 +24,6 @@ export default function WorkoutLogScreen() {
     );
   }
 
-  const tint = rpeColor(log.rpe);
   const totalSets = log.exercises.reduce((s, e) => s + e.sets.length, 0);
   const totalReps = log.exercises.reduce(
     (s, e) => s + e.sets.reduce((r, set) => r + set.reps, 0),
@@ -34,25 +32,6 @@ export default function WorkoutLogScreen() {
 
   return (
     <Screen title={log.title} subtitle={longDate(log.date)} showBack tabBarPadding={false}>
-      <Card style={[styles.rpeCard, { borderColor: tint }]}>
-        <View style={styles.rpeRow}>
-          <View style={[styles.rpeBadge, { backgroundColor: tint }]}>
-            <Text variant="display" color={colors.textInverse} style={styles.rpeValue}>
-              {log.rpe}
-            </Text>
-            <Text variant="micro" color={colors.textInverse}>
-              RPE
-            </Text>
-          </View>
-          <View style={styles.rpeText}>
-            <Text variant="h2">{RPE_DESCRIPTORS[log.rpe]}</Text>
-            <Text variant="caption" tone="secondary">
-              Reported by the client at the end of the session
-            </Text>
-          </View>
-        </View>
-      </Card>
-
       <View style={styles.tiles}>
         <StatTile label="Duration" value={`${log.durationMinutes}m`} icon="time-outline" />
         <StatTile label="Volume" value={volume(log.totalVolumeKg)} icon="stats-chart" tone="primary" />
@@ -122,29 +101,6 @@ export default function WorkoutLogScreen() {
 }
 
 const styles = StyleSheet.create({
-  rpeCard: {
-    borderWidth: StyleSheet.hairlineWidth * 2,
-  },
-  rpeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  rpeBadge: {
-    width: 72,
-    height: 72,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rpeValue: {
-    fontSize: 32,
-    lineHeight: 36,
-  },
-  rpeText: {
-    flex: 1,
-    gap: 2,
-  },
   tiles: {
     flexDirection: 'row',
     gap: spacing.sm,

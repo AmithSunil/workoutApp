@@ -40,7 +40,7 @@ export function LogWeightSheet({
     setWeight((prev) => (Number(prev) + delta).toFixed(1));
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Log weight" height="52%">
+    <Sheet visible={visible} onClose={onClose} title="Log weight" height="60%">
       <View style={styles.body}>
         <View style={styles.stepper}>
           <Pressable onPress={() => nudge(-0.1)} style={styles.stepBtn} hitSlop={8}>
@@ -71,7 +71,7 @@ export function LogWeightSheet({
           Date
         </Text>
         <View style={styles.dates}>
-          {lastNDays(5).reverse().map((d) => (
+          {lastNDays(7).reverse().map((d) => (
             <Pressable
               key={d}
               onPress={() => setSelectedDate(d)}

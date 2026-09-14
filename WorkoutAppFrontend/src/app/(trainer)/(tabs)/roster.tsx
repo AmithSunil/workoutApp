@@ -12,6 +12,7 @@ import { activeClientChanged } from '@/store/slices/sessionSlice';
 import { rosterFilterChanged, rosterQueryChanged } from '@/store/slices/uiSlice';
 import { colors, radius, spacing } from '@/theme';
 import type { ComplianceStatus } from '@/types/models';
+import { GOAL_LABEL } from '@/utils/goal';
 
 const FILTERS: Array<{ value: 'all' | ComplianceStatus; label: string; accent?: string }> = [
   { value: 'all', label: 'All' },
@@ -42,7 +43,7 @@ export default function RosterScreen() {
     const q = query.trim().toLowerCase();
     return (clients.data ?? [])
       .filter((c) => (filter === 'all' ? true : c.compliance.status === filter))
-      .filter((c) => (q ? c.name.toLowerCase().includes(q) || c.goal.includes(q) : true))
+      .filter((c) => (q ? c.name.toLowerCase().includes(q) || GOAL_LABEL[c.goal].toLowerCase().includes(q) : true))
       .sort((a, b) => a.compliance.score - b.compliance.score);
   }, [clients.data, filter, query]);
 

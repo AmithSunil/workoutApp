@@ -13,8 +13,6 @@ export interface StepperProps {
   onChange: (value: number) => void;
   /** Renders the value — e.g. seconds as "1m 30s". Defaults to the raw number. */
   format?: (value: number) => string;
-  /** Tints the value, used to carry RPE's severity colour. */
-  accent?: string;
   /** Disambiguates the accessibility label when several steppers share a screen. */
   contextLabel?: string;
 }
@@ -33,7 +31,6 @@ export function Stepper({
   step = 1,
   onChange,
   format,
-  accent,
   contextLabel,
 }: StepperProps) {
   const suffix = contextLabel ? ` for ${contextLabel}` : '';
@@ -60,7 +57,7 @@ export function Stepper({
           />
         </Pressable>
 
-        <Text variant="bodyStrong" align="center" color={accent} style={styles.value}>
+        <Text variant="bodyStrong" align="center" style={styles.value}>
           {format ? format(value) : value}
         </Text>
 

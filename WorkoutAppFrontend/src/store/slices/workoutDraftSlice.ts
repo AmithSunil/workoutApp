@@ -1,32 +1,38 @@
 import { createSlice, nanoid, type PayloadAction } from '@reduxjs/toolkit';
 
-import type { ISODate, LoggedExercise, MuscleGroup, WorkoutSession } from '@/types/models';
+import type { ISODate, LoggedExercise, MuscleGroup, RoutineDay, WorkoutLog } from '@/types/models';
 
 /**
  * The in-progress workout the client is logging.
  *
  * Deliberately local, not server state: sets are edited many times a second
- * while the user is mid-session, and only the finished log is POSTed.
+ * while the user is mid-workout, and only the finished log is POSTed.
+ *
+ * It is seeded from a `RoutineDay` — the day of the client's routine that falls
+ * on today. A routine prescribes intent ("4 sets of 8-12"), so the sets are
+ * expanded here: `sets` rows at the bottom of the rep range, no target weight,
+ * which is the honest starting point for someone about to type real numbers in.
  */
 export interface WorkoutDraftState {
-  sessionId: string | null;
+  dayId: string | null;
+  /** Set when the draft is an edit of a workout already logged today. */
+  logId: string | null;
   clientId: string | null;
   title: string;
   date: ISODate | null;
   startedAt: number | null;
   exercises: LoggedExercise[];
-  rpe: number;
   notes: string;
 }
 
 const initialState: WorkoutDraftState = {
-  sessionId: null,
+  dayId: null,
+  logId: null,
   clientId: null,
   title: '',
   date: null,
   startedAt: null,
   exercises: [],
-  rpe: 7,
   notes: '',
 };
 
@@ -36,28 +42,52 @@ const workoutDraftSlice = createSlice({
   reducers: {
     workoutStarted(
       state,
-      action: PayloadAction<{ session: WorkoutSession; clientId: string; date: ISODate }>
+      action: PayloadAction<{
+        day: RoutineDay;
+        title: string;
+        clientId: string;
+        date: ISODate;
+      }>
     ) {
-      const { session, clientId, date } = action.payload;
-      state.sessionId = session.id;
+      const { day, title, clientId, date } = action.payload;
+      state.dayId = day.id;
+      state.logId = null;
       state.clientId = clientId;
-      state.title = session.title;
+      state.title = title;
       state.date = date;
       state.startedAt = Date.now();
-      state.rpe = 7;
       state.notes = '';
-      state.exercises = session.exercises.map((pe) => ({
+      state.exercises = day.exercises.map((re) => ({
         id: nanoid(),
-        exerciseId: pe.exerciseId,
-        name: pe.name,
-        muscleGroup: pe.muscleGroup,
-        sets: pe.sets.map((s) => ({
+        exerciseId: re.exerciseId,
+        name: re.name,
+        muscleGroup: re.muscleGroup,
+        sets: Array.from({ length: re.sets }, () => ({
           id: nanoid(),
-          reps: s.reps,
-          weightKg: s.targetWeightKg ?? 0,
+          reps: re.repMin,
+          weightKg: 0,
           completed: false,
         })),
       }));
+    },
+
+    /**
+     * Re-opens the workout already logged for a day. A log is `LoggedExercise[]`
+     * already, so it seeds verbatim — sets come back ticked, exactly as saved.
+     *
+     * The clock is wound back by the logged duration rather than restarted, so
+     * finishing an edit cannot overwrite a 50-minute session with 2 minutes.
+     */
+    workoutResumed(state, action: PayloadAction<{ log: WorkoutLog; clientId: string }>) {
+      const { log, clientId } = action.payload;
+      state.dayId = log.id;
+      state.logId = log.id;
+      state.clientId = clientId;
+      state.title = log.title;
+      state.date = log.date;
+      state.startedAt = Date.now() - log.durationMinutes * 60_000;
+      state.notes = log.notes ?? '';
+      state.exercises = log.exercises;
     },
 
     setUpdated(
@@ -110,8 +140,9 @@ const workoutDraftSlice = createSlice({
       });
     },
 
-    rpeChanged(state, action: PayloadAction<number>) {
-      state.rpe = action.payload;
+
+    exerciseRemoved(state, action: PayloadAction<{ exerciseId: string }>) {
+      state.exercises = state.exercises.filter((e) => e.id !== action.payload.exerciseId);
     },
 
     notesChanged(state, action: PayloadAction<string>) {
@@ -126,12 +157,13 @@ const workoutDraftSlice = createSlice({
 
 export const {
   workoutStarted,
+  workoutResumed,
   setUpdated,
   setToggled,
   setAdded,
   setRemoved,
   exerciseAdded,
-  rpeChanged,
+  exerciseRemoved,
   notesChanged,
   workoutDiscarded,
 } = workoutDraftSlice.actions;
