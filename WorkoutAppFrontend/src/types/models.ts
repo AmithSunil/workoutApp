@@ -377,3 +377,35 @@ export interface TrainerSummary {
   criticalAlerts: number;
   weeklyComplianceAvg: number;
 }
+
+/* --------------------------------------------------------------- billing */
+
+/**
+ * A rung on the price list. `maxClients` null means unlimited, and is
+ * meaningless on a client-role plan — an individual has no roster to cap.
+ *
+ * Amounts are paise, the unit Razorpay charges in, and are PLACEHOLDERS until
+ * the real numbers are set (migration 20260920000001).
+ */
+export interface Plan {
+  code: string;
+  role: UserRole;
+  name: string;
+  pricePaise: number;
+  maxClients: number | null;
+  position: number;
+}
+
+/**
+ * What the signed-in user is entitled to. One rule decides it, here and in
+ * Postgres (`plan_active()`): `currentPeriodEnd` null means never expires (the
+ * free coach tier), otherwise it must be in the future. `status` is copy, not
+ * a gate — a user who cancels mid-cycle keeps the app until the date they
+ * already paid for.
+ */
+export interface Subscription {
+  userId: string;
+  planCode: string;
+  status: 'trialing' | 'active' | 'past_due' | 'cancelled';
+  currentPeriodEnd: ISODateTime | null;
+}

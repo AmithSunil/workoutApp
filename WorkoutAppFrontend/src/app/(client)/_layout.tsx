@@ -1,6 +1,8 @@
 import { Redirect, Stack } from 'expo-router';
 
 import { useGetClientQuery } from '@/api/endpoints/trainerApi';
+import { Paywall } from '@/components/billing/Paywall';
+import { useSubscription } from '@/hooks/useSubscription';
 import { routes } from '@/navigation/routes';
 import { useAppSelector } from '@/store/hooks';
 import { colors } from '@/theme';
@@ -26,6 +28,14 @@ export default function ClientLayout() {
   const userId = useAppSelector((s) => s.session.userId);
   const isClient = status === 'signedIn' && role === 'client' && !!userId;
   const profile = useGetClientQuery(userId ?? '', { skip: !isClient });
+  // A coached client is covered by the seat their coach pays for and is never
+  // asked. Only someone training on their own needs a plan of their own.
+  // ponytail: until S8 widens ClientProfile.trainerId to `string | null` this
+  // is always true, so no client is gated yet -- which is right, because no
+  // coachless client can exist either. S8 turns this on by itself.
+  const plan = useSubscription({
+    hasCoach: profile.data ? profile.data.trainerId !== null : true,
+  });
 
   if (status !== 'signedIn') return <Redirect href={routes.welcome()} />;
   if (role === 'trainer') return <Redirect href={routes.trainer.dashboard()} />;
@@ -36,6 +46,17 @@ export default function ClientLayout() {
   // (offline) falls through: each screen already handles its own errors.
   if (profile.isLoading) return null;
   const intake = !!profile.data && needsIntake(profile.data);
+
+  // After intake, not before: let someone finish setting themselves up on the
+  // trial, and meet the wall when the fourteen days are gone.
+  if (!intake && !plan.active) {
+    return (
+      <Paywall
+        title="Your trial has ended"
+        message="Everything you have logged is still here. Pick a plan to carry on training."
+      />
+    );
+  }
 
   return (
     <Stack

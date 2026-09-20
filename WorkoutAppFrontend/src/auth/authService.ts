@@ -1,6 +1,5 @@
 import type { Session } from '@supabase/supabase-js';
 
-import type { ProfileInput } from '@/api/handlers';
 import { supabase } from '@/utils/supabase';
 
 import { toAuthFailure } from './errors';
@@ -42,16 +41,14 @@ export const signInWithPassword = async (email: string, password: string): Promi
  * lock both out. Signup is open since migration 20260918000003 — the gate that
  * used to refuse strangers is gone.
  *
- * `signup` is the choice made at the front door. Supabase writes `options.data`
- * into the account's metadata **only when it creates the account**, and ignores
- * it for an address that already exists — which is exactly the behaviour this
- * relies on: a returning user cannot change their own role by arriving with a
- * different link.
+ * Nothing rides along with the address. Role is never something the caller
+ * brings: it is whatever `app_role()` answers once the account is linked, and
+ * for an address with no profile at all the app asks, after the code, on
+ * /welcome's last phase.
  */
-export const sendSignInCode = async (email: string, signup?: ProfileInput): Promise<void> => {
+export const sendSignInCode = async (email: string): Promise<void> => {
   const { error } = await supabase.auth.signInWithOtp({
     email: email.trim().toLowerCase(),
-    options: signup ? { data: { kind: signup.kind, name: signup.name } } : undefined,
   });
   if (error) throw toAuthFailure(error);
 };

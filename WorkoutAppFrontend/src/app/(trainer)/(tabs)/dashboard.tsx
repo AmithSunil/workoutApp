@@ -14,6 +14,7 @@ import {
   useReviewCheckInMutation,
   useUpdateTrainerMutation,
 } from '@/api/endpoints/trainerApi';
+import { Paywall } from '@/components/billing/Paywall';
 import { AlertCard } from '@/components/trainer/AlertCard';
 import { CheckInCard } from '@/components/trainer/CheckInCard';
 import { TrackingPicker } from '@/components/trainer/TrackingPicker';
@@ -28,6 +29,7 @@ import {
   StatusDot,
   Text,
 } from '@/components/ui';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch } from '@/store/hooks';
@@ -53,6 +55,8 @@ export default function TriageDashboard() {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
+  const { active } = useSubscription();
+
   const { data: trainer } = useGetTrainerQuery();
   const summary = useGetTrainerSummaryQuery();
   const alerts = useGetAlertsQuery();
@@ -63,6 +67,11 @@ export default function TriageDashboard() {
   const [reviewCheckIn, reviewState] = useReviewCheckInMutation();
   const [updateTrainer, trackingState] = useUpdateTrainerMutation();
   const tracking = useTracking();
+
+  // Hooks run unconditionally; the early return is below them. Everything this
+  // screen shows is derived from the roster, so a lapsed plan leaves it with
+  // nothing true to say.
+  const gated = !active;
 
   // A coach only triages the half of the product they track.
   const visibleAlerts = useMemo(
@@ -94,6 +103,8 @@ export default function TriageDashboard() {
   };
 
   const refreshing = summary.isFetching || alerts.isFetching || clients.isFetching;
+
+  if (gated) return <Paywall />;
 
   return (
     <Screen

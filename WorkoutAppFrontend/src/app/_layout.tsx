@@ -65,7 +65,7 @@ export default function RootLayout() {
               }}>
               <Stack.Screen name="index" options={{ animation: 'fade' }} />
               <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
-              <Stack.Screen name="otp" />
+              <Stack.Screen name="plans" />
               <Stack.Screen name="(client)" options={{ animation: 'fade' }} />
               <Stack.Screen name="(trainer)" options={{ animation: 'fade' }} />
               <Stack.Screen name="workout-log/[id]" options={{ presentation: 'modal' }} />

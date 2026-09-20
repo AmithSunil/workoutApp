@@ -20,10 +20,12 @@ import type {
   MacroTargets,
   Message,
   NutritionDay,
+  Plan,
   Routine,
   RoutineAssignment,
   RoutineDay,
   RoutineExercise,
+  Subscription,
   TrainerProfile,
   TrainerSummary,
   Weekday,
@@ -937,6 +939,67 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       };
     },
   },
+
+  /* --------------------------------------------------------------- billing */
+  {
+    method: 'GET',
+    pattern: '/plans',
+    handler: () => MOCK_PLANS,
+  },
+  {
+    method: 'GET',
+    pattern: '/subscription',
+    handler: () => db.subscription,
+  },
+  {
+    // The mock has no gateway, so "checkout" succeeds instantly and hands back
+    // no URL. That is what makes the paywall testable offline: the caller's
+    // refetch sees an active plan the same way it would after a real webhook,
+    // just without the browser hop in between.
+    method: 'POST',
+    pattern: '/subscription/checkout',
+    handler: ({ body }) => {
+      const { planCode } = body as { planCode: string };
+      const plan = MOCK_PLANS.find((p) => p.code === planCode);
+      if (!plan) throw new MockHttpError(404, `Unknown plan ${planCode}`);
+      // Same refusal as the edge function: a coach cannot move to a plan that
+      // does not cover the roster they already have.
+      if (plan.role === 'trainer' && plan.maxClients !== null && db.clients.length > plan.maxClients) {
+        throw new MockHttpError(
+          409,
+          `That plan covers ${plan.maxClients} clients and you have ${db.clients.length}.`,
+        );
+      }
+      const end = new Date();
+      end.setMonth(end.getMonth() + 1);
+      db.subscription = {
+        userId: db.subscription?.userId ?? db.trainer.id,
+        planCode,
+        // A free plan is perpetual and granted outright; everything else waits
+        // on a webhook in the real transport and is faked as paid here.
+        status: 'active',
+        currentPeriodEnd: plan.pricePaise === 0 ? null : end.toISOString(),
+      };
+      return { shortUrl: null };
+    },
+  },
+  {
+    method: 'POST',
+    pattern: '/subscription/cancel',
+    handler: () => {
+      if (db.subscription) db.subscription = { ...db.subscription, status: 'cancelled' };
+      return null;
+    },
+  },
+];
+
+/** Mirrors the rows seeded by migration 20260920000001. Placeholder pricing. */
+const MOCK_PLANS: Plan[] = [
+  { code: 'coach_free', role: 'trainer', name: 'Free', pricePaise: 0, maxClients: 2, position: 0 },
+  { code: 'coach_starter', role: 'trainer', name: 'Starter', pricePaise: 99900, maxClients: 15, position: 1 },
+  { code: 'coach_pro', role: 'trainer', name: 'Pro', pricePaise: 249900, maxClients: 50, position: 2 },
+  { code: 'coach_elite', role: 'trainer', name: 'Elite', pricePaise: 499900, maxClients: null, position: 3 },
+  { code: 'solo', role: 'client', name: 'Solo', pricePaise: 29900, maxClients: null, position: 0 },
 ];
 
 /** One day of a routine as it arrives from the builder; ids are minted server-side. */

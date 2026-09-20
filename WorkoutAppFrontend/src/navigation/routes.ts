@@ -1,6 +1,5 @@
 import type { Href } from 'expo-router';
 
-import type { ProfileInput } from '@/api/handlers';
 import type { UserRole } from '@/types/models';
 
 /**
@@ -21,25 +20,18 @@ export const CUSTOM_TRAIN_ID = 'custom';
 
 export const routes = {
   /**
-   * The front door, and the only way in: which kind of account, then a code.
+   * The front door, and the only way in: email, then a 6-digit code, and the
+   * role question only for an account the backend does not already know.
    * There is no password screen — nothing this app creates has a password.
    */
   welcome: () => href('/welcome'),
-  /**
-   * Passwordless sign-in: email, then a 6-digit code.
-   *
-   * With `signup`, the choice made at the front door rides along in the query
-   * and from there into the account's metadata, so a new user is never asked
-   * twice. Without it this is the invited-client path, unchanged.
-   */
-  otp: (signup?: ProfileInput) =>
-    href(
-      signup
-        ? `/otp?kind=${signup.kind}&name=${encodeURIComponent(signup.name)}`
-        : '/otp',
-    ),
   /** The redirect gate — where "back" lands when there is no history. */
   home: () => href('/'),
+  /**
+   * The price list, and the only way to a checkout. One screen for both roles:
+   * `GET /plans` carries the role each rung belongs to, so it filters itself.
+   */
+  plans: () => href('/plans'),
 
   client: {
     explore: () => href('/(client)/(tabs)/explore'),

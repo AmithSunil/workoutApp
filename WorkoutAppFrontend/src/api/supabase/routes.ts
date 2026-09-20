@@ -37,6 +37,8 @@ import {
   toNutritionDay,
   toProgressPhoto,
   toRoutine,
+  toPlan,
+  toSubscription,
   toThread,
   toTrainerProfile,
   toTrainerSummary,
@@ -55,6 +57,8 @@ import {
   type NutritionDayRow,
   type ProgressPhotoRow,
   type RoutineRow,
+  type PlanRow,
+  type SubscriptionRow,
   type ThreadRow,
   type TrainerProfileRow,
   type TrainerSummaryRow,
@@ -99,6 +103,23 @@ const rpc = async (fn: string, args: Record<string, unknown> = {}): Promise<unkn
   const { data, error } = await supabase.rpc(fn, args);
   if (error) throw fromPostgrest(error);
   return data;
+};
+
+/**
+ * `functions.invoke` reports any non-2xx as one opaque error, so the function's
+ * own `{ message }` -- "That plan covers 2 clients and you have 8" -- was being
+ * thrown away and replaced with a gateway error the user could do nothing
+ * about. Read it back off the response it is still holding.
+ */
+const fnError = async (error: unknown): Promise<ApiHttpError> => {
+  const res = (error as { context?: Response }).context;
+  try {
+    const body = await res?.clone().json();
+    if (body?.message) return new ApiHttpError(res?.status ?? 502, String(body.message));
+  } catch {
+    /* not JSON, or no response at all -- fall through */
+  }
+  return new ApiHttpError(502, 'Could not reach the payment gateway');
 };
 
 const str = (v: unknown): string => String(v ?? '');
@@ -907,6 +928,62 @@ export const supabaseRoutes: Array<{
         avgCaloriesLast7: Math.round(mean(recentDays.map((n) => n.consumed_calories))),
         openAlerts,
       };
+    },
+  },
+  /* ------------------------------------------------------------- billing */
+  {
+    method: 'GET',
+    pattern: '/plans',
+    handler: async () => {
+      const { data, error } = await supabase
+        .from('plans')
+        .select('code, role, name, price_paise, max_clients, position')
+        .order('position');
+      if (error) throw fromPostgrest(error);
+      return (data as PlanRow[]).map(toPlan);
+    },
+  },
+  {
+    // Null, not a 404, for an account with no row: "no subscription" is a
+    // state the paywall renders, not an error a screen has to catch. RLS
+    // (subscriptions_self_read) is what scopes this to the caller -- there is
+    // no id in the path, deliberately, so nobody can ask about someone else.
+    method: 'GET',
+    pattern: '/subscription',
+    handler: async () => {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('user_id, plan_code, status, current_period_end')
+        .maybeSingle();
+      if (error) throw fromPostgrest(error);
+      return data ? toSubscription(data as SubscriptionRow) : null;
+    },
+  },
+  {
+    // The two calls that need the Razorpay secret, so they live in an edge
+    // function rather than an RPC. What comes back is Razorpay's own hosted
+    // checkout URL; the app opens it in a browser and the webhook, not this
+    // response, is what activates the plan.
+    method: 'POST',
+    pattern: '/subscription/checkout',
+    handler: async ({ body }) => {
+      const { planCode } = body as { planCode: string };
+      const { data, error } = await supabase.functions.invoke('razorpay', {
+        body: { action: 'subscribe', planCode },
+      });
+      if (error) throw await fnError(error);
+      return data as { shortUrl: string | null };
+    },
+  },
+  {
+    method: 'POST',
+    pattern: '/subscription/cancel',
+    handler: async () => {
+      const { error } = await supabase.functions.invoke('razorpay', {
+        body: { action: 'cancel' },
+      });
+      if (error) throw await fnError(error);
+      return null;
     },
   },
 ];

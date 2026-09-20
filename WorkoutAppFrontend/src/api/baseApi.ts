@@ -43,6 +43,7 @@ export const baseApi = createApi({
     'Trainer',
     'TrainerSummary',
     'Compliance',
+    'Subscription',
   ] as const,
   /** Server data is cheap to refetch here; a short cache keeps screens live. */
   keepUnusedDataFor: 60,

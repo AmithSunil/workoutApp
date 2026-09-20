@@ -12,10 +12,9 @@ import { useAppSelector } from '@/store/hooks';
  * `/welcome`. Role now comes from `app_role()` over a real token, never from a
  * client-side choice.
  *
- * `/welcome` catches both the signed-out visitor and the `needsProfile`
- * session — a verified account that has not said who it is yet. It is the only
- * way in: no self-signed-up account has a password, so there is no password
- * screen to send anyone to.
+ * `/welcome` is the whole of signing in — address, code, and the role
+ * question only for an account with no profile behind it. It catches the
+ * signed-out visitor and the `needsProfile` session alike.
  */
 export default function IndexScreen() {
   const status = useAppSelector((s) => s.session.status);

@@ -27,6 +27,7 @@ import { BarSeries, LineChart, MacroBars, type BarDatum } from '@/components/cha
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
 import { GoalsEditor } from '@/components/trainer/GoalsEditor';
 import { HabitEditor } from '@/components/trainer/HabitEditor';
+import { Paywall } from '@/components/billing/Paywall';
 import { RoutineCard, RoutinePickerSheet } from '@/components/routines';
 import { PhotoGallery } from '@/components/progress/PhotoGallery';
 import { WorkoutLogRow } from '@/components/workouts/WorkoutLogRow';
@@ -42,6 +43,7 @@ import {
   StatTile,
   Text,
 } from '@/components/ui';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -79,13 +81,19 @@ export default function ClientDetailScreen() {
   // The stored tab can belong to a half the coach has since switched off.
   const activeTab = tabs.some((t) => t.value === tab) ? tab : tabs[0].value;
 
+  // Reachable by deep link as well as from the roster, so it carries the same
+  // gate rather than trusting the screen that sent the coach here.
+  const { active } = useSubscription();
+
   const clientId = id ?? '';
-  const overview = useGetClientOverviewQuery(clientId, { skip: !clientId });
+  const overview = useGetClientOverviewQuery(clientId, { skip: !clientId || !active });
   const threads = useGetThreadsQuery();
 
   const summary = overview.data;
   const client = summary?.client;
   const thread = (threads.data ?? []).find((t) => t.clientId === clientId);
+
+  if (!active) return <Paywall />;
 
   if (overview.isLoading || !summary || !client) {
     return (

@@ -2,7 +2,6 @@ import type { Session } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { baseApi } from '@/api/baseApi';
-import { trainerApi } from '@/api/endpoints/trainerApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearIdentity, loadIdentity, saveIdentity } from '@/store/persistence';
 import {
@@ -14,7 +13,7 @@ import {
 
 import { getStoredSession, signOutEverywhere, subscribeToAuthChanges } from './authService';
 import { authMessage, toAuthFailure } from './errors';
-import { resolveIdentity, type AppIdentity } from './identity';
+import { resolveIdentity } from './identity';
 
 /**
  * Keeps the session slice in step with Supabase Auth, for the lifetime of the app.
@@ -56,32 +55,6 @@ export function useAuthSession(): { ready: boolean } {
   );
 
   /**
-   * The kind picked at the front door travels in the account's user metadata
-   * (see `sendSignInCode`). When it is there, the question has already been
-   * answered — create the profile and resolve again, with no screen in
-   * between. Anything absent or unrecognised returns null and falls through to
-   * `needsProfile`, which is what /welcome's recovery mode is for.
-   */
-  const createFromMetadata = useCallback(
-    async (session: Session): Promise<AppIdentity | null> => {
-      const meta = session.user.user_metadata as { kind?: unknown; name?: unknown } | null;
-      const kind = meta?.kind;
-      const name = typeof meta?.name === 'string' ? meta.name.trim() : '';
-      if ((kind !== 'individual' && kind !== 'coach') || !name) return null;
-
-      try {
-        await dispatch(trainerApi.endpoints.createProfile.initiate({ kind, name })).unwrap();
-      } catch {
-        // A 409 means something already owns this account — an invite that
-        // linked first, or a second launch racing this one. The resolve below
-        // is the truth either way; only a null answer asks on the screen.
-      }
-      return resolveIdentity().catch(() => null);
-    },
-    [dispatch],
-  );
-
-  /**
    * Verified, but with no profile behind the account. The Supabase session is
    * deliberately left alone — they are signed in, just not as anybody yet.
    */
@@ -117,17 +90,11 @@ export function useAuthSession(): { ready: boolean } {
         const identity = await resolveIdentity();
         if (cancelled()) return;
 
-        // No profile yet. Nothing to cache and nothing to sign out of.
+        // No profile yet, and no invite claimed this account either. The one
+        // case where the app has to ask which kind of account this is.
         if (!identity) {
           await clearIdentity();
-          const created = await createFromMetadata(session);
-          if (cancelled()) return;
-          if (!created) {
-            needProfile(authUserId, email);
-            return;
-          }
-          enter({ ...created, authUserId, email });
-          void saveIdentity({ ...created, authUserId });
+          needProfile(authUserId, email);
           return;
         }
 
@@ -153,7 +120,7 @@ export function useAuthSession(): { ready: boolean } {
         }
       }
     },
-    [createFromMetadata, enter, leave, needProfile],
+    [enter, leave, needProfile],
   );
 
   useEffect(() => {

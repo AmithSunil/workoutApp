@@ -4,8 +4,10 @@ import { useMemo } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { useGetClientsQuery } from '@/api/endpoints/trainerApi';
+import { Paywall } from '@/components/billing/Paywall';
 import { ClientRosterItem } from '@/components/trainer/ClientRosterItem';
 import { Button, Card, Chip, EmptyState, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
+import { useSubscription } from '@/hooks/useSubscription';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { activeClientChanged } from '@/store/slices/sessionSlice';
@@ -28,7 +30,9 @@ export default function RosterScreen() {
   const query = useAppSelector((s) => s.ui.rosterQuery);
   const filter = useAppSelector((s) => s.ui.rosterFilter);
 
-  const clients = useGetClientsQuery();
+  // `active` below is already the un-invited clients; this one is the plan.
+  const { active: planOk } = useSubscription();
+  const clients = useGetClientsQuery(undefined, { skip: !planOk });
   // Invited clients have no compliance yet; they get their own group and stay
   // out of the counts and the traffic lights.
   const active = useMemo(() => (clients.data ?? []).filter((c) => !c.invited), [clients.data]);
@@ -55,6 +59,11 @@ export default function RosterScreen() {
     dispatch(activeClientChanged(clientId));
     router.push(routes.trainer.clientDetail(clientId));
   };
+
+  // The gate. Server-side it is the client_profiles select policy (the pending
+  // RLS set, old T10); this is the same rule rendered, so a lapsed coach sees a
+  // reason rather than an empty roster.
+  if (!planOk) return <Paywall />;
 
   return (
     <Screen

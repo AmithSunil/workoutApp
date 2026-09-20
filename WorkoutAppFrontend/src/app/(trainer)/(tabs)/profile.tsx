@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useGetTrainerQuery, useUpdateTrainerMutation } from '@/api/endpoints/trainerApi';
 import { signOutEverywhere } from '@/auth';
+import { PlanSummary } from '@/components/billing/PlanSummary';
 import { Avatar, Button, Card, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
 import { TrackingPicker } from '@/components/trainer/TrackingPicker';
 import { routes } from '@/navigation/routes';
@@ -64,6 +65,8 @@ export default function TrainerProfileScreen() {
           </View>
         ) : null}
       </Card>
+
+      <PlanSummary forRole="trainer" />
 
       <Button
         label="Sign out"

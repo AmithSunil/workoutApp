@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { signOutEverywhere } from '@/auth';
+import { PlanSummary } from '@/components/billing/PlanSummary';
 import { Avatar, Button, Card, Screen, SkeletonCard, Text } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { routes } from '@/navigation/routes';
@@ -41,6 +42,8 @@ export default function ClientProfileScreen() {
           </View>
         </View>
       </Card>
+
+      <PlanSummary forRole="client" />
 
       <Button
         label="Sign out"

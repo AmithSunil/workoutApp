@@ -35,6 +35,7 @@ import type {
   Routine,
   RoutineAssignment,
   Thread,
+  Subscription,
   TrainerProfile,
   WorkoutLog,
 } from '@/types/models';
@@ -43,6 +44,8 @@ const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
 export interface MockDb {
   trainer: TrainerProfile;
+  /** Null exercises the paywall; the seeded value is an active coach plan. */
+  subscription: Subscription | null;
   clients: ClientProfile[];
   foods: FoodItem[];
   exercises: Exercise[];
@@ -64,6 +67,12 @@ const seed = usersSeed as unknown as { trainer: TrainerProfile; clients: ClientP
 
 export const db: MockDb = {
   trainer: clone(seed.trainer),
+  subscription: {
+    userId: seed.trainer.id,
+    planCode: 'coach_pro',
+    status: 'active',
+    currentPeriodEnd: null,
+  },
   clients: clone(seed.clients),
   foods: clone(foodsSeed) as unknown as FoodItem[],
   exercises: clone(exercisesSeed) as unknown as Exercise[],

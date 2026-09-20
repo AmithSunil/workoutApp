@@ -29,11 +29,13 @@ import type {
   Message,
   MessageAttachment,
   NutritionDay,
+  Plan,
   ProgressPhoto,
   RedFlagAlert,
   Routine,
   RoutineDay,
   RoutineExercise,
+  Subscription,
   Thread,
   TrackingMode,
   TrainerProfile,
@@ -599,4 +601,41 @@ export const toTrainerSummary = (r: TrainerSummaryRow): TrainerSummary => ({
   unreadMessages: r.unread_messages,
   criticalAlerts: r.critical_alerts,
   weeklyComplianceAvg: r.weekly_compliance_avg,
+});
+
+/* ----------------------------------------------------------------- billing */
+
+export interface PlanRow {
+  code: string;
+  role: 'client' | 'trainer';
+  name: string;
+  price_paise: number;
+  max_clients: number | null;
+  position: number;
+}
+
+export interface SubscriptionRow {
+  user_id: string;
+  plan_code: string;
+  status: Subscription['status'];
+  current_period_end: string | null;
+}
+
+export const toPlan = (r: PlanRow): Plan => ({
+  code: r.code,
+  role: r.role,
+  name: r.name,
+  pricePaise: r.price_paise,
+  maxClients: r.max_clients,
+  position: r.position,
+});
+
+export const toSubscription = (r: SubscriptionRow): Subscription => ({
+  userId: r.user_id,
+  planCode: r.plan_code,
+  status: r.status,
+  // The entitlement comparison happens on this string, so it goes through the
+  // same iso() normalisation as every other timestamp -- a `+00:00` date
+  // parses, but nothing else in the app has ever seen that form.
+  currentPeriodEnd: isoOrNull(r.current_period_end),
 });
