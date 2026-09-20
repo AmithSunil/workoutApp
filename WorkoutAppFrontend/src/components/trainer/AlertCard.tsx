@@ -19,6 +19,7 @@ const KIND_ICON: Record<AlertKind, keyof typeof Ionicons.glyphMap> = {
   'weight-stall': 'trending-down-outline',
   'calorie-deficit-miss': 'restaurant-outline',
   'check-in-due': 'clipboard-outline',
+  'intake-complete': 'person-add-outline',
 };
 
 const SEVERITY: Record<AlertSeverity, { fg: string; bg: string; label: string }> = {

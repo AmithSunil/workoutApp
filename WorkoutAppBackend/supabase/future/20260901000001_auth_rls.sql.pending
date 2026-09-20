@@ -11,11 +11,11 @@
 --   2. Every person who needs to sign in has an auth.users row linked to their
 --      users row (seed/auth_dev_users.sql for the fixtures).
 --
--- Remaining prerequisite, the reason this is not applied:
---   3. The app must actually sign in. `src/app/index.tsx` is still a demo role
---      switcher that writes a role into sessionSlice without a token, so under
---      these policies every screen would read zero rows. Applying this before
---      the sign-in screen exists turns the app dark.
+--   3. The app signs in with real tokens (src/app/sign-in.tsx, done).
+--   4. The onboarding migrations 20260915000002..05 are applied -- the insert
+--      policies and routines.author_id below depend on them.
+--
+-- Held back only for the onboarding checkpoint review (tasks/todo.md, T10).
 --
 -- Applying it is this file, in one transaction. Nothing else changes: the RPCs
 -- are SECURITY INVOKER and will simply start obeying these policies.
@@ -27,7 +27,8 @@
 create function public.owns_routine(p_routine_id text)
 returns boolean language sql stable security definer set search_path = '' as $$
   select exists (select 1 from public.routines r
-                  where r.id = p_routine_id and r.trainer_id = public.app_user_id());
+                  where r.id = p_routine_id
+                    and (r.trainer_id = public.app_user_id() or r.author_id = public.app_user_id()));
 $$;
 
 /** A trainer sees their own templates; a client sees the ones assigned to them. */
@@ -66,13 +67,24 @@ create policy foods_write on foods for all to authenticated
 -- Three ways to be visible: you, someone you coach, or the coach you belong to.
 create policy users_visible on users for select to authenticated
   using (id = public.app_user_id() or public.is_trainer_of(id) or public.is_my_trainer(id));
-create policy users_self_update on users for update to authenticated
-  using (id = public.app_user_id()) with check (id = public.app_user_id());
+-- No self-update policy on users, deliberately. RLS cannot restrict columns, so
+-- `using (id = app_user_id())` also permits `update users set role = 'trainer'`
+-- -- and app_role() reads that column, so a client could promote themselves to
+-- coach in one statement and every is_trainer_of()/app_role() test downstream
+-- would start agreeing. Nothing in the app updates users at all (the only
+-- writer is link_auth_user, which is DEFINER), so the policy bought nothing.
+-- If self-editing of name/avatar is ever wanted, grant the columns rather than
+-- the row -- `grant update (name, avatar_url) on users to authenticated`
+-- beside a policy -- so role and auth_user_id stay out of reach.
 
 create policy trainer_profiles_visible on trainer_profiles for select to authenticated
   using (id = public.app_user_id() or public.is_my_trainer(id));
+-- app_role() as well as the id: without it a client whose id is c-001 could
+-- insert trainer_profiles(id = 'c-001') and appear as a coach in every view
+-- that joins this table. create_profile is DEFINER and does not pass here.
 create policy trainer_profiles_self on trainer_profiles for all to authenticated
-  using (id = public.app_user_id()) with check (id = public.app_user_id());
+  using      (id = public.app_user_id() and public.app_role() = 'trainer')
+  with check (id = public.app_user_id() and public.app_role() = 'trainer');
 
 -- A client reads their own profile but does not edit it: macro targets, goals
 -- and compliance are the coach's to set.
@@ -80,6 +92,37 @@ create policy client_profiles_visible on client_profiles for select to authentic
   using (public.owns_client(id));
 create policy client_profiles_trainer_writes on client_profiles for all to authenticated
   using (public.is_trainer_of(id)) with check (public.is_trainer_of(id));
+
+-- Onboarding (20260915000003). is_trainer_of() looks the row up in its own
+-- table, and an INSERT check runs before the new row is visible, so the
+-- `for all` policies above can never admit an insert. These key on the column.
+create policy users_trainer_insert_client on users for insert to authenticated
+  with check (role = 'client' and public.app_role() = 'trainer');
+-- Only a client nobody has signed in as yet (revoke_invite).
+create policy users_trainer_delete_pending on users for delete to authenticated
+  using (auth_user_id is null and public.is_trainer_of(id));
+create policy client_profiles_trainer_insert on client_profiles for insert to authenticated
+  with check (trainer_id = public.app_user_id() and public.app_role() = 'trainer');
+-- The app_role() clause is the second half of the same rule: trainer_id alone
+-- would let a *client* hang a roster row off themselves (pointing it at a coach
+-- who has no client_profiles row yet), and is_trainer_of() would then answer
+-- true for them.
+--
+-- Self-signup (20260918000002) does not pass through the policy above at all:
+-- create_profile is SECURITY DEFINER, because the caller has no users row yet
+-- and so has no app_role() for any policy to test. The trainer_id half is what
+-- stops a *coach* inserting a client onto someone else's roster.
+
+-- A coached client still gets no update policy: complete_intake (DEFINER) is
+-- the only way they write their own profile, so macros stay the coach's.
+--
+-- An individual has no coach to set them, so they set them. The predicate is
+-- what keeps the two apart, not discipline: the moment a coach adopts them
+-- (invite_client, S11) trainer_id stops being null and this policy stops
+-- matching, mid-session, with no other change anywhere.
+create policy client_profiles_self_writes on client_profiles for update to authenticated
+  using      (id = public.app_user_id() and trainer_id is null)
+  with check (id = public.app_user_id() and trainer_id is null);
 
 -- ---------------------------------------------------------------------------
 -- Everything hanging off a client_id: the client, or their trainer
@@ -141,8 +184,18 @@ end $$;
 
 create policy routines_read on routines for select to authenticated
   using (public.can_read_routine(id));
+-- The coach's own templates, or a routine its author wrote for themselves:
+-- under their coach's id when they have one (a coach who does not track
+-- workouts), and with no coach at all when they are training on their own
+-- (20260918000001 made routines.trainer_id nullable). Either way the author
+-- must be the caller, so this never widens to someone else's routine.
 create policy routines_owner on routines for all to authenticated
-  using (trainer_id = public.app_user_id()) with check (trainer_id = public.app_user_id());
+  using (trainer_id = public.app_user_id()
+         or (author_id = public.app_user_id()
+             and (trainer_id is null or public.is_my_trainer(trainer_id))))
+  with check (trainer_id = public.app_user_id()
+         or (author_id = public.app_user_id()
+             and (trainer_id is null or public.is_my_trainer(trainer_id))));
 
 create policy routine_days_read on routine_days for select to authenticated
   using (public.can_read_routine(routine_id));
@@ -164,6 +217,8 @@ create policy routine_exercises_owner on routine_exercises for all to authentica
 
 create policy threads_participants on threads for all to authenticated
   using (public.in_thread(id)) with check (public.in_thread(id));
+create policy threads_trainer_insert on threads for insert to authenticated
+  with check (trainer_id = public.app_user_id());
 create policy messages_read on messages for select to authenticated
   using (public.in_thread(thread_id));
 create policy messages_send on messages for insert to authenticated
@@ -191,3 +246,19 @@ create policy messages_update on messages for update to authenticated
 --   exercises                   32             32              -          0
 --
 --   c-001 rows visible to c-002: 0.  Other clients' logs visible to c-001: 0.
+--
+-- Re-run 2026-09-19 after the two edits above (offline Postgres 16, whole
+-- migration chain + seed.sql): every number in the table is unchanged, and the
+-- self-signup cases read --
+--
+--   an individual updating their own macros        1 row   (client_profiles_self_writes)
+--   a coached client updating their own macros     0 rows  (unchanged; complete_intake only)
+--   an individual updating another client's row    0 rows
+--   an individual creating their own routine       ok, trainer_id null, author_id theirs
+--   a coached client self-planning a routine       ok      (unchanged)
+--
+-- 2026-09-19, role-escalation edits (users_self_update dropped, app_role()
+-- added to trainer_profiles_self and client_profiles_trainer_insert): NOT
+-- replayed -- no test was asked for. tests/rls.sql carries the three cases
+-- (c1_role_after_self_promote, c1_mints_trainer_profile, c1_fake_roster) and
+-- they run with the rest of this file at T10.

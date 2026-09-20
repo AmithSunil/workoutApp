@@ -16,14 +16,14 @@ export default function ClientProfileScreen() {
 
   if (!client) {
     return (
-      <Screen title="Profile" showBack tabBarPadding={false}>
+      <Screen title="Profile">
         <SkeletonCard lines={4} />
       </Screen>
     );
   }
 
   return (
-    <Screen title="Profile" showBack tabBarPadding={false}>
+    <Screen title="Profile">
       <Card>
         <View style={styles.identity}>
           <Avatar name={client.name} uri={client.avatarUrl} size={56} />
@@ -49,7 +49,7 @@ export default function ClientProfileScreen() {
         fullWidth
         style={styles.signOut}
         onPress={() => {
-          void signOutEverywhere().then(() => router.replace(routes.signIn()));
+          void signOutEverywhere().then(() => router.replace(routes.welcome()));
         }}
       />
     </Screen>

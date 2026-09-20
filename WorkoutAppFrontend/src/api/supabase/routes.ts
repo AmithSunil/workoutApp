@@ -18,7 +18,7 @@
  * to know who is asking.
  */
 import { supabase } from '@/utils/supabase';
-import type { ClientGoalPatch } from '../handlers';
+import type { ClientGoalPatch, ClientInvite, IntakeInput, ProfileInput } from '../handlers';
 import type { ISODate, MacroTargets, TrainerProfile } from '@/types/models';
 import { TODAY, addDays, diffInDays, startOfWeek } from '@/utils/date';
 
@@ -109,7 +109,7 @@ const int = (v: unknown, fallback: number): number => {
 
 /* -------------------------------------------------------------- selects */
 
-const CLIENT = '*,users(name,email,avatar_url)';
+const CLIENT = '*,users(name,email,avatar_url,auth_user_id)';
 const LOG = '*,logged_exercises(*,logged_sets(*))';
 const NUTRITION = '*,food_entries(*)';
 const HABIT = '*,habit_completions(date)';
@@ -232,6 +232,60 @@ export const supabaseRoutes: Array<{
       }
 
       return toClientProfile(updated);
+    },
+  },
+
+  {
+    // The invite IS the client row (migration 20260915000003): users +
+    // client_profiles + thread in one RPC, then read back like any client.
+    method: 'POST',
+    pattern: '/clients/invite',
+    handler: async ({ body }) => {
+      const { name, email, profile } = body as ClientInvite;
+      const id = str(await rpc('invite_client', { p_name: name, p_email: email, p_profile: profile ?? null }));
+      return toClientProfile(
+        await row<ClientProfileRow>(
+          supabase.from('client_profiles').select(CLIENT).eq('id', id).single(),
+          `Client ${id} not found`,
+        ),
+      );
+    },
+  },
+  {
+    // Self-signup (migration 20260918000002). create_profile reads auth.uid()
+    // and the address from auth.users itself, so the body carries only the two
+    // things the server cannot know: which way in, and what to call them.
+    method: 'POST',
+    pattern: '/session/profile',
+    handler: async ({ body }) => {
+      const { kind, name } = body as ProfileInput;
+      return { id: str(await rpc('create_profile', { p_kind: kind, p_name: name })) };
+    },
+  },
+  {
+    method: 'DELETE',
+    pattern: '/clients/:id/invite',
+    handler: async ({ params }) => {
+      await rpc('revoke_invite', { p_client_id: params.id });
+      return { id: params.id };
+    },
+  },
+  {
+    // The server acts on the signed-in client (app_user_id()); the id in the
+    // path is for the mock, which has no notion of who is asking.
+    method: 'POST',
+    pattern: '/clients/:id/intake',
+    handler: async ({ body }) => {
+      const input = body as IntakeInput;
+      await rpc('complete_intake', {
+        p_height: input.heightCm ?? null,
+        p_weight: input.startWeightKg ?? null,
+        p_target: input.targetWeightKg ?? null,
+        p_goal: input.goal ?? null,
+        p_notes: input.notes ?? null,
+        p_date: input.date,
+      });
+      return null;
     },
   },
 

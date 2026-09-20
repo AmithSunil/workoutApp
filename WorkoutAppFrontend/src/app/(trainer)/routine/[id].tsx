@@ -214,6 +214,7 @@ export default function RoutineDetailScreen() {
         onClose={() => setAssignOpen(false)}
         clients={clients.data ?? []}
         selectedIds={selectedIds}
+        lockedIds={data.assignedClientIds}
         saving={assigning}
         error={assignError}
         onToggle={(clientId) =>
@@ -226,13 +227,7 @@ export default function RoutineDetailScreen() {
           void assignRoutine({ id: data.id, clientIds: selectedIds })
             .unwrap()
             .then(() => setAssignOpen(false))
-            // Unticking someone whose only routine this is would empty their
-            // app, so the server refuses it — say so rather than closing.
-            .catch(() =>
-              setAssignError(
-                'Someone you unticked has no other routine. A client keeps their last one until another is assigned.'
-              )
-            );
+            .catch(() => setAssignError('Could not assign this routine. Check your connection and retry.'));
         }}
       />
     </Screen>

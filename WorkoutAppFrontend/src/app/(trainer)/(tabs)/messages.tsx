@@ -26,6 +26,8 @@ export default function MessagesScreen() {
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
     return (threads.data ?? [])
+      // A new client's thread exists from the invite; it is not a conversation yet.
+      .filter((thread) => thread.lastMessageAt)
       .map((thread) => ({ thread, client: clientById[thread.clientId] }))
       .filter(({ client }) => (q ? (client?.name ?? '').toLowerCase().includes(q) : true))
       .sort((a, b) => {

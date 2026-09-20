@@ -8,7 +8,6 @@ import { useGetBodyMetricsQuery, useGetHabitsQuery, useToggleHabitMutation } fro
 import { useGetClientRoutinesQuery } from '@/api/endpoints/routinesApi';
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { CalorieGauge, MacroBars, Sparkline } from '@/components/charts';
-import { ProfileButton } from '@/components/common/ProfileButton';
 import { TrainerIndicator } from '@/components/common/TrainerIndicator';
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
 import { WeighInPrompt } from '@/components/progress/WeighInPrompt';
@@ -112,13 +111,6 @@ export default function ExploreScreen() {
     <Screen
       title={`Hi, ${firstName(client.name)}`}
       subtitle={longDate(TODAY)}
-      headerRight={
-        <ProfileButton
-          name={client.name}
-          avatarUrl={client.avatarUrl}
-          href={routes.client.profile()}
-        />
-      }
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetchAll} />}>
       {trainer ? (
         <TrainerIndicator trainer={trainer} href={routes.client.chat()} />

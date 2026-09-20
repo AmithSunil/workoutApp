@@ -16,6 +16,7 @@ const TABS: TabMeta[] = [
   { name: 'log', label: 'Log', icon: 'restaurant-outline', iconActive: 'restaurant' },
   { name: 'workouts', label: 'Workouts', icon: 'barbell-outline', iconActive: 'barbell' },
   { name: 'progress', label: 'Progress', icon: 'trending-up-outline', iconActive: 'trending-up' },
+  { name: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ];
 
 const AppTabBar = createAppTabBar(TABS);

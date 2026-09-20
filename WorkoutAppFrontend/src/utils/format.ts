@@ -7,7 +7,8 @@ export const ratio = (value: number, total: number): number =>
 
 export const pct = (value: number, total: number): number => Math.round(ratio(value, total) * 100);
 
-export const kg = (value: number, digits = 1): string => `${value.toFixed(digits)} kg`;
+export const kg = (value: number | null, digits = 1): string =>
+  value === null ? '—' : `${value.toFixed(digits)} kg`;
 
 export const signed = (value: number, digits = 1): string =>
   `${value > 0 ? '+' : value < 0 ? '−' : ''}${Math.abs(value).toFixed(digits)}`;

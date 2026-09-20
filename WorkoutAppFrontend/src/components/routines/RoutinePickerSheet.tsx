@@ -13,7 +13,7 @@ export interface RoutinePickerSheetProps {
   visible: boolean;
   onClose: () => void;
   routines: Routine[];
-  /** Routines this client already has — shown ticked and not re-assignable. */
+  /** The routine this client follows — shown ticked and not re-assignable. */
   assignedRoutineIds: string[];
   onPick: (routineId: string) => void;
   /** Id currently being assigned, so the row can show a spinner. */
@@ -24,6 +24,9 @@ export interface RoutinePickerSheetProps {
 /**
  * Pick a routine from the library for one client — the assignment flow that
  * starts on the client's profile rather than on the routine.
+ *
+ * A client follows exactly one routine, so picking one here replaces the one
+ * they have; the sheet says so rather than leaving the trainer to find out.
  */
 export function RoutinePickerSheet({
   visible,
@@ -37,8 +40,8 @@ export function RoutinePickerSheet({
   return (
     <Sheet visible={visible} onClose={onClose} title={`Assign to ${clientName}`} height="76%">
       <Text variant="caption" tone="secondary" style={styles.intro}>
-        Pick a routine from your library. You can tailor it for {clientName} afterwards without
-        touching anyone else&apos;s copy.
+        Pick a routine from your library — it replaces the one {clientName} is following now.
+        You can tailor it for them afterwards without touching anyone else&apos;s copy.
       </Text>
 
       <FlatList

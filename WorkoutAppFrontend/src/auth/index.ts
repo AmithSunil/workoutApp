@@ -3,7 +3,14 @@
  * `@supabase/supabase-js` or `@/utils/supabase` — the same containment rule
  * that keeps `mockDb` inside `src/api/*`.
  */
-export { DEV_PASSWORD, signInWithPassword, signOutEverywhere } from './authService';
+export {
+  DEV_PASSWORD,
+  refreshIdentity,
+  sendSignInCode,
+  signInWithPassword,
+  signOutEverywhere,
+  verifySignInCode,
+} from './authService';
 export { AuthFailure, authMessage, toAuthFailure } from './errors';
 export type { AuthFailureKind } from './errors';
 export { resolveIdentity } from './identity';

@@ -5,7 +5,7 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, TextInput, View } fr
 
 import { useGetClientsQuery } from '@/api/endpoints/trainerApi';
 import { ClientRosterItem } from '@/components/trainer/ClientRosterItem';
-import { Card, Chip, EmptyState, Screen, SkeletonCard, Text } from '@/components/ui';
+import { Button, Card, Chip, EmptyState, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { activeClientChanged } from '@/store/slices/sessionSlice';
@@ -29,23 +29,27 @@ export default function RosterScreen() {
   const filter = useAppSelector((s) => s.ui.rosterFilter);
 
   const clients = useGetClientsQuery();
+  // Invited clients have no compliance yet; they get their own group and stay
+  // out of the counts and the traffic lights.
+  const active = useMemo(() => (clients.data ?? []).filter((c) => !c.invited), [clients.data]);
+  const invited = useMemo(() => (clients.data ?? []).filter((c) => c.invited), [clients.data]);
 
   const counts = useMemo(() => {
     const base = { all: 0, green: 0, yellow: 0, red: 0 };
-    for (const c of clients.data ?? []) {
+    for (const c of active) {
       base.all += 1;
       base[c.compliance.status] += 1;
     }
     return base;
-  }, [clients.data]);
+  }, [active]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return (clients.data ?? [])
+    return active
       .filter((c) => (filter === 'all' ? true : c.compliance.status === filter))
       .filter((c) => (q ? c.name.toLowerCase().includes(q) || GOAL_LABEL[c.goal].toLowerCase().includes(q) : true))
       .sort((a, b) => a.compliance.score - b.compliance.score);
-  }, [clients.data, filter, query]);
+  }, [active, filter, query]);
 
   const open = (clientId: string) => {
     dispatch(activeClientChanged(clientId));
@@ -56,6 +60,14 @@ export default function RosterScreen() {
     <Screen
       title="Clients"
       subtitle={`${counts.all} active · ${counts.red + counts.yellow} need attention`}
+      headerRight={
+        <Button
+          label="Add"
+          icon="person-add-outline"
+          size="sm"
+          onPress={() => router.push(routes.trainer.invite())}
+        />
+      }
       refreshControl={
         <RefreshControl refreshing={clients.isFetching} onRefresh={() => void clients.refetch()} />
       }>
@@ -99,6 +111,16 @@ export default function RosterScreen() {
           <SkeletonCard lines={2} />
           <SkeletonCard lines={2} />
         </>
+      ) : active.length === 0 ? (
+        <Card>
+          <EmptyState
+            icon="person-add-outline"
+            title="No active clients yet"
+            message="Add a client by email. They sign in with a code, no password."
+            actionLabel="Add a client"
+            onAction={() => router.push(routes.trainer.invite())}
+          />
+        </Card>
       ) : filtered.length === 0 ? (
         <Card>
           <EmptyState
@@ -122,6 +144,15 @@ export default function RosterScreen() {
           ))}
         </>
       )}
+
+      {invited.length > 0 ? (
+        <>
+          <SectionHeader title="Invited" caption="Not signed in yet — set them up now" />
+          {invited.map((client) => (
+            <ClientRosterItem key={client.id} client={client} onPress={() => open(client.id)} />
+          ))}
+        </>
+      ) : null}
     </Screen>
   );
 }

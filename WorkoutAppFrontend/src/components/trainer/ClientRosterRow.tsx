@@ -22,18 +22,35 @@ export function ClientRosterRow({ client, trend, onPress }: ClientRosterRowProps
   return (
     <Card padded={false} onPress={onPress} variant="flat" style={styles.card}>
       <View style={styles.row}>
-        <Avatar name={client.name} uri={client.avatarUrl} size={44} status={status} />
+        <Avatar
+          name={client.name}
+          uri={client.avatarUrl}
+          size={44}
+          status={client.invited ? undefined : status}
+        />
 
         <View style={styles.text}>
           <Text variant="h2" numberOfLines={1}>
             {client.name}
           </Text>
           <Text variant="micro" tone="tertiary" numberOfLines={1}>
-            {GOAL_LABEL[client.goal]} ·{' '}
-            {client.compliance.lastLoggedAt
-              ? `logged ${timeAgo(client.compliance.lastLoggedAt)}`
-              : 'never logged'}
+            {client.invited
+              ? client.email
+              : `${GOAL_LABEL[client.goal]} · ${
+                  client.compliance.lastLoggedAt
+                    ? `logged ${timeAgo(client.compliance.lastLoggedAt)}`
+                    : 'never logged'
+                }`}
           </Text>
+          {client.invited ? (
+            <View style={styles.statusRow}>
+              <View style={[styles.pill, { backgroundColor: colors.primarySoft }]}>
+                <Text variant="micro" tone="primary">
+                  Invite pending
+                </Text>
+              </View>
+            </View>
+          ) : (
           <View style={styles.statusRow}>
             <View style={[styles.pill, { backgroundColor: `${tint}1A` }]}>
               <Text variant="micro" color={tint}>
@@ -49,6 +66,7 @@ export function ClientRosterRow({ client, trend, onPress }: ClientRosterRowProps
               </View>
             ) : null}
           </View>
+          )}
         </View>
 
         <View style={styles.right}>

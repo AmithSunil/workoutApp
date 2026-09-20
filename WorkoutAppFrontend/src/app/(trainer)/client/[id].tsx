@@ -19,7 +19,9 @@ import {
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import {
   useGetClientOverviewQuery,
+  useGetTrainerQuery,
   useGetWeeklyComplianceQuery,
+  useRevokeInviteMutation,
 } from '@/api/endpoints/trainerApi';
 import { BarSeries, LineChart, MacroBars, type BarDatum } from '@/components/charts';
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
@@ -50,6 +52,7 @@ import { shows, type TrackingDomain } from '@/utils/tracking';
 import { GOAL_LABEL } from '@/utils/goal';
 import type { ClientProfile } from '@/types/models';
 import { grams, kcal, kg, pct, signed } from '@/utils/format';
+import { shareInvite } from '@/utils/invite';
 
 type DetailTab = UiState['clientDetailTab'];
 
@@ -109,6 +112,8 @@ export default function ClientDetailScreen() {
           status={client.compliance.status}
         />
       }>
+      {client.invited ? <InviteCard client={client} /> : null}
+
       {/* Pinned header context */}
       <View style={styles.tiles}>
         <StatTile
@@ -162,7 +167,7 @@ export default function ClientDetailScreen() {
       />
 
       {activeTab === 'metrics' ? (
-        <MetricsTab clientId={clientId} targetWeightKg={client.targetWeightKg} />
+        <MetricsTab clientId={clientId} targetWeightKg={client.targetWeightKg ?? undefined} />
       ) : null}
       {activeTab === 'nutrition' ? (
         <NutritionTab client={client} currentWeightKg={summary.latestWeightKg} />
@@ -173,9 +178,64 @@ export default function ClientDetailScreen() {
   );
 }
 
+/* ---------------------------------------------------------------- invite */
+
+/**
+ * Nobody has signed in as this client yet. Everything below still works — the
+ * coach can set goals, habits and a routine now and the client finds them on
+ * day one.
+ */
+function InviteCard({ client }: { client: ClientProfile }) {
+  const router = useRouter();
+  const trainer = useGetTrainerQuery();
+  const [revoke, revoking] = useRevokeInviteMutation();
+  // Alert.alert is a no-op on web, so the confirm is a second tap.
+  const [confirming, setConfirming] = useState(false);
+
+  return (
+    <Card>
+      <Text variant="h2">Invite pending</Text>
+      <Text variant="caption" tone="secondary" style={styles.chartCaption}>
+        {client.name.split(' ')[0]} signs in with {client.email}. Set up their goals, habits and
+        routine now — they will be waiting on day one.
+      </Text>
+      <View style={styles.actions}>
+        <Button
+          label="Share invite"
+          icon="share-outline"
+          size="sm"
+          style={styles.action}
+          onPress={() => void shareInvite(client, trainer.data?.name ?? 'Your coach')}
+        />
+        <Button
+          label={confirming ? 'Tap again to remove' : 'Remove'}
+          icon="trash-outline"
+          variant={confirming ? 'danger' : 'secondary'}
+          size="sm"
+          style={styles.action}
+          loading={revoking.isLoading}
+          onPress={() =>
+            confirming
+              ? void revoke(client.id)
+                  .unwrap()
+                  .then(() => router.replace(routes.trainer.roster()))
+                  .catch(() => setConfirming(false))
+              : setConfirming(true)
+          }
+        />
+      </View>
+      {revoking.isError ? (
+        <Text variant="caption" tone="danger">
+          Could not remove this invite. They may have just signed in.
+        </Text>
+      ) : null}
+    </Card>
+  );
+}
+
 /* ------------------------------------------------------------------ tabs */
 
-function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeightKg: number }) {
+function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeightKg?: number }) {
   const metrics = useGetBodyMetricsQuery({ clientId });
   const photos = useGetProgressPhotosQuery({ clientId });
   const habits = useGetHabitsQuery({ clientId });
@@ -252,7 +312,7 @@ function NutritionTab({
   currentWeightKg,
 }: {
   client: ClientProfile;
-  currentWeightKg: number;
+  currentWeightKg: number | null;
 }) {
   const clientId = client.id;
   const compliance = useGetWeeklyComplianceQuery({ clientId, weeks: 6 });
@@ -445,9 +505,9 @@ function PlanTab({ clientId, clientName }: { clientId: string; clientName: strin
   return (
     <>
       <SectionHeader
-        title="Assigned routines"
-        caption="Their training week, repeating until you change it"
-        actionLabel="Assign"
+        title="Current routine"
+        caption="Their training week, repeating until you assign another"
+        actionLabel={assigned.length === 0 ? 'Assign' : 'Change'}
         onAction={() => setPickerOpen(true)}
       />
       {assigned.length === 0 ? (

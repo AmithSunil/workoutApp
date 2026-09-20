@@ -14,10 +14,16 @@ import { TODAY } from '@/utils/date';
 export type AuthStatus =
   /** Cold start: the stored session has not been inspected yet. */
   | 'unknown'
-  /** No usable session. The sign-in screen is the only reachable route. */
+  /** No usable session. The front door is the only reachable route. */
   | 'signedOut'
   /** A Supabase session exists and has been resolved to an app user. */
-  | 'signedIn';
+  | 'signedIn'
+  /**
+   * A Supabase session exists but the account has no app profile yet. Signed in
+   * to Supabase, not yet signed in to the app: `role` and `userId` stay null,
+   * and the only route that answers is the one that asks which they are.
+   */
+  | 'needsProfile';
 
 export interface SessionState {
   status: AuthStatus;
@@ -33,8 +39,8 @@ export interface SessionState {
   activeDate: string;
   /**
    * Why the last session ended, when it ended for a reason worth explaining
-   * (an unlinked account, an unreachable backend). Shown once on the sign-in
-   * screen; a deliberate sign-out leaves it null.
+   * (an unlinked account, an unreachable backend). Shown once on whichever
+   * auth screen comes up next; a deliberate sign-out leaves it null.
    */
   signedOutReason: string | null;
 }
@@ -42,6 +48,11 @@ export interface SessionState {
 export interface SignedInPayload {
   role: UserRole;
   userId: string;
+  authUserId: string;
+  email: string | null;
+}
+
+export interface ProfileNeededPayload {
   authUserId: string;
   email: string | null;
 }
@@ -84,6 +95,22 @@ const sessionSlice = createSlice({
       }
     },
 
+    /**
+     * Verified, but nobody yet. Deliberately not a sign-out: the Supabase
+     * session is good and must survive, or the code they just used to get here
+     * would have to be sent again before they can say who they are.
+     */
+    profileNeeded(state, action: PayloadAction<ProfileNeededPayload>) {
+      state.status = 'needsProfile';
+      state.role = null;
+      state.userId = null;
+      state.authUserId = action.payload.authUserId;
+      state.email = action.payload.email;
+      state.activeClientId = null;
+      state.activeDate = TODAY;
+      state.signedOutReason = null;
+    },
+
     signedOut(state, action: PayloadAction<{ reason?: string } | undefined>) {
       state.status = 'signedOut';
       state.role = null;
@@ -95,7 +122,7 @@ const sessionSlice = createSlice({
       state.signedOutReason = action.payload?.reason ?? null;
     },
 
-    /** Clears the one-shot explanation after the sign-in screen has shown it. */
+    /** Clears the one-shot explanation after an auth screen has shown it. */
     signOutReasonDismissed(state) {
       state.signedOutReason = null;
     },
@@ -112,6 +139,7 @@ const sessionSlice = createSlice({
 
 export const {
   signedIn,
+  profileNeeded,
   signedOut,
   signOutReasonDismissed,
   activeClientChanged,

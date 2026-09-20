@@ -14,7 +14,6 @@ import {
   useReviewCheckInMutation,
   useUpdateTrainerMutation,
 } from '@/api/endpoints/trainerApi';
-import { ProfileButton } from '@/components/common/ProfileButton';
 import { AlertCard } from '@/components/trainer/AlertCard';
 import { CheckInCard } from '@/components/trainer/CheckInCard';
 import { TrackingPicker } from '@/components/trainer/TrackingPicker';
@@ -33,6 +32,7 @@ import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch } from '@/store/hooks';
 import { activeClientChanged } from '@/store/slices/sessionSlice';
+import { clientDetailTabChanged } from '@/store/slices/uiSlice';
 import { colors, radius, spacing, statusColor } from '@/theme';
 import { ALERT_DOMAIN, shows } from '@/utils/tracking';
 import { TODAY, longDate, timeAgo } from '@/utils/date';
@@ -78,7 +78,7 @@ export default function TriageDashboard() {
   const needsAttention = useMemo(
     () =>
       (clients.data ?? [])
-        .filter((c) => c.compliance.status !== 'green')
+        .filter((c) => !c.invited && c.compliance.status !== 'green')
         .sort((a, b) => a.compliance.score - b.compliance.score),
     [clients.data]
   );
@@ -99,15 +99,6 @@ export default function TriageDashboard() {
     <Screen
       title={trainer ? `${greeting()}, ${firstName(trainer.name)}` : 'Triage'}
       subtitle={longDate(TODAY)}
-      headerRight={
-        trainer ? (
-          <ProfileButton
-            name={trainer.name}
-            avatarUrl={trainer.avatarUrl}
-            href={routes.trainer.profile()}
-          />
-        ) : undefined
-      }
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -233,7 +224,13 @@ export default function TriageDashboard() {
             key={alert.id}
             alert={alert}
             client={clientById[alert.clientId]}
-            onPress={() => openClient(alert.clientId)}
+            onPress={() => {
+              // A finished setup needs targets, which live on the Nutrition tab.
+              if (alert.kind === 'intake-complete') {
+                dispatch(clientDetailTabChanged(tracking.nutrition ? 'nutrition' : 'metrics'));
+              }
+              openClient(alert.clientId);
+            }}
             onMessage={() => messageClient(alert.clientId)}
             onResolve={() => void resolveAlert(alert.id)}
           />

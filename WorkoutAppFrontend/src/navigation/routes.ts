@@ -1,5 +1,6 @@
 import type { Href } from 'expo-router';
 
+import type { ProfileInput } from '@/api/handlers';
 import type { UserRole } from '@/types/models';
 
 /**
@@ -19,13 +20,32 @@ const href = (path: string): Href => path as unknown as Href;
 export const CUSTOM_TRAIN_ID = 'custom';
 
 export const routes = {
-  signIn: () => href('/sign-in'),
+  /**
+   * The front door, and the only way in: which kind of account, then a code.
+   * There is no password screen — nothing this app creates has a password.
+   */
+  welcome: () => href('/welcome'),
+  /**
+   * Passwordless sign-in: email, then a 6-digit code.
+   *
+   * With `signup`, the choice made at the front door rides along in the query
+   * and from there into the account's metadata, so a new user is never asked
+   * twice. Without it this is the invited-client path, unchanged.
+   */
+  otp: (signup?: ProfileInput) =>
+    href(
+      signup
+        ? `/otp?kind=${signup.kind}&name=${encodeURIComponent(signup.name)}`
+        : '/otp',
+    ),
   /** The redirect gate — where "back" lands when there is no history. */
   home: () => href('/'),
 
   client: {
     explore: () => href('/(client)/(tabs)/explore'),
-    profile: () => href('/(client)/profile'),
+    profile: () => href('/(client)/(tabs)/profile'),
+    /** First-run setup for a client the coach added without body numbers. */
+    onboarding: () => href('/(client)/onboarding'),
     routineBuilder: () => href('/(client)/routine/new'),
     log: () => href('/(client)/(tabs)/log'),
     workouts: () => href('/(client)/(tabs)/workouts'),
@@ -44,7 +64,8 @@ export const routes = {
     roster: () => href('/(trainer)/(tabs)/roster'),
     messages: () => href('/(trainer)/(tabs)/messages'),
     routines: () => href('/(trainer)/(tabs)/routines'),
-    profile: () => href('/(trainer)/profile'),
+    profile: () => href('/(trainer)/(tabs)/profile'),
+    invite: () => href('/(trainer)/invite'),
     routineBuilder: () => href('/(trainer)/routine/new'),
     routineDetail: (routineId: string) => href(`/(trainer)/routine/${routineId}`),
     routineEdit: (routineId: string) => href(`/(trainer)/routine/edit/${routineId}`),

@@ -9,9 +9,9 @@ export default function TrainerLayout() {
   const status = useAppSelector((s) => s.session.status);
   const role = useAppSelector((s) => s.session.role);
 
-  if (status !== 'signedIn') return <Redirect href={routes.signIn()} />;
+  if (status !== 'signedIn') return <Redirect href={routes.welcome()} />;
   if (role === 'client') return <Redirect href={routes.client.explore()} />;
-  if (role !== 'trainer') return <Redirect href={routes.signIn()} />;
+  if (role !== 'trainer') return <Redirect href={routes.welcome()} />;
 
   return (
     <Stack
@@ -20,7 +20,7 @@ export default function TrainerLayout() {
         contentStyle: { backgroundColor: colors.background },
       }}>
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="profile" />
+      <Stack.Screen name="invite" />
       <Stack.Screen name="client/[id]" />
       <Stack.Screen name="routine/new" />
       <Stack.Screen name="routine/[id]" />

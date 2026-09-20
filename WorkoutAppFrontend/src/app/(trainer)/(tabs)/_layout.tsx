@@ -21,6 +21,7 @@ const BASE_TABS: Array<TabMeta & { domain?: TrackingDomain }> = [
     domain: 'workout',
   },
   { name: 'messages', label: 'Messages', icon: 'chatbubbles-outline', iconActive: 'chatbubbles' },
+  { name: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ];
 
 export default function TrainerTabsLayout() {

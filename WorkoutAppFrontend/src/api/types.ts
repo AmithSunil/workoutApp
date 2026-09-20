@@ -18,3 +18,7 @@ export interface ApiError {
   status: number;
   data: { message: string };
 }
+
+/** The server's own words for a failed request, for screens that show them. */
+export const errorMessage = (error: unknown, fallback: string): string =>
+  (error as Partial<ApiError> | undefined)?.data?.message || fallback;

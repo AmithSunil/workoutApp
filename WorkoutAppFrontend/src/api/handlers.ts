@@ -132,15 +132,22 @@ const resolveAssignment = (assignment: RoutineAssignment): AssignedRoutine => {
   };
 };
 
+/**
+ * Puts one client on one routine — the only way a client's routine changes.
+ *
+ * A client follows exactly one routine, so assigning a different one
+ * de-allocates the current one, customisation included. Re-assigning the one
+ * they already follow is a no-op rather than an error, so it never silently
+ * discards a customisation the trainer just made.
+ */
 const createAssignment = (routineId: string, clientId: string): RoutineAssignment => {
   requireRoutine(routineId);
   requireClient(clientId);
   const existing = db.routineAssignments.find(
     (a) => a.routineId === routineId && a.clientId === clientId
   );
-  // Re-assigning an existing pairing is a no-op rather than an error, so it
-  // never silently discards a customisation the trainer already made.
   if (existing) return existing;
+  db.routineAssignments = db.routineAssignments.filter((a) => a.clientId !== clientId);
   const now = new Date().toISOString();
   const assignment: RoutineAssignment = {
     id: nextId('ra'),
@@ -152,22 +159,6 @@ const createAssignment = (routineId: string, clientId: string): RoutineAssignmen
   };
   db.routineAssignments.unshift(assignment);
   return assignment;
-};
-
-/**
- * A client is never left with an empty app: their last routine stays until a
- * different one is assigned. Unassigning is for swapping, not for emptying.
- */
-const assertNotLastRoutine = (doomed: RoutineAssignment[]): void => {
-  const stranded = doomed.some(
-    (a) => !db.routineAssignments.some((o) => o.clientId === a.clientId && !doomed.includes(o))
-  );
-  if (stranded) {
-    throw new MockHttpError(
-      409,
-      'That would leave a client with no routine. Assign another one first.'
-    );
-  }
 };
 
 const ensureNutritionDay = (clientId: string, date: ISODate): NutritionDay => {
@@ -198,13 +189,17 @@ const deriveStatus = (client: ClientProfile): ComplianceStatus => {
   return 'red';
 };
 
+/** Invited clients have never logged anything; they don't count yet. */
+const activeClients = () => db.clients.filter((c) => !c.invited);
+
 const trainerSummary = (): TrainerSummary => ({
-  activeClients: db.clients.length,
+  activeClients: activeClients().length,
   pendingCheckIns: db.checkIns.filter((c) => c.status === 'pending').length,
   unreadMessages: db.threads.reduce((sum, t) => sum + t.unreadForTrainer, 0),
   criticalAlerts: db.alerts.filter((a) => !a.resolved && a.severity === 'critical').length,
   weeklyComplianceAvg: Math.round(
-    db.clients.reduce((sum, c) => sum + c.compliance.score, 0) / Math.max(db.clients.length, 1)
+    activeClients().reduce((sum, c) => sum + c.compliance.score, 0) /
+      Math.max(activeClients().length, 1)
   ),
 });
 
@@ -272,6 +267,145 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
         if (day.clientId === client.id && day.date >= TODAY) day.targets = { ...client.targets };
       }
       return client;
+    },
+  },
+
+  {
+    method: 'POST',
+    pattern: '/clients/invite',
+    handler: ({ body }) => {
+      const { name, email, profile } = body as ClientInvite;
+      const address = email.trim().toLowerCase();
+      if (!name.trim()) throw new MockHttpError(400, 'A client needs a name');
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) {
+        throw new MockHttpError(400, 'That email address doesn’t look right');
+      }
+      if ([db.trainer, ...db.clients].some((u) => u.email.toLowerCase() === address)) {
+        throw new MockHttpError(409, 'That email already has an account');
+      }
+      const client: ClientProfile = {
+        id: nextId('c'),
+        role: 'client',
+        name: name.trim(),
+        email: address,
+        avatarUrl: '',
+        trainerId: db.trainer.id,
+        goal: profile?.goal ?? 'recomp',
+        heightCm: profile?.heightCm ?? null,
+        startWeightKg: profile?.startWeightKg ?? null,
+        targetWeightKg: profile?.targetWeightKg ?? null,
+        targets: { ...STARTER_MACROS },
+        joinedAt: TODAY,
+        invited: true,
+        compliance: { status: 'yellow', score: 0, lastLoggedAt: null, streakDays: 0 },
+      };
+      db.clients.push(client);
+      db.trainer.clientIds.push(client.id);
+      db.threads.push({
+        id: `th-${client.id}`,
+        clientId: client.id,
+        trainerId: db.trainer.id,
+        lastMessagePreview: '',
+        lastMessageAt: '',
+        unreadForTrainer: 0,
+        unreadForClient: 0,
+      });
+      if (client.startWeightKg !== null) {
+        db.bodyMetrics.push({ id: nextId('bm'), clientId: client.id, date: TODAY, weightKg: client.startWeightKg });
+      }
+      return client;
+    },
+  },
+  {
+    // Mirrors create_profile (migration 20260918000002). The real transport
+    // reads the caller's uid and email off the token; the mock has no auth at
+    // all, so it just mints the row the same way and hands the id back.
+    method: 'POST',
+    pattern: '/session/profile',
+    handler: ({ body }) => {
+      const { kind, name } = body as ProfileInput;
+      if (!name?.trim()) throw new MockHttpError(400, 'A profile needs a name');
+      // The mock has exactly one coach, and signing up as one makes you them.
+      if (kind === 'coach') return { id: db.trainer.id };
+      if (kind !== 'individual') throw new MockHttpError(400, `Unknown profile kind: ${kind}`);
+
+      const client: ClientProfile = {
+        id: nextId('c'),
+        role: 'client',
+        name: name.trim(),
+        email: `${name.trim().toLowerCase().replace(/\s+/g, '.')}@example.com`,
+        avatarUrl: '',
+        // ponytail: the mock's one trainer until ClientProfile.trainerId widens
+        // to `string | null` in S8 -- then this becomes null and the mock can
+        // actually exercise the coachless paths (S13's fixture depends on it).
+        trainerId: db.trainer.id,
+        goal: 'recomp',
+        heightCm: null,
+        startWeightKg: null,
+        targetWeightKg: null,
+        targets: { ...STARTER_MACROS },
+        joinedAt: TODAY,
+        compliance: { status: 'yellow', score: 0, lastLoggedAt: null, streakDays: 0 },
+      };
+      db.clients.push(client);
+      return { id: client.id };
+    },
+  },
+  {
+    method: 'DELETE',
+    pattern: '/clients/:id/invite',
+    handler: ({ params }) => {
+      const client = findClient(params.id);
+      if (!client?.invited) throw new MockHttpError(404, `No pending invite for ${params.id}`);
+      db.clients = db.clients.filter((c) => c.id !== client.id);
+      db.trainer.clientIds = db.trainer.clientIds.filter((id) => id !== client.id);
+      db.threads = db.threads.filter((t) => t.clientId !== client.id);
+      db.bodyMetrics = db.bodyMetrics.filter((m) => m.clientId !== client.id);
+      return { id: client.id };
+    },
+  },
+  {
+    // Mirrors complete_intake (migration 20260915000005).
+    method: 'POST',
+    pattern: '/clients/:id/intake',
+    handler: ({ params, body }) => {
+      const client = requireClient(params.id);
+      const input = body as IntakeInput;
+      if (client.heightCm !== null && client.startWeightKg !== null) {
+        throw new MockHttpError(409, 'Setup is already done');
+      }
+      const height = client.heightCm ?? input.heightCm ?? 0;
+      const weight = client.startWeightKg ?? input.startWeightKg ?? 0;
+      const target = client.targetWeightKg ?? input.targetWeightKg ?? 0;
+      if (height <= 0 || weight <= 0 || target <= 0) {
+        throw new MockHttpError(400, 'Height, weight and goal weight must be positive numbers');
+      }
+      if (client.targetWeightKg === null && input.goal) client.goal = input.goal;
+      if (client.startWeightKg === null) {
+        db.bodyMetrics = db.bodyMetrics.filter((m) => !(m.clientId === client.id && m.date === input.date));
+        db.bodyMetrics.push({ id: nextId('bm'), clientId: client.id, date: input.date, weightKg: weight });
+      }
+      Object.assign(client, { heightCm: height, startWeightKg: weight, targetWeightKg: target });
+      delete client.invited;
+      db.alerts.push({
+        id: nextId('al'),
+        clientId: client.id,
+        kind: 'intake-complete',
+        severity: 'info',
+        title: `${client.name} finished setup`,
+        detail: 'Still on starter macros — set their calorie and macro targets.',
+        raisedAt: new Date().toISOString(),
+        resolved: false,
+      });
+      const thread = db.threads.find((t) => t.clientId === client.id);
+      const notes = input.notes?.trim();
+      if (thread && notes) {
+        const sentAt = new Date().toISOString();
+        db.messages.push({ id: nextId('m'), threadId: thread.id, senderId: client.id, body: notes, sentAt, readAt: null });
+        Object.assign(thread, { lastMessagePreview: notes, lastMessageAt: sentAt });
+        thread.unreadForTrainer += 1;
+      }
+      return null;
     },
   },
 
@@ -460,17 +594,10 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       // Reject the whole assignment if any client is unknown, rather than
       // silently dropping one and leaving the coach thinking it landed.
       for (const clientId of clientIds) requireClient(clientId);
-      const wanted = new Set(clientIds);
 
-      // Drop the ones unticked, keep the rest exactly as they are so an
-      // existing customisation survives an edit to the client list.
-      assertNotLastRoutine(
-        db.routineAssignments.filter((a) => a.routineId === routine.id && !wanted.has(a.clientId))
-      );
-      db.routineAssignments = db.routineAssignments.filter(
-        (a) => a.routineId !== routine.id || wanted.has(a.clientId)
-      );
-      for (const clientId of wanted) createAssignment(routine.id, clientId);
+      // Additive: a client left out of the list keeps the routine they have.
+      // Moving someone off this one means assigning them a different one.
+      for (const clientId of new Set(clientIds)) createAssignment(routine.id, clientId);
 
       routine.updatedAt = new Date().toISOString();
       return withAssignments(routine);
@@ -568,7 +695,6 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     pattern: '/assignments/:id',
     handler: ({ params }) => {
       const assignment = requireAssignment(params.id);
-      assertNotLastRoutine([assignment]);
       db.routineAssignments = db.routineAssignments.filter((a) => a.id !== assignment.id);
       return { id: assignment.id };
     },
@@ -830,11 +956,39 @@ export interface RoutineInput {
  * What a coach may change about a client: where they are headed and what they
  * eat to get there. Compliance, height and the joined date are not theirs.
  */
+/** Mirrors the column defaults in migration 20260915000003. */
+const STARTER_MACROS: MacroTargets = { calories: 2000, protein: 150, carbs: 200, fat: 65 };
+
+/** `POST /clients/invite`. Height + start weight together let the client skip intake. */
+export interface ClientInvite {
+  name: string;
+  email: string;
+  profile?: Partial<Pick<ClientProfile, 'heightCm' | 'startWeightKg' | 'targetWeightKg' | 'goal'>>;
+}
+
+/** `POST /session/profile`. Self-signup: what the server cannot read off the token. */
+export interface ProfileInput {
+  kind: 'individual' | 'coach';
+  name: string;
+}
+
+/** `POST /clients/:id/intake`. Fields the coach already set are ignored. */
+export interface IntakeInput {
+  heightCm?: number;
+  startWeightKg?: number;
+  targetWeightKg?: number;
+  goal?: ClientProfile['goal'];
+  notes?: string;
+  /** The device's today — the first weigh-in lands on it. */
+  date: ISODate;
+}
+
 export type ClientGoalPatch = Partial<Pick<ClientProfile, 'goal' | 'targetWeightKg' | 'targets'>>;
 
 export interface ClientOverview {
   client: ClientProfile;
-  latestWeightKg: number;
+  /** Null for a client with no weigh-in and no starting weight yet. */
+  latestWeightKg: number | null;
   weightChange30d: number;
   sessionsLast7: number;
   loggedDaysLast7: number;

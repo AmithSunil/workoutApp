@@ -47,6 +47,7 @@ type Nullable<T> = T | null;
 
 /** Postgres `numeric` carries its scale into JSON; normalise it. */
 const num = (v: unknown): number => Number(v ?? 0);
+const numOrNull = (v: unknown): number | null => (v === null || v === undefined ? null : Number(v));
 
 /** `timestamptz` → the `…Z` ISO form the rest of the app assumes. */
 const iso = (v: Nullable<string>): string => (v ? new Date(v).toISOString() : '');
@@ -76,9 +77,9 @@ export interface ClientProfileRow {
   id: string;
   trainer_id: string;
   goal: ClientProfile['goal'];
-  height_cm: number;
-  start_weight_kg: number;
-  target_weight_kg: number;
+  height_cm: Nullable<number>;
+  start_weight_kg: Nullable<number>;
+  target_weight_kg: Nullable<number>;
   target_calories: number;
   target_protein: number;
   target_carbs: number;
@@ -88,7 +89,7 @@ export interface ClientProfileRow {
   compliance_status: ClientProfile['compliance']['status'];
   last_logged_at: Nullable<string>;
   compliance_streak_days: number;
-  users: UserRow;
+  users: UserRow & { auth_user_id: Nullable<string> };
 }
 
 export interface ExerciseRow {
@@ -328,9 +329,9 @@ export const toClientProfile = (r: ClientProfileRow): ClientProfile => ({
   avatarUrl: r.users.avatar_url,
   trainerId: r.trainer_id,
   goal: r.goal,
-  heightCm: num(r.height_cm),
-  startWeightKg: num(r.start_weight_kg),
-  targetWeightKg: num(r.target_weight_kg),
+  heightCm: numOrNull(r.height_cm),
+  startWeightKg: numOrNull(r.start_weight_kg),
+  targetWeightKg: numOrNull(r.target_weight_kg),
   targets: {
     calories: r.target_calories,
     protein: r.target_protein,
@@ -338,6 +339,8 @@ export const toClientProfile = (r: ClientProfileRow): ClientProfile => ({
     fat: r.target_fat,
   },
   joinedAt: r.joined_at,
+  // Absent rather than false, like every other optional field here.
+  ...(r.users.auth_user_id ? {} : { invited: true as const }),
   compliance: {
     // The stored status, not one re-derived from the score. The backend owns
     // this rollup (plan 7.1); deriving it here would put two answers in the app.

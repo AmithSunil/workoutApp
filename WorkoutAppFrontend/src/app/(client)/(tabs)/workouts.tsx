@@ -196,7 +196,7 @@ export default function WorkoutsScreen() {
           {(routines.data ?? []).length > 0 ? (
             <>
               <SectionHeader
-                title="Your routines"
+                title="Your routine"
                 caption={selfPlanned ? 'Planned by you' : 'Written for you by your coach'}
               />
               {(routines.data ?? []).map((assigned) => (

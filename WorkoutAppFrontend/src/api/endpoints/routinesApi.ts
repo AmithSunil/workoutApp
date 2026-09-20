@@ -8,7 +8,8 @@ import type { AssignedRoutine, Routine } from '@/types/models';
  *
  * Two resources, deliberately: a `Routine` is the trainer's weekly template,
  * and a `RoutineAssignment` is one client's copy of it — which may have been
- * customised for them alone. Everything client-facing reads the assignment, so
+ * customised for them alone. There is at most one assignment per client:
+ * assigning replaces, and nothing in the app unassigns. Everything client-facing reads the assignment, so
  * a per-client tweak can never leak back into the library.
  *
  * Mutations invalidate both tags broadly: the library is small, and every write
@@ -74,7 +75,10 @@ export const routinesApi = baseApi.injectEndpoints({
       providesTags: (_r, _e, id) => [{ type: 'RoutineAssignment', id }],
     }),
 
-    /** Assign one routine to one client — the flow that starts on a client's profile. */
+    /**
+     * Put one client on one routine. A client follows exactly one at a time, so
+     * this de-allocates whatever they were following.
+     */
     createAssignment: build.mutation<AssignedRoutine, { routineId: string; clientId: string }>({
       query: (body) => ({ url: '/assignments', method: 'POST', body }),
       invalidatesTags: ['Routine', 'RoutineAssignment'],
@@ -90,11 +94,6 @@ export const routinesApi = baseApi.injectEndpoints({
     resetAssignment: build.mutation<AssignedRoutine, string>({
       query: (id) => ({ url: `/assignments/${id}/reset`, method: 'POST' }),
       invalidatesTags: ['RoutineAssignment'],
-    }),
-
-    removeAssignment: build.mutation<{ id: string }, string>({
-      query: (id) => ({ url: `/assignments/${id}`, method: 'DELETE' }),
-      invalidatesTags: ['Routine', 'RoutineAssignment'],
     }),
   }),
 });
@@ -113,5 +112,4 @@ export const {
   useCreateAssignmentMutation,
   useCustomiseAssignmentMutation,
   useResetAssignmentMutation,
-  useRemoveAssignmentMutation,
 } = routinesApi;

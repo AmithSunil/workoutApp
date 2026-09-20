@@ -9,8 +9,8 @@ import { GOAL_SEGMENTS, deriveGoal } from '@/utils/goal';
 
 export interface GoalsEditorProps {
   client: ClientProfile;
-  /** Latest weigh-in. Falls back to the joining weight when they have none. */
-  currentWeightKg: number;
+  /** Latest weigh-in. Falls back to the joining weight; null for an invited client with neither. */
+  currentWeightKg: number | null;
   onClose: () => void;
 }
 
@@ -39,7 +39,7 @@ type FieldKey = (typeof FIELDS)[number]['key'];
 export function GoalsEditor({ client, currentWeightKg, onClose }: GoalsEditorProps) {
   const [updateClient, saving] = useUpdateClientMutation();
   const [draft, setDraft] = useState<Record<FieldKey, string>>({
-    weight: String(client.targetWeightKg),
+    weight: client.targetWeightKg === null ? '' : String(client.targetWeightKg),
     calories: String(client.targets.calories),
     protein: String(client.targets.protein),
     carbs: String(client.targets.carbs),
@@ -51,7 +51,7 @@ export function GoalsEditor({ client, currentWeightKg, onClose }: GoalsEditorPro
   // under them the next time they corrected a digit.
   const [pinned, setPinned] = useState(false);
 
-  const current = currentWeightKg || client.startWeightKg;
+  const current = currentWeightKg ?? client.startWeightKg;
 
   const values = FIELDS.map((f) => Number(draft[f.key].trim() || NaN));
   const bad = values.map(
@@ -63,7 +63,7 @@ export function GoalsEditor({ client, currentWeightKg, onClose }: GoalsEditorPro
     setDraft((d) => ({ ...d, [key]: text }));
     if (key !== 'weight' || pinned) return;
     const target = Number(text.trim() || NaN);
-    if (Number.isFinite(target) && target > 0) setGoal(deriveGoal(current, target));
+    if (current !== null && Number.isFinite(target) && target > 0) setGoal(deriveGoal(current, target));
   };
 
   const save = () => {
@@ -113,9 +113,11 @@ export function GoalsEditor({ client, currentWeightKg, onClose }: GoalsEditorPro
                   }}
                 />
                 <Text variant="micro" tone="tertiary">
-                  {pinned
-                    ? `Set by you — ${current.toFixed(1)} kg today.`
-                    : `Follows the goal weight against the ${current.toFixed(1)} kg they weigh today. Pick one to fix it.`}
+                  {current === null
+                    ? 'No weigh-in yet, so pick the goal yourself.'
+                    : pinned
+                      ? `Set by you — ${current.toFixed(1)} kg today.`
+                      : `Follows the goal weight against the ${current.toFixed(1)} kg they weigh today. Pick one to fix it.`}
                 </Text>
               </View>
             ) : null}

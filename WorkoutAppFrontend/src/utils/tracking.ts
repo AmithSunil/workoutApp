@@ -21,6 +21,7 @@ export const ALERT_DOMAIN: Record<AlertKind, TrackingDomain> = {
   'calorie-deficit-miss': 'nutrition',
   'weight-stall': 'both',
   'check-in-due': 'both',
+  'intake-complete': 'both',
 };
 
 export const TRACKING_LABEL: Record<TrackingMode, string> = {

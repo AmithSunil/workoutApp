@@ -1,6 +1,13 @@
 import { baseApi } from '../baseApi';
 
-import type { ClientGoalPatch, ClientOverview, WeeklyComplianceRow } from '../handlers';
+import type {
+  ClientGoalPatch,
+  ClientInvite,
+  ClientOverview,
+  IntakeInput,
+  ProfileInput,
+  WeeklyComplianceRow,
+} from '../handlers';
 import type {
   CheckIn,
   ClientProfile,
@@ -45,6 +52,42 @@ export const trainerApi = baseApi.injectEndpoints({
         'ClientList',
         'NutritionDay',
         'Compliance',
+      ],
+    }),
+
+    /**
+     * Self-signup. Invalidates nothing on purpose: what this creates is an
+     * identity, and identity is read through `resolveIdentity()` rather than
+     * RTK Query, so the caller re-resolves the session instead.
+     */
+    createProfile: build.mutation<{ id: string }, ProfileInput>({
+      query: (body) => ({ url: '/session/profile', method: 'POST', body }),
+    }),
+
+    inviteClient: build.mutation<ClientProfile, ClientInvite>({
+      query: (body) => ({ url: '/clients/invite', method: 'POST', body }),
+      invalidatesTags: ['ClientList', 'Trainer', 'TrainerSummary', 'Thread'],
+    }),
+
+    revokeInvite: build.mutation<{ id: string }, string>({
+      query: (id) => ({ url: `/clients/${id}/invite`, method: 'DELETE' }),
+      invalidatesTags: ['ClientList', 'Trainer', 'TrainerSummary', 'Thread'],
+    }),
+
+    /** The client's own first-run setup. Clears the onboarding redirect. */
+    completeIntake: build.mutation<null, { clientId: string; input: IntakeInput }>({
+      query: ({ clientId, input }) => ({
+        url: `/clients/${clientId}/intake`,
+        method: 'POST',
+        body: input,
+      }),
+      invalidatesTags: (_r, _e, { clientId }) => [
+        { type: 'Client', id: clientId },
+        { type: 'ClientOverview', id: clientId },
+        { type: 'Metric', id: clientId },
+        'Alert',
+        'Thread',
+        'Message',
       ],
     }),
 
@@ -95,6 +138,10 @@ export const {
   useGetClientsQuery,
   useGetClientQuery,
   useUpdateClientMutation,
+  useCreateProfileMutation,
+  useInviteClientMutation,
+  useRevokeInviteMutation,
+  useCompleteIntakeMutation,
   useGetTrainerSummaryQuery,
   useGetAlertsQuery,
   useResolveAlertMutation,

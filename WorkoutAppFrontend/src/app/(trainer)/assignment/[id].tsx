@@ -6,7 +6,6 @@ import { StyleSheet, View } from 'react-native';
 import {
   useCustomiseAssignmentMutation,
   useGetAssignmentQuery,
-  useRemoveAssignmentMutation,
   useResetAssignmentMutation,
 } from '@/api/endpoints/routinesApi';
 import { useGetClientQuery } from '@/api/endpoints/trainerApi';
@@ -60,12 +59,10 @@ export default function AssignmentScreen() {
 
   const [customise, { isLoading: saving }] = useCustomiseAssignmentMutation();
   const [reset, { isLoading: resetting }] = useResetAssignmentMutation();
-  const [removeAssignment, { isLoading: removing }] = useRemoveAssignmentMutation();
 
   const [draft, setDraft] = useState<DraftDay[] | null>(null);
   const [active, setActive] = useState<Weekday | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [confirmingRemove, setConfirmingRemove] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const data = assignment.data;
@@ -248,35 +245,11 @@ export default function AssignmentScreen() {
             fullWidth
             onPress={() => router.push(routes.trainer.routineDetail(data.routineId))}
           />
-          <Button
-            label={confirmingRemove ? 'Tap to confirm' : `Unassign from ${firstName(name)}`}
-            icon={confirmingRemove ? 'alert-circle-outline' : 'close-circle-outline'}
-            variant={confirmingRemove ? 'danger' : 'secondary'}
-            fullWidth
-            loading={removing}
-            onPress={() => {
-              if (!confirmingRemove) {
-                setConfirmingRemove(true);
-                return;
-              }
-              setError(null);
-              void removeAssignment(assignmentId)
-                .unwrap()
-                .then(() => router.back())
-                .catch(() => {
-                  setConfirmingRemove(false);
-                  setError(
-                    `Could not unassign this routine. ${firstName(name)} keeps their last routine until another one is assigned.`
-                  );
-                });
-            }}
-          />
-          {confirmingRemove ? (
-            <Text variant="micro" tone="tertiary" align="center">
-              This removes the routine from their app{data.customised ? ', along with the customisation' : ''}.
-              Only possible if they have another one.
-            </Text>
-          ) : null}
+          <Text variant="micro" tone="tertiary" align="center">
+            {firstName(name)} follows one routine at a time. Assigning a different
+            one from their profile replaces this
+            {data.customised ? ', customisation included' : ''}.
+          </Text>
         </>
       )}
 

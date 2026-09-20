@@ -11,7 +11,7 @@ import { TODAY, monthDay, startOfWeek } from '@/utils/date';
 export interface WeighInPromptProps {
   clientId: string;
   /** Seeds the stepper when they have never logged a weight. */
-  startWeightKg: number;
+  startWeightKg: number | null;
 }
 
 /**
@@ -54,7 +54,7 @@ export function WeighInPrompt({ clientId, startWeightKg }: WeighInPromptProps) {
       <LogWeightSheet
         visible={open}
         date={TODAY}
-        initialWeightKg={logged[logged.length - 1]?.weightKg ?? startWeightKg}
+        initialWeightKg={logged[logged.length - 1]?.weightKg ?? startWeightKg ?? 75}
         busy={logging.isLoading}
         onClose={() => setOpen(false)}
         onSubmit={({ date, weightKg }) => {

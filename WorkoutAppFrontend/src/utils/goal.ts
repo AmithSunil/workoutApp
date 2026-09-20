@@ -29,3 +29,10 @@ export const deriveGoal = (currentKg: number, targetKg: number): Goal =>
     : targetKg < currentKg
       ? 'cut'
       : 'bulk';
+
+/**
+ * A client the coach added before knowing their body numbers. The client fills
+ * them in once, on first sign-in (`(client)/onboarding`).
+ */
+export const needsIntake = (client: Pick<ClientProfile, 'heightCm' | 'startWeightKg'>): boolean =>
+  client.heightCm === null || client.startWeightKg === null;

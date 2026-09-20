@@ -23,21 +23,30 @@ const isRole = (value: unknown): value is UserRole => value === 'client' || valu
  * Asks the backend who the current access token belongs to.
  *
  * Both RPCs read `auth.uid()` server-side, so this is only meaningful once a
- * session exists. A null answer means the account has no linked profile — a
- * real state (a client can be on a roster before they ever sign in), not a bug,
- * so it gets its own failure kind rather than a generic error.
+ * session exists. Two nulls mean the account has no profile at all — since
+ * self-signup that is an ordinary state (they have not chosen a role yet), so
+ * it comes back as `null` for the caller to route on rather than as a failure.
+ * One null and one answer is a different thing entirely: a half-linked account,
+ * which is a fault and still throws `unlinked`.
  */
-export const resolveIdentity = async (): Promise<AppIdentity> => {
-  const [idResult, roleResult] = await Promise.all([
-    supabase.rpc('app_user_id'),
-    supabase.rpc('app_role'),
-  ]);
+const ask = () => Promise.all([supabase.rpc('app_user_id'), supabase.rpc('app_role')]);
+
+export const resolveIdentity = async (): Promise<AppIdentity | null> => {
+  let [idResult, roleResult] = await ask();
+
+  // Signing in on top of an existing session revokes the old token while these
+  // two calls are in flight, so one of them can go out with it and come back
+  // 401 (seen on the first OTP sign-in). The new session has settled by the
+  // time we ask again; a second failure is a real one.
+  if (idResult.error || roleResult.error) [idResult, roleResult] = await ask();
 
   if (idResult.error) throw toAuthFailure(idResult.error);
   if (roleResult.error) throw toAuthFailure(roleResult.error);
 
   const userId = idResult.data;
   const role = roleResult.data;
+
+  if (userId == null && role == null) return null;
 
   if (typeof userId !== 'string' || !userId || !isRole(role)) {
     throw new AuthFailure('unlinked', authMessage('unlinked'));

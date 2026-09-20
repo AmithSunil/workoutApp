@@ -52,13 +52,13 @@ export default function ProgressScreen() {
   const latest = metrics.data?.[metrics.data.length - 1];
   const first = metrics.data?.[0];
   const totalChange = latest && first ? latest.weightKg - first.weightKg : 0;
-  const toGoal = latest && client ? latest.weightKg - client.targetWeightKg : 0;
+  // Never null once onboarding is done, which `(client)/_layout` guarantees.
+  const start = client?.startWeightKg ?? null;
+  const goalKg = client?.targetWeightKg ?? null;
+  const toGoal = latest && goalKg !== null ? latest.weightKg - goalKg : 0;
   const goalProgress =
-    client && latest
-      ? pct(
-          Math.abs(client.startWeightKg - latest.weightKg),
-          Math.abs(client.startWeightKg - client.targetWeightKg)
-        )
+    latest && start !== null && goalKg !== null
+      ? pct(Math.abs(start - latest.weightKg), Math.abs(start - goalKg))
       : 0;
 
   return (
@@ -109,8 +109,8 @@ export default function ProgressScreen() {
               <LineChart
                 data={series}
                 height={210}
-                target={client.targetWeightKg}
-                targetLabel={`Goal ${client.targetWeightKg}kg`}
+                target={goalKg ?? undefined}
+                targetLabel={goalKg === null ? undefined : `Goal ${goalKg}kg`}
                 unit=" kg"
                 onSelect={setSelected}
               />

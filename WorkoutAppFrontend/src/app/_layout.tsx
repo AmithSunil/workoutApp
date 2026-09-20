@@ -25,7 +25,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 
 /**
  * Resolves the Supabase session before the first navigation decision is made,
- * so a returning user never sees the sign-in screen flash. The Inter stack is
+ * so a returning user never sees the front door flash. The Inter stack is
  * held here too, so no screen paints in a fallback face and then reflows.
  */
 function SessionBootstrap({ children }: { children: React.ReactNode }) {
@@ -64,7 +64,8 @@ export default function RootLayout() {
                 animation: 'slide_from_right',
               }}>
               <Stack.Screen name="index" options={{ animation: 'fade' }} />
-              <Stack.Screen name="sign-in" options={{ animation: 'fade' }} />
+              <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
+              <Stack.Screen name="otp" />
               <Stack.Screen name="(client)" options={{ animation: 'fade' }} />
               <Stack.Screen name="(trainer)" options={{ animation: 'fade' }} />
               <Stack.Screen name="workout-log/[id]" options={{ presentation: 'modal' }} />

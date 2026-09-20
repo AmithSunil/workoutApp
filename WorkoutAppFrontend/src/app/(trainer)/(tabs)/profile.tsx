@@ -23,14 +23,14 @@ export default function TrainerProfileScreen() {
 
   if (!trainer) {
     return (
-      <Screen title="Profile" showBack tabBarPadding={false}>
+      <Screen title="Profile">
         <SkeletonCard lines={4} />
       </Screen>
     );
   }
 
   return (
-    <Screen title="Profile" showBack tabBarPadding={false}>
+    <Screen title="Profile">
       <Card>
         <View style={styles.identity}>
           <Avatar name={trainer.name} uri={trainer.avatarUrl} size={56} />
@@ -72,7 +72,7 @@ export default function TrainerProfileScreen() {
         fullWidth
         style={styles.signOut}
         onPress={() => {
-          void signOutEverywhere().then(() => router.replace(routes.signIn()));
+          void signOutEverywhere().then(() => router.replace(routes.welcome()));
         }}
       />
     </Screen>

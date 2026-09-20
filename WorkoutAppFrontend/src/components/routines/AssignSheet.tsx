@@ -15,6 +15,9 @@ export interface AssignSheetProps {
   onToggle: (clientId: string) => void;
   onConfirm: () => void;
   saving?: boolean;
+  /** Already following this routine: shown ticked and locked, since unticking
+   *  would leave them with no routine at all. */
+  lockedIds?: string[];
   /** Wording differs between assigning a new routine and editing an assignment. */
   confirmLabel?: string;
   /** Shown above the confirm button when the save was refused. */
@@ -22,9 +25,11 @@ export interface AssignSheetProps {
 }
 
 /**
- * Client multi-select. The selection is a complete replacement of the routine's
- * assignment list, so unticking someone removes it from their app — the confirm
- * label says "Save assignment" rather than "Assign" for exactly that reason.
+ * Client multi-select, add-only.
+ *
+ * A client follows exactly one routine, so ticking someone moves them onto this
+ * one and off whatever they had. Unticking is not the inverse — it would leave
+ * them with nothing — so clients already following this routine are locked.
  */
 export function AssignSheet({
   visible,
@@ -34,6 +39,7 @@ export function AssignSheet({
   onToggle,
   onConfirm,
   saving,
+  lockedIds = [],
   confirmLabel,
   error,
 }: AssignSheetProps) {
@@ -42,7 +48,8 @@ export function AssignSheet({
   return (
     <Sheet visible={visible} onClose={onClose} title="Assign to clients" height="78%">
       <Text variant="caption" tone="secondary" style={styles.intro}>
-        Everyone ticked here sees this routine in their app. Unticking removes it.
+        Everyone ticked here sees this routine in their app. Assigning it replaces
+        whatever routine they are following now.
       </Text>
 
       <FlatList
@@ -53,16 +60,18 @@ export function AssignSheet({
         ListEmptyComponent={<EmptyState icon="people-outline" title="No clients yet" compact />}
         renderItem={({ item }) => {
           const selected = selectedIds.includes(item.id);
+          const locked = lockedIds.includes(item.id);
           return (
             <Pressable
-              onPress={() => onToggle(item.id)}
+              onPress={() => (locked ? undefined : onToggle(item.id))}
+              disabled={locked}
               accessibilityRole="checkbox"
-              accessibilityState={{ checked: selected }}
+              accessibilityState={{ checked: selected, disabled: locked }}
               accessibilityLabel={`Assign to ${item.name}`}
               style={({ pressed }) => [
                 styles.row,
                 selected && styles.rowSelected,
-                pressed && styles.pressed,
+                pressed && !locked && styles.pressed,
               ]}>
               <Avatar
                 name={item.name}
@@ -76,9 +85,11 @@ export function AssignSheet({
                 </Text>
                 <Text
                   variant="micro"
-                  color={statusColor(item.compliance.status)}
+                  color={locked ? colors.success : statusColor(item.compliance.status)}
                   numberOfLines={1}>
-                  {GOAL_LABEL[item.goal]} · {item.compliance.score}% adherence
+                  {locked
+                    ? 'Already following this'
+                    : `${GOAL_LABEL[item.goal]} · ${item.compliance.score}% adherence`}
                 </Text>
               </View>
               <View style={[styles.check, selected && styles.checkSelected]}>
@@ -98,7 +109,7 @@ export function AssignSheet({
       ) : null}
 
       <Button
-        label={confirmLabel ?? (count === 0 ? 'Save assignment' : `Save assignment (${count})`)}
+        label={confirmLabel ?? (count === 0 ? 'Assign' : `Assign (${count})`)}
         fullWidth
         loading={saving}
         onPress={onConfirm}

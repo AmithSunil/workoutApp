@@ -40,11 +40,14 @@ export interface ClientProfile extends User {
   role: 'client';
   trainerId: string;
   goal: 'cut' | 'recomp' | 'bulk' | 'performance';
-  heightCm: number;
-  startWeightKg: number;
-  targetWeightKg: number;
+  /** Null until intake: a coach can add a client before knowing these. */
+  heightCm: number | null;
+  startWeightKg: number | null;
+  targetWeightKg: number | null;
   targets: MacroTargets;
   joinedAt: ISODate;
+  /** On the roster, but nobody has signed in as this client yet. */
+  invited?: true;
   /** Rolled up by the backend; drives the roster traffic lights. */
   compliance: {
     status: ComplianceStatus;
@@ -335,7 +338,9 @@ export type AlertKind =
   | 'missed-logs'
   | 'weight-stall'
   | 'calorie-deficit-miss'
-  | 'check-in-due';
+  | 'check-in-due'
+  /** A new client finished setup and is still on starter macros. */
+  | 'intake-complete';
 
 export type AlertSeverity = 'critical' | 'warning' | 'info';
 
