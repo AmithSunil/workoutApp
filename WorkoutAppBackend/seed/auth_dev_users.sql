@@ -36,3 +36,25 @@ select a.id::text, a.id,
        'email', now(), now(), now()
   from auth.users a
  where not exists (select 1 from auth.identities i where i.user_id = a.id and i.provider = 'email');
+
+-- ---------------------------------------------------------------------------
+-- Plans for the fixtures (20260920000001)
+-- ---------------------------------------------------------------------------
+--
+-- The migration backfills everyone who exists *when it is applied*, which
+-- covers the remote. A fresh offline replay runs the migrations before the
+-- seed, so the fixtures arrive after that backfill has already been and gone,
+-- with no subscription row and therefore no roster. This is the same statement,
+-- run where the fixtures are made usable rather than where the table is made.
+--
+-- Perpetual and grandfathered on purpose: nobody should have to buy a plan to
+-- run the seeded data.
+insert into public.subscriptions (user_id, plan_code, status, current_period_end)
+select u.id,
+       case when u.role = 'trainer' then 'coach_pro' else 'solo' end,
+       'active',
+       null
+  from public.users u
+ where u.role = 'trainer'
+    or exists (select 1 from public.client_profiles c where c.id = u.id and c.trainer_id is null)
+on conflict (user_id) do nothing;

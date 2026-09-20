@@ -1,0 +1,7 @@
+# Only the two settings that are not defaults: the webhook has no JWT to verify,
+# because Razorpay signs with an HMAC instead (see razorpay-webhook/index.ts).
+[functions.razorpay]
+verify_jwt = true
+
+[functions.razorpay-webhook]
+verify_jwt = false

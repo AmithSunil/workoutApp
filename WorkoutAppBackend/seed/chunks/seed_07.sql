@@ -1371,3 +1371,35 @@ insert into ai_food_suggestions (id,client_id,transcript,confidence,items) value
 ('ai-002',null,'chicken burrito bowl with extra rice and a diet coke',0.88,'[{"name":"Chicken Breast","servings":1,"servingLabel":"150 g cooked","calories":248,"protein":46,"carbs":0,"fat":5,"emoji":"🍗"},{"name":"Basmati Rice","servings":1.5,"servingLabel":"270 g cooked","calories":351,"protein":8,"carbs":77,"fat":2,"emoji":"🍚"},{"name":"Mixed Salad","servings":1,"servingLabel":"1 bowl","calories":165,"protein":3,"carbs":9,"fat":13,"emoji":"🥗"}]'::jsonb),
 ('ai-003',null,'protein shake and a handful of almonds after the gym',0.97,'[{"name":"Whey Protein","servings":1,"servingLabel":"1 scoop","calories":120,"protein":24,"carbs":3,"fat":1,"emoji":"🥤"},{"name":"Almonds","servings":1,"servingLabel":"30 g","calories":174,"protein":6,"carbs":6,"fat":15,"emoji":"🌰"}]'::jsonb)
 on conflict (id) do update set client_id=excluded.client_id,transcript=excluded.transcript,confidence=excluded.confidence,items=excluded.items;
+
+-- ---------------------------------------------------------------------------
+-- Advance the id counters past the rows just inserted
+-- ---------------------------------------------------------------------------
+--
+-- The seed writes explicit ids (c-001, wl-00144) without touching
+-- id_sequences, so without this the first RPC write after a fresh seed mints
+-- an id that already exists. 20260831000006 has the same block, but it runs at
+-- migration time -- before these rows exist -- so it can only ever advance the
+-- counters past nothing.
+--
+-- Derived rather than mapped: every prefix in id_sequences is checked against
+-- every text `id` column in the schema. A new prefix or a new table needs no
+-- edit here, which is the point -- the hardcoded prefix->table list in
+-- 20260831000006 is exactly what went stale when 'c' and 't' were added later.
+do $$
+declare p record; t record; mx bigint; best bigint;
+begin
+  for p in select prefix from public.id_sequences loop
+    best := 0;
+    for t in select c.table_name from information_schema.columns c
+              where c.table_schema = 'public' and c.column_name = 'id' and c.data_type = 'text'
+    loop
+      execute format('select coalesce(max((regexp_match(id, %L))[1]::bigint), 0) from public.%I',
+                     '^' || p.prefix || '-(\d+)$', t.table_name)
+        into mx;
+      if mx > best then best := mx; end if;
+    end loop;
+    update public.id_sequences s set last_value = greatest(s.last_value, best)
+     where s.prefix = p.prefix;
+  end loop;
+end $$;

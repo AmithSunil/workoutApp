@@ -37,6 +37,7 @@ declare
   adi  uuid := (select auth_user_id from public.users where id = 'c-001');
   leah uuid := (select auth_user_id from public.users where id = 'c-002');
   r    jsonb := '{}'::jsonb;
+  n    int;
   pending   text;
   prefilled text;
   newbie    uuid;
@@ -215,6 +216,54 @@ begin
   r := r || jsonb_build_object('solo_routine_coachless',
     (select count(*) from public.routines
       where title = 'Rls solo plan' and trainer_id is null and author_id = solo_id));
+
+  -- ---------------------------------------------------------------------
+  -- Billing (20260920000001): the gate is inside owns_client()
+  -- ---------------------------------------------------------------------
+  execute 'reset role';
+  update public.subscriptions set current_period_end = now() - interval '1 day'
+   where user_id = 't-001';
+  execute 'set local role authenticated';
+  perform set_config('request.jwt.claims', json_build_object('sub', maya, 'role','authenticated')::text, true);
+  r := r || jsonb_build_object(
+    'lapsed_clients',   (select count(*) from public.client_profiles),
+    'lapsed_logs',      (select count(*) from public.workout_logs),
+    'lapsed_metrics',   (select count(*) from public.body_metrics));
+  update public.client_profiles set target_calories = 1 where id = 'c-001';
+  get diagnostics n = row_count;
+  r := r || jsonb_build_object('lapsed_macro_write', n);
+  begin
+    perform public.invite_client('Lapsed', 'lapsed@example.com');
+    r := r || '{"lapsed_invite":"ALLOWED"}';
+  exception when others then r := r || jsonb_build_object('lapsed_invite', sqlstate);
+  end;
+
+  -- Back in credit, everything returns. Nothing was deleted while it was gone.
+  execute 'reset role';
+  update public.subscriptions set current_period_end = null where user_id = 't-001';
+  execute 'set local role authenticated';
+  perform set_config('request.jwt.claims', json_build_object('sub', maya, 'role','authenticated')::text, true);
+  r := r || jsonb_build_object('restored_clients', (select count(*) from public.client_profiles));
+
+  -- The seat cap, which bites whatever the app is showing.
+  execute 'reset role';
+  update public.subscriptions set plan_code = 'coach_free' where user_id = 't-001';
+  execute 'set local role authenticated';
+  perform set_config('request.jwt.claims', json_build_object('sub', maya, 'role','authenticated')::text, true);
+  begin
+    perform public.invite_client('Over Cap', 'overcap@example.com');
+    r := r || '{"over_cap_invite":"ALLOWED"}';
+  exception when others then r := r || jsonb_build_object('over_cap_invite', sqlstate);
+  end;
+
+  -- A client must not be able to write themselves a plan.
+  perform set_config('request.jwt.claims', json_build_object('sub', adi, 'role','authenticated')::text, true);
+  begin
+    update public.subscriptions set plan_code = 'coach_elite' where user_id = 'c-001';
+    get diagnostics n = row_count;
+    r := r || jsonb_build_object('client_self_grant', n);
+  exception when others then r := r || jsonb_build_object('client_self_grant', sqlstate);
+  end;
 
   execute 'set local role anon';
   perform set_config('request.jwt.claims', '', true);

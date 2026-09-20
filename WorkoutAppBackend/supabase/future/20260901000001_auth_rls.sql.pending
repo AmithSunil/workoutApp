@@ -88,10 +88,17 @@ create policy trainer_profiles_self on trainer_profiles for all to authenticated
 
 -- A client reads their own profile but does not edit it: macro targets, goals
 -- and compliance are the coach's to set.
+--
+-- This is also the roster gate, and it needed no edit for it: 20260920000001
+-- put plan_active() inside owns_client() itself, so a lapsed coach's roster,
+-- dashboard counts, client detail and every table below keyed on a client_id
+-- all return nothing together. A client's own access is the other branch of
+-- that predicate and never consults billing.
 create policy client_profiles_visible on client_profiles for select to authenticated
   using (public.owns_client(id));
 create policy client_profiles_trainer_writes on client_profiles for all to authenticated
-  using (public.is_trainer_of(id)) with check (public.is_trainer_of(id));
+  using (public.is_trainer_of(id) and public.plan_active())
+  with check (public.is_trainer_of(id) and public.plan_active());
 
 -- Onboarding (20260915000003). is_trainer_of() looks the row up in its own
 -- table, and an INSERT check runs before the new row is visible, so the
@@ -226,6 +233,21 @@ create policy messages_send on messages for insert to authenticated
 create policy messages_update on messages for update to authenticated
   using (public.in_thread(thread_id)) with check (public.in_thread(thread_id));
 
+-- ---------------------------------------------------------------------------
+-- Billing (20260920000001): read your own, and nothing else
+-- ---------------------------------------------------------------------------
+
+-- The price list is public to anyone signed in -- the paywall has to render it.
+create policy plans_read on plans for select to authenticated using (true);
+
+-- A subscription is readable by its owner and writable by nobody: every write
+-- comes from the razorpay edge functions under the service role, which
+-- bypasses RLS. That is deliberate -- a client that could update this table
+-- could grant itself a plan. 20260920000001 also revokes the write *grants*,
+-- so this is belt as well as braces.
+create policy subscriptions_self_read on subscriptions for select to authenticated
+  using (user_id = public.app_user_id());
+
 -- id_sequences deliberately gets no policy: RLS is on and nothing can reach it.
 -- next_id() is SECURITY DEFINER and owned by postgres, which bypasses RLS, so
 -- the counters stay reachable exactly one way.
@@ -262,3 +284,36 @@ create policy messages_update on messages for update to authenticated
 -- replayed -- no test was asked for. tests/rls.sql carries the three cases
 -- (c1_role_after_self_promote, c1_mints_trainer_profile, c1_fake_roster) and
 -- they run with the rest of this file at T10.
+--
+-- 2026-09-20, billing (20260920000001). Re-run offline against the whole chain
+-- + seed.sql + this file. plan_active() went inside owns_client(), so the gate
+-- is the predicate ~20 tables already route through, not a clause per policy.
+--
+--                                   t-001 paid   t-001 lapsed   c-001
+--   client_profiles                        8            0          1
+--   workout_logs                         144            0         44
+--   logged_sets                         2290            0          -
+--   body_metrics                         504            0          -
+--   nutrition_days                         -            0          -
+--   threads                                -            -          1
+--
+--   Every paid-coach number above is the one recorded in the table further up:
+--   a coach with a plan sees exactly what they saw before this existed.
+--
+--   a lapsed coach updating a client's macros      0 rows
+--   a client reading their coach's billing         0 rows (they have none)
+--   a client writing subscriptions                 permission denied (grant, not policy)
+--   an individual reading their own subscription   1 row, solo/trialing, 14 days
+--   an individual editing their own macros         1 row (unchanged by billing)
+--   anon                                           0 everywhere (unchanged)
+--
+-- 2026-09-20, second run: `tests/rls.sql` now runs to completion for the first
+-- time since the S4 edits -- 66 cases, every number above reproduced exactly.
+-- It had been failing on a line that predates all of this: the seed writes
+-- explicit ids without advancing id_sequences, so next_id('c') minted c-001 and
+-- invite_client collided on users_pkey. Fixed at the source (seed.sql and
+-- seed.mjs now end with a derived counter bump), not here.
+--
+--   restored_clients reads 9, not 8, and that is correct: the onboarding
+--   section above invites two clients and revokes one before the billing cases
+--   run. It is the count after that sequence, not a discrepancy.

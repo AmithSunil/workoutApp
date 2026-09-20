@@ -481,10 +481,47 @@ function toSql([name, rows, conflict = 'id']) {
            : `on conflict (${conflict}) do nothing;\n\n`);
 }
 
+const ID_SEQUENCE_BUMP = `
+-- ---------------------------------------------------------------------------
+-- Advance the id counters past the rows just inserted
+-- ---------------------------------------------------------------------------
+--
+-- The seed writes explicit ids (c-001, wl-00144) without touching
+-- id_sequences, so without this the first RPC write after a fresh seed mints
+-- an id that already exists. 20260831000006 has the same block, but it runs at
+-- migration time -- before these rows exist -- so it can only ever advance the
+-- counters past nothing.
+--
+-- Derived rather than mapped: every prefix in id_sequences is checked against
+-- every text \`id\` column in the schema. A new prefix or a new table needs no
+-- edit here, which is the point -- the hardcoded prefix->table list in
+-- 20260831000006 is exactly what went stale when 'c' and 't' were added later.
+do $$
+declare p record; t record; mx bigint; best bigint;
+begin
+  for p in select prefix from public.id_sequences loop
+    best := 0;
+    for t in select c.table_name from information_schema.columns c
+              where c.table_schema = 'public' and c.column_name = 'id' and c.data_type = 'text'
+    loop
+      execute format('select coalesce(max((regexp_match(id, %L))[1]::bigint), 0) from public.%I',
+                     '^' || p.prefix || '-(\\d+)$', t.table_name)
+        into mx;
+      if mx > best then best := mx; end if;
+    end loop;
+    update public.id_sequences s set last_value = greatest(s.last_value, best)
+     where s.prefix = p.prefix;
+  end loop;
+end $$;
+`;
+
 if (EMIT) {
   const only = process.argv.slice(2).filter((a) => a !== '--emit-sql');
   const wanted = only.length ? TABLES.filter(([n]) => only.includes(n)) : TABLES;
-  const sql = wanted.map(toSql).join('');
+  // Always last, and always emitted: an id_sequences bump derived from the rows
+  // above. Without it the first RPC write after a fresh seed collides on a
+  // primary key that the fixtures already used. See ID_SEQUENCE_BUMP.
+  const sql = wanted.map(toSql).join('') + ID_SEQUENCE_BUMP;
   writeFileSync('seed.sql', sql);
   for (const [n, rows] of wanted) console.log(`  ${n.padEnd(30)} ${rows.length}`);
   console.log(`\nWrote seed.sql (${(sql.length / 1024).toFixed(1)} KB).`);
