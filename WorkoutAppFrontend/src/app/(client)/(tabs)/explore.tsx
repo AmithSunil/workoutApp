@@ -4,7 +4,11 @@ import { useCallback } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { useGetNutritionDayQuery } from '@/api/endpoints/nutritionApi';
-import { useGetBodyMetricsQuery, useGetHabitsQuery, useToggleHabitMutation } from '@/api/endpoints/progressApi';
+import {
+  useGetBodyMetricsQuery,
+  useGetHabitsQuery,
+  useToggleHabitMutation,
+} from '@/api/endpoints/progressApi';
 import { useGetClientRoutinesQuery } from '@/api/endpoints/routinesApi';
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { CalorieGauge, MacroBars, Sparkline } from '@/components/charts';
@@ -22,6 +26,7 @@ import {
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
+import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing } from '@/theme';
 import { TODAY, WEEKDAY_LABEL, diffInDays, longDate, weekdayOf } from '@/utils/date';
@@ -62,6 +67,7 @@ const DISCOVER = [
 export default function ExploreScreen() {
   const router = useRouter();
   const { clientId, client, trainer } = useSession();
+  const tracking = useTracking();
 
   const nutrition = useGetNutritionDayQuery(
     { clientId: clientId ?? '', date: TODAY },
@@ -95,8 +101,7 @@ export default function ExploreScreen() {
   const weightSeries = (metrics.data ?? []).slice(-30).map((m) => m.weightKg);
   const latestWeight = metrics.data?.[metrics.data.length - 1];
   const weekAgo = metrics.data?.find((m) => diffInDays(TODAY, m.date) <= 7);
-  const weightDelta =
-    latestWeight && weekAgo ? latestWeight.weightKg - weekAgo.weightKg : 0;
+  const weightDelta = latestWeight && weekAgo ? latestWeight.weightKg - weekAgo.weightKg : 0;
 
   if (!client) {
     return (
@@ -112,45 +117,45 @@ export default function ExploreScreen() {
       title={`Hi, ${firstName(client.name)}`}
       subtitle={longDate(TODAY)}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetchAll} />}>
-      {trainer ? (
-        <TrainerIndicator trainer={trainer} href={routes.client.chat()} />
-      ) : null}
+      {trainer ? <TrainerIndicator trainer={trainer} href={routes.client.chat()} /> : null}
 
       <WeighInPrompt clientId={client.id} startWeightKg={client.startWeightKg} />
 
       {/* Today's nutrition at a glance */}
-      <Card onPress={() => router.push(routes.client.log())}>
-        <View style={styles.gaugeRow}>
-          {nutrition.data ? (
-            <CalorieGauge
-              consumed={nutrition.data.consumed.calories}
-              target={nutrition.data.targets.calories}
-              size={150}
-              strokeWidth={13}
-            />
-          ) : (
-            <View style={styles.gaugePlaceholder} />
-          )}
-          <View style={styles.gaugeSide}>
-            <Text variant="micro" tone="tertiary">
-              TODAY'S MACROS
-            </Text>
+      {tracking.nutrition ? (
+        <Card onPress={() => router.push(routes.client.log())}>
+          <View style={styles.gaugeRow}>
             {nutrition.data ? (
-              <MacroBars
-                consumed={nutrition.data.consumed}
-                targets={nutrition.data.targets}
-                compact
+              <CalorieGauge
+                consumed={nutrition.data.consumed.calories}
+                target={nutrition.data.targets.calories}
+                size={150}
+                strokeWidth={13}
               />
-            ) : null}
+            ) : (
+              <View style={styles.gaugePlaceholder} />
+            )}
+            <View style={styles.gaugeSide}>
+              <Text variant="micro" tone="tertiary">
+                TODAY'S MACROS
+              </Text>
+              {nutrition.data ? (
+                <MacroBars
+                  consumed={nutrition.data.consumed}
+                  targets={nutrition.data.targets}
+                  compact
+                />
+              ) : null}
+            </View>
           </View>
-        </View>
-        <View style={styles.cardFooter}>
-          <Text variant="label" tone="primary">
-            Log a meal
-          </Text>
-          <Ionicons name="arrow-forward" size={14} color={colors.primary} />
-        </View>
-      </Card>
+          <View style={styles.cardFooter}>
+            <Text variant="label" tone="primary">
+              Log a meal
+            </Text>
+            <Ionicons name="arrow-forward" size={14} color={colors.primary} />
+          </View>
+        </Card>
+      ) : null}
 
       {/* Quick stats */}
       <View style={styles.tiles}>
@@ -160,57 +165,71 @@ export default function ExploreScreen() {
           icon="flame"
           tone="warning"
         />
-        <StatTile
-          label="Sessions / 7d"
-          value={`${weekLogs.length}`}
-          icon="barbell"
-          tone="primary"
-        />
-        <StatTile
-          label="Volume / 7d"
-          value={volume(weekVolume)}
-          icon="stats-chart"
-          tone="success"
-        />
+        {tracking.workout ? (
+          <>
+            <StatTile
+              label="Sessions / 7d"
+              value={`${weekLogs.length}`}
+              icon="barbell"
+              tone="primary"
+            />
+            <StatTile
+              label="Volume / 7d"
+              value={volume(weekVolume)}
+              icon="stats-chart"
+              tone="success"
+            />
+          </>
+        ) : null}
       </View>
 
       {/* Today's training */}
-      <SectionHeader
-        title="Training"
-        caption={loggedToday ? 'Done' : todayDay ? WEEKDAY_LABEL[today] : 'Rest day'}
-        actionLabel="All workouts"
-        onAction={() => router.push(routes.client.workouts())}
-      />
-      {todayDay && routine ? (
-        <TodayCard
-          day={todayDay}
-          routineTitle={routine.title}
-          done={loggedToday}
-          onStart={() => router.push(routes.client.train(routine.assignmentId))}
-        />
-      ) : (
-        <Card>
-          <EmptyState
-            icon={loggedToday ? 'checkmark-circle' : routine ? 'bed-outline' : 'calendar-outline'}
-            title={loggedToday ? 'Workout logged' : routine ? 'Rest day' : 'No routine yet'}
-            message={
-              loggedToday
-                ? "You've trained today. Open your workouts to review or edit it."
-                : routine
-                  ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
-                  : 'Your coach will give you a routine — it will show up here.'
-            }
-            compact
+      {tracking.workout ? (
+        <>
+          <SectionHeader
+            title="Training"
+            caption={loggedToday ? 'Done' : todayDay ? WEEKDAY_LABEL[today] : 'Rest day'}
+            actionLabel="All workouts"
+            onAction={() => router.push(routes.client.workouts())}
           />
-        </Card>
-      )}
+          {todayDay && routine ? (
+            <TodayCard
+              day={todayDay}
+              routineTitle={routine.title}
+              done={loggedToday}
+              onStart={() => router.push(routes.client.train(routine.assignmentId))}
+            />
+          ) : (
+            <Card>
+              <EmptyState
+                icon={
+                  loggedToday ? 'checkmark-circle' : routine ? 'bed-outline' : 'calendar-outline'
+                }
+                title={loggedToday ? 'Workout logged' : routine ? 'Rest day' : 'No routine yet'}
+                message={
+                  loggedToday
+                    ? "You've trained today. Open your workouts to review or edit it."
+                    : routine
+                      ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
+                      : 'Your coach will give you a routine — it will show up here.'
+                }
+                compact
+              />
+            </Card>
+          )}
+        </>
+      ) : null}
 
       {/* Habits */}
       {habits.data && habits.data.length > 0 ? (
         <HabitChecklist
           habits={habits.data}
           onToggle={(habit) =>
-            void toggleHabit({ id: habit.id, clientId: habit.clientId, date: TODAY })
+            void toggleHabit({
+              id: habit.id,
+              clientId: habit.clientId,
+              date: TODAY,
+            })
           }
         />
       ) : null}
@@ -256,7 +275,7 @@ export default function ExploreScreen() {
             </Text>
           </Pressable>
         ))}
-    </ScrollView>
+      </ScrollView>
     </Screen>
   );
 }

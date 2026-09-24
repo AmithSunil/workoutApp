@@ -7,8 +7,8 @@ import type { AlertKind, TrackingMode } from '@/types/models';
  * it belongs to, and `shows()` decides. `null` (the choice not yet made) and
  * `'both'` behave identically, so nothing disappears before a coach has picked.
  *
- * The client side is deliberately unaffected — a client keeps logging whatever
- * they like; their coach simply is not reviewing that half.
+ * The client side follows the same rule: a client only tracks what their coach
+ * chose. A client with no coach reads `null` and so tracks both.
  */
 export type TrackingDomain = TrackingMode;
 

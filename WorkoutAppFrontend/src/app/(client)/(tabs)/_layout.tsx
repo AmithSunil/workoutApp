@@ -1,25 +1,38 @@
 import { Tabs } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { ChatFab } from '@/components/common/ChatFab';
 import { createAppTabBar, type TabMeta } from '@/components/navigation/AppTabBar';
 import { useClientThread, useSession } from '@/hooks/useSession';
+import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { colors } from '@/theme';
+import { shows, type TrackingDomain } from '@/utils/tracking';
 
 export const unstable_settings = {
   initialRouteName: 'explore',
 };
 
-const TABS: TabMeta[] = [
+const TABS: Array<TabMeta & { domain?: TrackingDomain }> = [
   { name: 'explore', label: 'Explore', icon: 'compass-outline', iconActive: 'compass' },
-  { name: 'log', label: 'Log', icon: 'restaurant-outline', iconActive: 'restaurant' },
-  { name: 'workouts', label: 'Workouts', icon: 'barbell-outline', iconActive: 'barbell' },
+  {
+    name: 'log',
+    label: 'Log',
+    icon: 'restaurant-outline',
+    iconActive: 'restaurant',
+    domain: 'nutrition',
+  },
+  {
+    name: 'workouts',
+    label: 'Workouts',
+    icon: 'barbell-outline',
+    iconActive: 'barbell',
+    domain: 'workout',
+  },
   { name: 'progress', label: 'Progress', icon: 'trending-up-outline', iconActive: 'trending-up' },
   { name: 'profile', label: 'Profile', icon: 'person-outline', iconActive: 'person' },
 ];
-
-const AppTabBar = createAppTabBar(TABS);
 
 /**
  * The client shell. The chat FAB lives here rather than on individual screens so
@@ -28,6 +41,13 @@ const AppTabBar = createAppTabBar(TABS);
 export default function ClientTabsLayout() {
   const { clientId } = useSession();
   const thread = useClientThread(clientId);
+  const { mode } = useTracking();
+
+  // A client only tracks what their coach chose; the hidden tab's screen also redirects.
+  const AppTabBar = useMemo(
+    () => createAppTabBar(TABS.filter((tab) => shows(mode, tab.domain ?? 'both'))),
+    [mode]
+  );
 
   return (
     <View style={styles.root}>

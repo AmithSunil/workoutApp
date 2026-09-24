@@ -1,3 +1,4 @@
+import { Redirect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
@@ -17,6 +18,8 @@ import { MealSection } from '@/components/nutrition/MealSection';
 import { QuickAddCarousel } from '@/components/nutrition/QuickAddCarousel';
 import { Card, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
+import { useTracking } from '@/hooks/useTracking';
+import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { activeDateChanged } from '@/store/slices/sessionSlice';
 import { pendingMealSlotChanged } from '@/store/slices/uiSlice';
@@ -28,7 +31,12 @@ import { kcal } from '@/utils/format';
 const SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
 /** Nutrition logging: gauge, quick-add, AI parse, and the meal ledger. */
-export default function LogScreen() {
+/** Only reachable while the client's coach tracks nutrition — a deep link lands on home. */
+export default function LogRoute() {
+  return useTracking().nutrition ? <LogScreen /> : <Redirect href={routes.client.explore()} />;
+}
+
+function LogScreen() {
   const dispatch = useAppDispatch();
   const { clientId } = useSession();
   const activeDate = useAppSelector((s) => s.session.activeDate);

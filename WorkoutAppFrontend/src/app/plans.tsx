@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 
@@ -30,7 +30,14 @@ export default function PlansScreen() {
   // runs while the card is still being typed -- `refetchOnFocus` (the store
   // already calls setupListeners) asks again when the tab comes back, which is
   // the only way this screen learns the webhook has landed.
-  const sub = useGetSubscriptionQuery(undefined, { refetchOnFocus: true });
+  // The plan code a checkout was just opened for. The webhook lands seconds
+  // after the browser closes, often after the one refetch in `buy`, so poll
+  // until the row says that plan is paid for.
+  const [awaiting, setAwaiting] = useState<string | null>(null);
+  const sub = useGetSubscriptionQuery(undefined, {
+    refetchOnFocus: true,
+    pollingInterval: awaiting ? 3000 : 0,
+  });
   const clients = useGetClientsQuery(undefined, { skip: role !== 'trainer' });
   const [checkout, checkoutState] = useStartCheckoutMutation();
   const [cancel, cancelState] = useCancelSubscriptionMutation();
@@ -44,6 +51,22 @@ export default function PlansScreen() {
   const active = planActive(current);
   const currentPlan = mine.find((p) => p.code === current?.planCode);
   const seatsUsed = clients.data?.length ?? 0;
+  // The plan a coach needs: the cheapest tier (plans come ordered by
+  // `position`) that covers the roster they already have.
+  const recommended =
+    role === 'trainer' && clients.data
+      ? mine.find((p) => p.maxClients === null || p.maxClients >= seatsUsed)
+      : undefined;
+
+  const landed = !!awaiting && current?.planCode === awaiting && current.status === 'active' && active;
+  useEffect(() => {
+    if (!awaiting) return;
+    if (landed) return setAwaiting(null);
+    // ponytail: 2-minute cap on polling; an abandoned checkout or a mandate
+    // that starts at the end of a paid period never lands here.
+    const t = setTimeout(() => setAwaiting(null), 120_000);
+    return () => clearTimeout(t);
+  }, [awaiting, landed]);
 
   const buy = async (code: string) => {
     setError(null);
@@ -52,7 +75,10 @@ export default function PlansScreen() {
       const { shortUrl } = await checkout(code).unwrap();
       // No URL means nothing to pay: the free tier, and the mock transport,
       // which activates instantly.
-      if (shortUrl) await WebBrowser.openBrowserAsync(shortUrl);
+      if (shortUrl) {
+        setAwaiting(code);
+        await WebBrowser.openBrowserAsync(shortUrl);
+      }
       await sub.refetch();
     } catch (e) {
       // The server's own words when it has some -- "That plan covers 2 clients
@@ -64,6 +90,12 @@ export default function PlansScreen() {
 
   return (
     <Screen title="Plan" showBack subtitle={role === 'trainer' ? 'Priced by roster size' : undefined}>
+      {awaiting ? (
+        <Text variant="caption" tone="secondary" style={styles.note}>
+          Waiting for Razorpay to confirm your payment…
+        </Text>
+      ) : null}
+
       {current ? (
         <Card style={styles.status}>
           <Text variant="label" tone="secondary">
@@ -109,6 +141,11 @@ export default function PlansScreen() {
                   {seatsLabel(p)}
                 </Text>
               ) : null}
+              {p.code === recommended?.code ? (
+                <Text variant="caption" tone="secondary" style={styles.note}>
+                  Recommended — fits your {seatsUsed} {seatsUsed === 1 ? 'client' : 'clients'}
+                </Text>
+              ) : null}
               {isCurrent ? (
                 <Text variant="caption" tone="secondary" style={styles.note}>
                   Your plan
@@ -135,6 +172,7 @@ export default function PlansScreen() {
                           : 'Choose'
                     }
                     size="sm"
+                    variant={!recommended || p.code === recommended.code ? 'primary' : 'secondary'}
                     onPress={() => {
                       // Dropping to free ends a paid period there and then, so
                       // it confirms itself the way Cancel does.

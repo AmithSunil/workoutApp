@@ -30,9 +30,14 @@ async function verify(raw: string, signature: string, secret: string) {
 
 Deno.serve(async (req) => {
   const raw = await req.text();
-  const ok = await verify(raw, req.headers.get('x-razorpay-signature') ?? '',
-                          Deno.env.get('RAZORPAY_WEBHOOK_SECRET')!);
-  if (!ok) return new Response('bad signature', { status: 401 });
+  // Trimmed: a secret pasted with a trailing newline or space signs nothing
+  // Razorpay sends, and every delivery 401s with no other symptom.
+  const ok = await verify(raw, (req.headers.get('x-razorpay-signature') ?? '').trim(),
+                          (Deno.env.get('RAZORPAY_WEBHOOK_SECRET') ?? '').trim());
+  if (!ok) {
+    console.error('razorpay-webhook: signature mismatch -- RAZORPAY_WEBHOOK_SECRET does not match the secret on the Razorpay webhook');
+    return new Response('bad signature', { status: 401 });
+  }
 
   const body = JSON.parse(raw);
   const entity = body?.payload?.subscription?.entity;

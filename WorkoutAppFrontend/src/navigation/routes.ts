@@ -38,7 +38,6 @@ export const routes = {
     profile: () => href('/(client)/(tabs)/profile'),
     /** First-run setup for a client the coach added without body numbers. */
     onboarding: () => href('/(client)/onboarding'),
-    routineBuilder: () => href('/(client)/routine/new'),
     log: () => href('/(client)/(tabs)/log'),
     workouts: () => href('/(client)/(tabs)/workouts'),
     progress: () => href('/(client)/(tabs)/progress'),

@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
@@ -36,14 +36,16 @@ import { volume } from '@/utils/format';
 
 type Tab = 'upcoming' | 'history';
 
+/** Only reachable while the client's coach tracks workouts — a deep link lands on home. */
+export default function WorkoutsRoute() {
+  return useTracking().workout ? <WorkoutsScreen /> : <Redirect href={routes.client.explore()} />;
+}
+
 /** Training hub: what's on today, and an auditable record of what's been done. */
-export default function WorkoutsScreen() {
+function WorkoutsScreen() {
   const router = useRouter();
   const { clientId } = useSession();
   const [tab, setTab] = useState<Tab>('upcoming');
-
-  // A coach who tracks nutrition only writes no programme, so the client does.
-  const selfPlanned = !useTracking().workout;
 
   const logs = useGetWorkoutLogsQuery({ clientId: clientId ?? '', limit: 40 }, { skip: !clientId });
   const routines = useGetClientRoutinesQuery({ clientId: clientId ?? '' }, { skip: !clientId });
@@ -87,7 +89,7 @@ export default function WorkoutsScreen() {
   return (
     <Screen
       title="Workouts"
-      subtitle={selfPlanned ? 'Your routine, planned by you' : 'Your routine, written by your coach'}
+      subtitle="Your routine, written by your coach"
       refreshControl={
         <RefreshControl
           refreshing={routines.isFetching || logs.isFetching}
@@ -165,9 +167,7 @@ export default function WorkoutsScreen() {
                 message={
                   current
                     ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
-                    : selfPlanned
-                      ? 'Plan a routine below and your training week takes shape here.'
-                      : "Your coach hasn't given you a routine yet. Message them if you're unsure."
+                    : "Your coach hasn't given you a routine yet. Message them if you're unsure."
                 }
                 compact
               />
@@ -184,20 +184,11 @@ export default function WorkoutsScreen() {
             />
           )}
 
-          {selfPlanned ? (
-            <Button
-              label="Plan a routine"
-              icon="add"
-              fullWidth
-              onPress={() => router.push(routes.client.routineBuilder())}
-            />
-          ) : null}
-
           {(routines.data ?? []).length > 0 ? (
             <>
               <SectionHeader
                 title="Your routine"
-                caption={selfPlanned ? 'Planned by you' : 'Written for you by your coach'}
+                caption="Written for you by your coach"
               />
               {(routines.data ?? []).map((assigned) => (
                 <RoutineCard
