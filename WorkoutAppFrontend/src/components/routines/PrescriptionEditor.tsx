@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { Card, Text } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { colors, fonts, radius, spacing } from '@/theme';
 import { restLabel } from '@/utils/format';
 
 import { LIMITS, type DraftExercise } from './draft';
@@ -34,7 +34,7 @@ export function PrescriptionEditor({
   onMoveDown,
 }: PrescriptionEditorProps) {
   return (
-    <Card>
+    <Card style={styles.card}>
       <View style={styles.header}>
         <View style={styles.index}>
           <Text variant="label" tone="secondary">
@@ -45,7 +45,7 @@ export function PrescriptionEditor({
           <Text variant="h2" numberOfLines={2}>
             {exercise.name}
           </Text>
-          <Text variant="micro" tone="tertiary">
+          <Text variant="caption" tone="tertiary" style={styles.muscle}>
             {exercise.muscleGroup}
           </Text>
         </View>
@@ -60,7 +60,7 @@ export function PrescriptionEditor({
             style={styles.iconButton}>
             <Ionicons
               name="chevron-up"
-              size={15}
+              size={18}
               color={onMoveUp ? colors.textSecondary : colors.borderStrong}
             />
           </Pressable>
@@ -73,7 +73,7 @@ export function PrescriptionEditor({
             style={styles.iconButton}>
             <Ionicons
               name="chevron-down"
-              size={15}
+              size={18}
               color={onMoveDown ? colors.textSecondary : colors.borderStrong}
             />
           </Pressable>
@@ -83,7 +83,7 @@ export function PrescriptionEditor({
             accessibilityRole="button"
             accessibilityLabel={`Remove ${exercise.name}`}
             style={styles.iconButton}>
-            <Ionicons name="close" size={15} color={colors.danger} />
+            <Ionicons name="trash-outline" size={17} color={colors.textTertiary} />
           </Pressable>
         </View>
       </View>
@@ -155,10 +155,16 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: spacing.md,
   },
+  card: {
+    padding: spacing.xl,
+  },
+  muscle: {
+    textTransform: 'capitalize',
+  },
   index: {
-    width: 26,
-    height: 26,
-    borderRadius: radius.xs,
+    width: 28,
+    height: 28,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
@@ -173,10 +179,9 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   iconButton: {
-    width: 26,
-    height: 26,
-    borderRadius: radius.xs,
-    backgroundColor: colors.surfaceMuted,
+    width: 30,
+    height: 30,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -196,11 +201,10 @@ const styles = StyleSheet.create({
   },
   notes: {
     marginTop: spacing.md,
-    minHeight: 40,
-    backgroundColor: colors.surfaceSunken,
+    minHeight: 44,
+    backgroundColor: colors.surfaceMuted,
     borderRadius: radius.sm,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    fontFamily: fonts.regular,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     fontSize: 13,

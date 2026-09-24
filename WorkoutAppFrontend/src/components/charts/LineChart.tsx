@@ -3,7 +3,7 @@ import { PanResponder, StyleSheet, View } from 'react-native';
 import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
 import { Text } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { colors, fonts, radius, spacing } from '@/theme';
 import { monthDay } from '@/utils/date';
 
 export interface LinePoint {
@@ -171,7 +171,8 @@ export function LineChart({
                     <SvgText
                       x={PAD_LEFT - 8}
                       y={ty + 3}
-                      fontSize={9}
+                      fontSize={10}
+                      fontFamily={fonts.medium}
                       fill={colors.textTertiary}
                       textAnchor="end">
                       {tick.toFixed(1)}
@@ -195,7 +196,8 @@ export function LineChart({
                 <SvgText
                   x={width - PAD_RIGHT}
                   y={geometry.y(target) - 5}
-                  fontSize={9}
+                  fontSize={10}
+                  fontFamily={fonts.medium}
                   fill={colors.success}
                   textAnchor="end">
                   {targetLabel ?? `Goal ${target}${unit}`}
@@ -255,7 +257,8 @@ export function LineChart({
                   key={i}
                   x={geometry.points[i].x}
                   y={height - 6}
-                  fontSize={9}
+                  fontSize={10}
+                  fontFamily={fonts.medium}
                   fill={colors.textTertiary}
                   textAnchor={i === 0 ? 'start' : i === data.length - 1 ? 'end' : 'middle'}>
                   {monthDay(data[i].date)}
@@ -299,7 +302,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderColor: colors.border,
     alignItems: 'center',
-    shadowColor: '#1A1F2B',
+    shadowColor: colors.text,
     shadowOpacity: 0.09,
     shadowRadius: 18,
     shadowOffset: { width: 0, height: 6 },

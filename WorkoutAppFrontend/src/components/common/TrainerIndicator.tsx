@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, type Href } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Avatar, Text } from '@/components/ui';
+import { Avatar, PressableScale, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { TrainerProfile } from '@/types/models';
 
@@ -28,20 +28,21 @@ export function TrainerIndicator({
 
   if (compact) {
     return (
-      <Pressable
+      <PressableScale
         onPress={href ? () => router.push(href) : undefined}
         style={styles.compact}
-        accessibilityLabel={`Coach ${trainer.name}`}>
-        <Avatar name={trainer.name} uri={trainer.avatarUrl} size={30} />
+        accessibilityRole="button"
+        accessibilityLabel={`Message your coach, ${trainer.name}`}>
+        <Avatar name={trainer.name} uri={trainer.avatarUrl} size={44} />
         {online ? <View style={styles.dot} /> : null}
-      </Pressable>
+      </PressableScale>
     );
   }
 
   return (
-    <Pressable
+    <PressableScale
       onPress={href ? () => router.push(href) : undefined}
-      style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+      style={[styles.row]}>
       <View>
         <Avatar name={trainer.name} uri={trainer.avatarUrl} size={38} />
         {online ? <View style={styles.dot} /> : null}
@@ -55,7 +56,7 @@ export function TrainerIndicator({
         </Text>
       </View>
       <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -88,8 +89,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.success,
     borderWidth: 2,
     borderColor: colors.surface,
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

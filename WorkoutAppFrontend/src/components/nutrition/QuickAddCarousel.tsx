@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { Text } from '@/components/ui';
-import { colors, elevation, radius, spacing } from '@/theme';
+import { PressableScale, Text } from '@/components/ui';
+import { colors, radius, spacing } from '@/theme';
 import type { FoodItem } from '@/types/models';
 import { kcal } from '@/utils/format';
 
@@ -18,99 +19,111 @@ export interface QuickAddCarouselProps {
  * nutrition-logging adherence, which is what the trainer's compliance score reads.
  */
 export function QuickAddCarousel({ foods, onAdd, onBrowse }: QuickAddCarouselProps) {
+  // The tapped card flashes a ✓ so a one-tap add never feels like a missed tap.
+  const [justAdded, setJustAdded] = useState<string | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
+  }, []);
+
+  const add = (food: FoodItem) => {
+    onAdd(food);
+    setJustAdded(food.id);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setJustAdded(null), 1400);
+  };
+
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.bleed}
       contentContainerStyle={styles.content}>
       {foods.map((food) => (
-        <Pressable
+        <PressableScale
           key={food.id}
-          onPress={() => onAdd(food)}
+          onPress={() => add(food)}
           accessibilityRole="button"
           accessibilityLabel={`Quick add ${food.name}`}
-          style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
-          <View style={styles.emojiWrap}>
+          style={styles.card}>
+          <View style={styles.top}>
             <Text style={styles.emoji}>{food.emoji}</Text>
+            <View style={[styles.plus, justAdded === food.id && styles.plusDone]}>
+              <Ionicons
+                name={justAdded === food.id ? 'checkmark' : 'add'}
+                size={16}
+                color={justAdded === food.id ? colors.textOnPrimary : colors.primaryText}
+              />
+            </View>
           </View>
           <Text variant="label" numberOfLines={1}>
             {food.name}
           </Text>
           <Text variant="micro" tone="tertiary" numberOfLines={1}>
-            {kcal(food.calories)} kcal · {food.servingLabel}
+            {kcal(food.calories)} kcal
           </Text>
-          <View style={styles.plus}>
-            <Ionicons name="add" size={13} color={colors.textOnPrimary} />
-          </View>
-        </Pressable>
+        </PressableScale>
       ))}
 
       {onBrowse ? (
-        <Pressable
+        <PressableScale
           onPress={onBrowse}
-          style={({ pressed }) => [styles.card, styles.browse, pressed && styles.pressed]}>
-          <View style={[styles.emojiWrap, styles.browseIcon]}>
-            <Ionicons name="search" size={17} color={colors.primary} />
+          accessibilityRole="button"
+          style={[styles.card, styles.browse]}>
+          <View style={styles.top}>
+            <Ionicons name="search" size={22} color={colors.textSecondary} />
           </View>
-          <Text variant="label" tone="primary">
-            Browse all
-          </Text>
+          <Text variant="label">Browse all</Text>
           <Text variant="micro" tone="tertiary">
             Search or use AI
           </Text>
-        </Pressable>
+        </PressableScale>
       ) : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  bleed: {
+    marginHorizontal: -spacing.xl,
+  },
   content: {
     gap: spacing.md,
-    paddingHorizontal: 2,
-    paddingVertical: 2,
+    paddingHorizontal: spacing.xl,
   },
   card: {
-    width: 126,
-    padding: spacing.md,
-    borderRadius: radius.md,
+    width: 128,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
     gap: 2,
-    ...elevation.card,
   },
-  browse: {
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.primarySoftBorder,
-    backgroundColor: colors.primarySoft,
-  },
-  browseIcon: {
-    backgroundColor: colors.surface,
-  },
-  emojiWrap: {
-    width: 34,
+  top: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     height: 34,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surfaceMuted,
-    alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: spacing.sm,
   },
   emoji: {
-    fontSize: 18,
+    fontSize: 26,
+    lineHeight: 32,
   },
   plus: {
-    position: 'absolute',
-    top: spacing.md,
-    right: spacing.md,
-    width: 20,
-    height: 20,
+    width: 28,
+    height: 28,
     borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.99 }],
+  plusDone: {
+    backgroundColor: colors.success,
+  },
+  browse: {
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: colors.borderStrong,
   },
 });

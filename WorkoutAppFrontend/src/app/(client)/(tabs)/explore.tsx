@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { useGetNutritionDayQuery } from '@/api/endpoints/nutritionApi';
 import {
@@ -11,25 +11,33 @@ import {
 } from '@/api/endpoints/progressApi';
 import { useGetClientRoutinesQuery } from '@/api/endpoints/routinesApi';
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
-import { CalorieGauge, MacroBars, Sparkline } from '@/components/charts';
-import { TrainerIndicator } from '@/components/common/TrainerIndicator';
+import { Sparkline } from '@/components/charts';
+import { NutritionSummary } from '@/components/nutrition/NutritionSummary';
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
 import { WeighInPrompt } from '@/components/progress/WeighInPrompt';
 import { TodayCard } from '@/components/workouts/TodayCard';
 import {
   Card,
-  EmptyState,
+  PressableScale,
   Screen,
   SectionHeader,
   SkeletonCard,
-  StatTile,
+  StatRow,
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing } from '@/theme';
-import { TODAY, WEEKDAY_LABEL, diffInDays, longDate, weekdayOf } from '@/utils/date';
+import {
+  TODAY,
+  addDays,
+  diffInDays,
+  longDate,
+  startOfWeek,
+  weekdayInitial,
+  weekdayOf,
+} from '@/utils/date';
 import { firstName, kg, signed, volume } from '@/utils/format';
 
 const DISCOVER = [
@@ -63,10 +71,15 @@ const DISCOVER = [
   },
 ];
 
+const greeting = () => {
+  const h = new Date().getHours();
+  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+};
+
 /** Client home: everything due today, in the order the day happens. */
 export default function ExploreScreen() {
   const router = useRouter();
-  const { clientId, client, trainer } = useSession();
+  const { clientId, client } = useSession();
   const tracking = useTracking();
 
   const nutrition = useGetNutritionDayQuery(
@@ -103,9 +116,14 @@ export default function ExploreScreen() {
   const weekAgo = metrics.data?.find((m) => diffInDays(TODAY, m.date) <= 7);
   const weightDelta = latestWeight && weekAgo ? latestWeight.weightKg - weekAgo.weightKg : 0;
 
+  // Mon → Sun of this calendar week, marked where a workout was logged.
+  const monday = startOfWeek(TODAY);
+  const week = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+  const trainedDates = new Set(logs.data?.map((l) => l.date));
+
   if (!client) {
     return (
-      <Screen title="Today">
+      <Screen>
         <SkeletonCard lines={4} />
         <SkeletonCard lines={3} />
       </Screen>
@@ -113,82 +131,39 @@ export default function ExploreScreen() {
   }
 
   return (
-    <Screen
-      title={`Hi, ${firstName(client.name)}`}
-      subtitle={longDate(TODAY)}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetchAll} />}>
-      {trainer ? <TrainerIndicator trainer={trainer} href={routes.client.chat()} /> : null}
+    <Screen refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refetchAll} />}>
+      {/* Greeting — scrolls with the page */}
+      <View style={styles.hello}>
+        <View style={styles.helloText}>
+          <Text variant="micro" tone="tertiary">
+            {longDate(TODAY).toUpperCase()}
+          </Text>
+          <Text variant="display">
+            {greeting()},{'\n'}
+            {firstName(client.name)}
+          </Text>
+        </View>
+      </View>
+
+      {/* Nutrition — one number that matters, the macros beneath */}
+      {tracking.nutrition ? (
+        <View style={styles.section}>
+          <SectionHeader
+            title="Nutrition"
+            actionLabel="Log a meal"
+            onAction={() => router.push(routes.client.log())}
+          />
+          <NutritionSummary day={nutrition.data} onPress={() => router.push(routes.client.log())} />
+        </View>
+      ) : null}
 
       <WeighInPrompt clientId={client.id} startWeightKg={client.startWeightKg} />
 
-      {/* Today's nutrition at a glance */}
-      {tracking.nutrition ? (
-        <Card onPress={() => router.push(routes.client.log())}>
-          <View style={styles.gaugeRow}>
-            {nutrition.data ? (
-              <CalorieGauge
-                consumed={nutrition.data.consumed.calories}
-                target={nutrition.data.targets.calories}
-                size={150}
-                strokeWidth={13}
-              />
-            ) : (
-              <View style={styles.gaugePlaceholder} />
-            )}
-            <View style={styles.gaugeSide}>
-              <Text variant="micro" tone="tertiary">
-                TODAY'S MACROS
-              </Text>
-              {nutrition.data ? (
-                <MacroBars
-                  consumed={nutrition.data.consumed}
-                  targets={nutrition.data.targets}
-                  compact
-                />
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.cardFooter}>
-            <Text variant="label" tone="primary">
-              Log a meal
-            </Text>
-            <Ionicons name="arrow-forward" size={14} color={colors.primary} />
-          </View>
-        </Card>
-      ) : null}
-
-      {/* Quick stats */}
-      <View style={styles.tiles}>
-        <StatTile
-          label="Day streak"
-          value={`${client.compliance.streakDays}`}
-          icon="flame"
-          tone="warning"
-        />
-        {tracking.workout ? (
-          <>
-            <StatTile
-              label="Sessions / 7d"
-              value={`${weekLogs.length}`}
-              icon="barbell"
-              tone="primary"
-            />
-            <StatTile
-              label="Volume / 7d"
-              value={volume(weekVolume)}
-              icon="stats-chart"
-              tone="success"
-            />
-          </>
-        ) : null}
-      </View>
-
-      {/* Today's training */}
+      {/* Training — the day's one big action */}
       {tracking.workout ? (
-        <>
+        <View style={styles.section}>
           <SectionHeader
-            title="Training"
-            caption={loggedToday ? 'Done' : todayDay ? WEEKDAY_LABEL[today] : 'Rest day'}
+            title="Today's training"
             actionLabel="All workouts"
             onAction={() => router.push(routes.client.workouts())}
           />
@@ -200,149 +175,248 @@ export default function ExploreScreen() {
               onStart={() => router.push(routes.client.train(routine.assignmentId))}
             />
           ) : (
-            <Card>
-              <EmptyState
-                icon={
-                  loggedToday ? 'checkmark-circle' : routine ? 'bed-outline' : 'calendar-outline'
-                }
-                title={loggedToday ? 'Workout logged' : routine ? 'Rest day' : 'No routine yet'}
-                message={
-                  loggedToday
-                    ? "You've trained today. Open your workouts to review or edit it."
+            <Card onPress={() => router.push(routes.client.workouts())} style={styles.restRow}>
+              <View style={styles.restIcon}>
+                <Ionicons
+                  name={
+                    loggedToday ? 'checkmark' : routine ? 'moon-outline' : 'calendar-clear-outline'
+                  }
+                  size={20}
+                  color={loggedToday ? colors.success : colors.textSecondary}
+                />
+              </View>
+              <View style={styles.flex}>
+                <Text variant="h2">
+                  {loggedToday ? 'Workout logged' : routine ? 'Rest day' : 'No routine yet'}
+                </Text>
+                <Text variant="caption" tone="secondary">
+                  {loggedToday
+                    ? 'Nice work. Tap to review or edit it.'
                     : routine
-                      ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
-                      : 'Your coach will give you a routine — it will show up here.'
-                }
-                compact
-              />
+                      ? 'Move a little, eat well, sleep more.'
+                      : 'Your coach will send one soon.'}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
             </Card>
           )}
-        </>
+        </View>
       ) : null}
+
+      {/* This week — streak, the days trained, the headline numbers */}
+      <View style={styles.section}>
+        <SectionHeader title="This week" />
+        <Card style={styles.big}>
+          <View style={styles.weekDays}>
+            {week.map((date) => {
+              const trained = trainedDates.has(date);
+              const isToday = date === TODAY;
+              return (
+                <View key={date} style={styles.weekDay}>
+                  <Text variant="micro" tone={isToday ? 'default' : 'tertiary'}>
+                    {weekdayInitial(date)}
+                  </Text>
+                  <View
+                    style={[
+                      styles.dayDot,
+                      trained && styles.dayDotDone,
+                      isToday && !trained && styles.dayDotToday,
+                    ]}>
+                    {trained ? (
+                      <Ionicons name="checkmark" size={14} color={colors.textOnPrimary} />
+                    ) : null}
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+          <StatRow
+            style={styles.stats}
+            items={[
+              { label: 'Day streak', value: `${client.compliance.streakDays}`, icon: 'flame' },
+              ...(tracking.workout
+                ? [
+                    { label: 'Sessions', value: `${weekLogs.length}` },
+                    { label: 'Volume', value: volume(weekVolume) },
+                  ]
+                : []),
+            ]}
+          />
+        </Card>
+      </View>
 
       {/* Habits */}
       {habits.data && habits.data.length > 0 ? (
-        <HabitChecklist
-          habits={habits.data}
-          onToggle={(habit) =>
-            void toggleHabit({
-              id: habit.id,
-              clientId: habit.clientId,
-              date: TODAY,
-            })
-          }
-        />
+        <View style={styles.section}>
+          <SectionHeader
+            title="Habits"
+            caption={`${habits.data.filter((h) => h.completedDates.includes(TODAY)).length} of ${habits.data.length} done today`}
+          />
+          <HabitChecklist
+            habits={habits.data}
+            headless
+            onToggle={(habit) =>
+              void toggleHabit({
+                id: habit.id,
+                clientId: habit.clientId,
+                date: TODAY,
+              })
+            }
+          />
+        </View>
       ) : null}
 
-      {/* Weight trend teaser */}
+      {/* Weight trend */}
       {weightSeries.length > 1 && latestWeight ? (
-        <Card onPress={() => router.push(routes.client.progress())}>
-          <View style={styles.weightRow}>
-            <View style={styles.weightText}>
-              <Text variant="micro" tone="tertiary">
-                BODY WEIGHT · 30 DAYS
-              </Text>
-              <Text variant="title">{kg(latestWeight.weightKg)}</Text>
-              <Text
-                variant="caption"
-                tone={weightDelta === 0 ? 'secondary' : weightDelta < 0 ? 'success' : 'warning'}>
-                {signed(weightDelta)} kg this week · goal {kg(client.targetWeightKg, 0)}
-              </Text>
+        <View style={styles.section}>
+          <SectionHeader
+            title="Body weight"
+            actionLabel="Progress"
+            onAction={() => router.push(routes.client.progress())}
+          />
+          <Card onPress={() => router.push(routes.client.progress())} style={styles.big}>
+            <View style={styles.weightRow}>
+              <View style={styles.flex}>
+                <Text variant="metric">{kg(latestWeight.weightKg)}</Text>
+                <Text
+                  variant="caption"
+                  tone={weightDelta === 0 ? 'secondary' : weightDelta < 0 ? 'success' : 'warning'}>
+                  {signed(weightDelta)} kg this week
+                </Text>
+                <Text variant="caption" tone="tertiary">
+                  Goal {kg(client.targetWeightKg, 0)}
+                </Text>
+              </View>
+              <Sparkline values={weightSeries} width={132} height={56} />
             </View>
-            <Sparkline values={weightSeries} width={110} height={46} />
-          </View>
-        </Card>
+          </Card>
+        </View>
       ) : null}
 
       {/* Discovery */}
-      <SectionHeader title="Explore" caption="Picked for your goal" />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.discoverStrip}>
-        {DISCOVER.map((item) => (
-          <Pressable
-            key={item.id}
-            style={({ pressed }) => [styles.discoverCard, pressed && styles.pressed]}>
-            <View style={[styles.discoverIcon, { backgroundColor: item.tint }]}>
-              <Text style={styles.discoverEmoji}>{item.emoji}</Text>
-            </View>
-            <Text variant="label" numberOfLines={2}>
-              {item.title}
-            </Text>
-            <Text variant="micro" tone="tertiary" numberOfLines={1}>
-              {item.caption}
-            </Text>
-          </Pressable>
-        ))}
-      </ScrollView>
+      <View style={styles.section}>
+        <SectionHeader title="For you" />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.bleed}
+          contentContainerStyle={styles.discoverStrip}>
+          {DISCOVER.map((item) => (
+            <PressableScale key={item.id} style={styles.discoverCard}>
+              <View style={[styles.discoverArt, { backgroundColor: item.tint }]}>
+                <Text style={styles.discoverEmoji}>{item.emoji}</Text>
+              </View>
+              <View style={styles.discoverText}>
+                <Text variant="bodyStrong" numberOfLines={2}>
+                  {item.title}
+                </Text>
+                <Text variant="caption" tone="tertiary" numberOfLines={1}>
+                  {item.caption}
+                </Text>
+              </View>
+            </PressableScale>
+          ))}
+        </ScrollView>
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  gaugeRow: {
+  flex: {
+    flex: 1,
+  },
+  hello: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+  helloText: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  big: {
+    padding: spacing.xl,
+  },
+  restRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
   },
-  gaugePlaceholder: {
-    width: 150,
-    height: 150,
-  },
-  gaugeSide: {
-    flex: 1,
-    gap: spacing.sm,
-  },
-  cardFooter: {
-    flexDirection: 'row',
+  restIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
-    marginTop: spacing.lg,
-    paddingTop: spacing.md,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
   },
-  tiles: {
+  weekDays: {
     flexDirection: 'row',
-    gap: spacing.md,
+    justifyContent: 'space-between',
+  },
+  weekDay: {
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  dayDot: {
+    width: 30,
+    height: 30,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayDotDone: {
+    backgroundColor: colors.primary,
+  },
+  dayDotToday: {
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.primary,
+  },
+  stats: {
+    marginTop: spacing.xl,
+    paddingTop: spacing.lg,
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
   },
   weightRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
+    gap: spacing.lg,
   },
-  weightText: {
-    flex: 1,
-    gap: 1,
+  bleed: {
+    marginHorizontal: -spacing.xl,
   },
   discoverStrip: {
     gap: spacing.md,
-    paddingVertical: 2,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xs,
   },
   discoverCard: {
-    width: 168,
-    padding: spacing.md,
-    borderRadius: radius.md,
+    width: 208,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
-    gap: spacing.xs,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    overflow: 'hidden',
   },
-  discoverIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.sm,
+  discoverArt: {
+    height: 104,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.xs,
   },
   discoverEmoji: {
-    fontSize: 18,
+    fontSize: 40,
+    lineHeight: 48,
   },
-  pressed: {
-    opacity: 0.75,
+  discoverText: {
+    padding: spacing.lg,
+    gap: spacing.xs,
   },
 });

@@ -21,6 +21,8 @@ export interface InputProps extends Omit<TextInputProps, 'style' | 'placeholderT
   password?: boolean;
   inputRef?: React.RefObject<TextInput | null>;
   containerStyle?: ViewStyle;
+  /** Unit shown inside the field on the right — "kg", "kcal", "g". */
+  suffix?: string;
 }
 
 /**
@@ -35,6 +37,7 @@ export function Input({
   password,
   inputRef,
   containerStyle,
+  suffix,
   onFocus,
   onBlur,
   ...rest
@@ -79,6 +82,12 @@ export function Input({
           }}
           {...rest}
         />
+
+        {suffix ? (
+          <Text variant="label" tone="tertiary">
+            {suffix}
+          </Text>
+        ) : null}
 
         {password ? (
           <Pressable

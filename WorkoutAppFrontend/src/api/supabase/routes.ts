@@ -817,9 +817,9 @@ export const supabaseRoutes: Array<{
     /**
      * Weekly rollups are computed here, not in the database.
      *
-     * The scheduled compliance job (plan 7.1) needs pg_cron or an Edge
-     * Function, neither of which is installed, so this stays where the mock put
-     * it: two ranged reads and the arithmetic, over the window actually on screen.
+     * The headline score is refreshed by pg_cron (refresh_compliance); this
+     * per-week table stays here: two ranged reads and the arithmetic, over the
+     * window actually on screen.
      */
     method: 'GET',
     pattern: '/trainer/clients/:id/compliance',
@@ -838,6 +838,7 @@ export const supabaseRoutes: Array<{
             .from('nutrition_days')
             .select('date,consumed_calories,consumed_protein')
             .eq('client_id', params.id)
+            .gt('consumed_calories', 0) // opening a day creates an empty row
             .gte('date', from),
         ),
         rows<{ date: string }>(

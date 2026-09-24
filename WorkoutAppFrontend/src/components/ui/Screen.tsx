@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from './Text';
 import { routes } from '@/navigation/routes';
-import { colors, radius, spacing } from '@/theme';
+import { colors, elevation, radius, spacing } from '@/theme';
 
 export const TAB_BAR_HEIGHT = 64;
 
@@ -111,15 +111,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.lg,
   },
   back: {
-    width: 32,
-    height: 32,
+    width: 38,
+    height: 38,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,
+    ...elevation.card,
     marginLeft: -spacing.xs,
   },
   headerText: {

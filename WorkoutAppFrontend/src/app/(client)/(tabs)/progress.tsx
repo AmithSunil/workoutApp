@@ -16,15 +16,17 @@ import {
   Button,
   Card,
   EmptyState,
+  ProgressBar,
   Screen,
   SectionHeader,
   SegmentedControl,
   SkeletonCard,
+  StatRow,
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { colors, radius, spacing } from '@/theme';
-import { TODAY, diffInDays } from '@/utils/date';
+import { TODAY, diffInDays, monthDay } from '@/utils/date';
 import { kg, pct, signed } from '@/utils/format';
 
 type Range = '30' | '90' | 'all';
@@ -64,127 +66,159 @@ export default function ProgressScreen() {
   return (
     <>
       <Screen
-        title="Progress"
-        subtitle="Trends, photos and consistency"
         refreshControl={
           <RefreshControl
             refreshing={metrics.isFetching}
             onRefresh={() => void metrics.refetch()}
           />
         }>
+        <View style={styles.hello}>
+          <Text variant="micro" tone="tertiary">
+            YOUR PROGRESS
+          </Text>
+          <Text variant="display">Progress</Text>
+        </View>
+
+        {/* Weight — the number, its trend, and the one action */}
         {metrics.isLoading || !client ? (
           <SkeletonCard lines={5} />
         ) : (
-          <Card>
-            <View style={styles.header}>
-              <View style={styles.headerText}>
-                <Text variant="micro" tone="tertiary">
-                  {selected ? 'SELECTED' : 'CURRENT WEIGHT'}
-                </Text>
-                <Text variant="display" style={styles.weight}>
-                  {kg(selected?.value ?? latest?.weightKg ?? client.startWeightKg)}
-                </Text>
-                <Text
-                  variant="caption"
-                  tone={totalChange <= 0 ? 'success' : 'warning'}
-                  numberOfLines={2}>
-                  {signed(totalChange)} kg since start · {Math.abs(toGoal).toFixed(1)} kg to goal
+          <View style={styles.section}>
+            <SectionHeader title="Body weight" />
+            <Card style={styles.big}>
+              <View style={styles.header}>
+                <View style={styles.flex}>
+                  <Text variant="metricLg">
+                    {kg(selected?.value ?? latest?.weightKg ?? client.startWeightKg)}
+                  </Text>
+                  <Text
+                    variant="caption"
+                    tone={selected ? 'secondary' : totalChange <= 0 ? 'success' : 'warning'}>
+                    {selected
+                      ? `On ${monthDay(selected.date)}`
+                      : `${signed(totalChange)} kg since you started`}
+                  </Text>
+                </View>
+              </View>
+
+              <SegmentedControl<Range>
+                value={range}
+                onChange={setRange}
+                size="sm"
+                segments={[
+                  { value: '30', label: '30 days' },
+                  { value: '90', label: '90 days' },
+                  { value: 'all', label: 'All time' },
+                ]}
+              />
+
+              <View style={styles.chart}>
+                {series.length > 1 ? (
+                  <LineChart
+                    data={series}
+                    height={200}
+                    target={goalKg ?? undefined}
+                    targetLabel={goalKg === null ? undefined : `Goal ${goalKg}kg`}
+                    unit=" kg"
+                    onSelect={setSelected}
+                  />
+                ) : (
+                  <EmptyState
+                    icon="analytics-outline"
+                    title="Not enough data yet"
+                    message="Log your weight a few more times to see a trend."
+                    compact
+                  />
+                )}
+              </View>
+
+              <View style={styles.legend}>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendLine, { backgroundColor: colors.primary }]} />
+                  <Text variant="micro" tone="tertiary">
+                    Daily
+                  </Text>
+                </View>
+                <View style={styles.legendItem}>
+                  <View style={[styles.legendLine, styles.legendDashed]} />
+                  <Text variant="micro" tone="tertiary">
+                    7-day average
+                  </Text>
+                </View>
+                <Text variant="micro" tone="tertiary" style={styles.legendHint}>
+                  Drag to inspect
                 </Text>
               </View>
-              <View style={styles.rangeControl}>
-                <SegmentedControl<Range>
-                  value={range}
-                  onChange={setRange}
-                  size="sm"
-                  segments={[
-                    { value: '30', label: '30d' },
-                    { value: '90', label: '90d' },
-                    { value: 'all', label: 'All' },
-                  ]}
+
+              <Button
+                label="Log weight"
+                icon="add"
+                fullWidth
+                onPress={() => setSheetOpen(true)}
+                style={styles.cta}
+              />
+            </Card>
+          </View>
+        )}
+
+        {/* Goal — start, now, target on one line, and how far along */}
+        {client && start !== null && goalKg !== null ? (
+          <View style={styles.section}>
+            <SectionHeader
+              title="Goal"
+              caption={`${Math.abs(toGoal).toFixed(1)} kg to go`}
+            />
+            <Card style={styles.big}>
+              <StatRow
+                items={[
+                  { label: 'Start', value: kg(start) },
+                  { label: 'Now', value: kg(latest?.weightKg ?? start) },
+                  { label: 'Goal', value: kg(goalKg, 0) },
+                ]}
+              />
+              <View style={styles.goalRow}>
+                <View style={styles.flex}>
+                  <ProgressBar value={Math.min(goalProgress, 100)} target={100} height={8} />
+                </View>
+                <Text variant="label">{Math.min(goalProgress, 100)}%</Text>
+              </View>
+            </Card>
+          </View>
+        ) : null}
+
+        {/* Photos */}
+        <View style={styles.section}>
+          {photos.isLoading ? (
+            <SkeletonCard lines={2} />
+          ) : (photos.data ?? []).length > 0 ? (
+            <PhotoGallery photos={photos.data ?? []} onAdd={() => undefined} limit={2} />
+          ) : (
+            <>
+              <SectionHeader title="Photos" />
+              <Card>
+                <EmptyState
+                  icon="camera-outline"
+                  title="No photos yet"
+                  message="Same light, same pose, same time of day — that's what makes them useful."
+                  compact
                 />
-              </View>
-            </View>
+              </Card>
+            </>
+          )}
+        </View>
 
-            {series.length > 1 ? (
-              <LineChart
-                data={series}
-                height={210}
-                target={goalKg ?? undefined}
-                targetLabel={goalKg === null ? undefined : `Goal ${goalKg}kg`}
-                unit=" kg"
-                onSelect={setSelected}
-              />
-            ) : (
-              <EmptyState
-                icon="analytics-outline"
-                title="Not enough data yet"
-                message="Log your weight a few more times to see a trend."
-                compact
-              />
-            )}
-
-            <View style={styles.legend}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendLine, { backgroundColor: colors.primary }]} />
-                <Text variant="micro" tone="tertiary">
-                  Daily
-                </Text>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendLine, styles.legendDashed]} />
-                <Text variant="micro" tone="tertiary">
-                  7-day average
-                </Text>
-              </View>
-              <Text variant="micro" tone="tertiary">
-                Touch and drag the chart
-              </Text>
-            </View>
-
-            <View style={styles.goalRow}>
-              <View style={styles.goalTrack}>
-                <View style={[styles.goalFill, { width: `${Math.min(goalProgress, 100)}%` }]} />
-              </View>
-              <Text variant="label" tone="secondary">
-                {Math.min(goalProgress, 100)}%
-              </Text>
-            </View>
-
-            <Button
-              label="Log today's weight"
-              icon="add"
-              variant="ghost"
-              fullWidth
-              onPress={() => setSheetOpen(true)}
-              style={styles.cta}
-            />
-          </Card>
-        )}
-
-        <SectionHeader title="Photos" caption="Compare like-for-like every two weeks" />
-        {photos.isLoading ? (
-          <SkeletonCard lines={2} />
-        ) : (photos.data ?? []).length > 0 ? (
-          <PhotoGallery photos={photos.data ?? []} onAdd={() => undefined} />
-        ) : (
-          <Card>
-            <EmptyState
-              icon="camera-outline"
-              title="No photos yet"
-              message="Same light, same pose, same time of day — that's what makes them useful."
-              compact
-            />
-          </Card>
-        )}
-
-        <SectionHeader title="Consistency" caption="Last 7 days per habit" />
+        {/* Habits */}
         {habits.data && habits.data.length > 0 ? (
-          <HabitChecklist
-            habits={habits.data}
-            onToggle={(habit) =>
-              void toggleHabit({ id: habit.id, clientId: habit.clientId, date: TODAY })
-            }
-          />
+          <View style={styles.section}>
+            <SectionHeader title="Habits" caption="Your last 7 days" />
+            <HabitChecklist
+              habits={habits.data}
+              headless
+              onToggle={(habit) =>
+                void toggleHabit({ id: habit.id, clientId: habit.clientId, date: TODAY })
+              }
+            />
+          </View>
         ) : null}
       </Screen>
 
@@ -204,29 +238,33 @@ export default function ProgressScreen() {
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  hello: {
+    gap: spacing.xs,
+    paddingTop: spacing.lg,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  big: {
+    padding: spacing.xl,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
-  headerText: {
-    flex: 1,
-    gap: 1,
-  },
-  weight: {
-    letterSpacing: -1,
-  },
-  rangeControl: {
-    width: 138,
+  chart: {
+    marginTop: spacing.lg,
   },
   legend: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
     marginTop: spacing.sm,
-    flexWrap: 'wrap',
   },
   legendItem: {
     flexDirection: 'row',
@@ -242,25 +280,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.textTertiary,
     opacity: 0.6,
   },
+  legendHint: {
+    marginLeft: 'auto',
+  },
   goalRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    marginTop: spacing.lg,
-  },
-  goalTrack: {
-    flex: 1,
-    height: 8,
-    borderRadius: radius.pill,
-    backgroundColor: colors.surfaceMuted,
-    overflow: 'hidden',
-  },
-  goalFill: {
-    height: '100%',
-    borderRadius: radius.pill,
-    backgroundColor: colors.success,
+    marginTop: spacing.xl,
   },
   cta: {
-    marginTop: spacing.lg,
+    marginTop: spacing.xl,
   },
 });

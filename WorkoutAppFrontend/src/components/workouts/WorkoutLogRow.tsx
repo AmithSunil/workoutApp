@@ -16,7 +16,7 @@ export function WorkoutLogRow({ log, onPress }: WorkoutLogRowProps) {
   const [month, day] = monthDay(log.date).split(' ');
 
   return (
-    <Card variant="flat" padded={false} onPress={onPress} style={styles.card}>
+    <Card variant="flat" padded={false} onPress={onPress}>
       <View style={styles.row}>
         <View style={styles.date}>
           <Text variant="h2">{day}</Text>
@@ -56,19 +56,15 @@ export function WorkoutLogRow({ log, onPress }: WorkoutLogRowProps) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   date: {
-    width: 46,
-    height: 46,
+    width: 48,
+    height: 52,
     borderRadius: radius.sm,
     backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
@@ -85,8 +81,8 @@ const styles = StyleSheet.create({
   note: {
     flexDirection: 'row',
     gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.lg,
     marginTop: -spacing.xs,
   },
   noteText: {

@@ -23,7 +23,7 @@ import {
   useGetWeeklyComplianceQuery,
   useRevokeInviteMutation,
 } from '@/api/endpoints/trainerApi';
-import { BarSeries, LineChart, MacroBars, type BarDatum } from '@/components/charts';
+import { BarSeries, LineChart, type BarDatum } from '@/components/charts';
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
 import { GoalsEditor } from '@/components/trainer/GoalsEditor';
 import { HabitEditor } from '@/components/trainer/HabitEditor';
@@ -36,11 +36,12 @@ import {
   Button,
   Card,
   EmptyState,
+  ProgressBar,
   Screen,
   SectionHeader,
   SegmentedControl,
   SkeletonCard,
-  StatTile,
+  StatRow,
   Text,
 } from '@/components/ui';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -57,6 +58,16 @@ import { grams, kcal, kg, pct, signed } from '@/utils/format';
 import { shareInvite } from '@/utils/invite';
 
 type DetailTab = UiState['clientDetailTab'];
+
+/** Sessions shown before "Show all". */
+const HISTORY_PREVIEW = 5;
+
+/** Weekly bar colours — distinct hues, so "over" and "under" never read alike. */
+const LEGEND = [
+  { color: colors.success, label: 'Within 8%' },
+  { color: colors.warning, label: 'Over' },
+  { color: colors.carbs, label: 'Under' },
+];
 
 /** Tabs, each tagged with the half of the product it belongs to. */
 const TABS: Array<{ value: DetailTab; label: string; domain: TrackingDomain }> = [
@@ -105,74 +116,81 @@ export default function ClientDetailScreen() {
   }
 
   const tint = statusColor(client.compliance.status);
+  const weightTrendGood = summary.weightChange30d <= 0;
 
   return (
-    <Screen
-      title={client.name}
-      subtitle={`${statusLabel(client.compliance.status)} · ${client.compliance.score}% adherence`}
-      showBack
-      tabBarPadding={false}
-      headerRight={
+    <Screen showBack tabBarPadding={false}>
+      {/* Who — centred, with status stated in words and colour */}
+      <View style={styles.hero}>
         <Avatar
           name={client.name}
           uri={client.avatarUrl}
-          size={44}
-          status={client.compliance.status}
+          size={88}
+          status={client.invited ? undefined : client.compliance.status}
         />
-      }>
-      {client.invited ? <InviteCard client={client} /> : null}
-
-      {/* Pinned header context */}
-      <View style={styles.tiles}>
-        <StatTile
-          label="Weight"
-          value={kg(summary.latestWeightKg)}
-          hint={`${signed(summary.weightChange30d)} kg / 30d`}
-          icon="scale-outline"
-          tone={summary.weightChange30d <= 0 ? 'success' : 'warning'}
-        />
-        {tracking.workout ? (
-          <StatTile
-            label="Sessions / 7d"
-            value={`${summary.sessionsLast7}`}
-            icon="barbell"
-            tone="primary"
-          />
-        ) : null}
-        {tracking.nutrition ? (
-          <StatTile
-            label="Logged / 7d"
-            value={`${summary.loggedDaysLast7}d`}
-            hint={`${kcal(summary.avgCaloriesLast7)} avg`}
-            icon="restaurant"
-            tone={summary.loggedDaysLast7 >= 6 ? 'success' : 'warning'}
-          />
-        ) : null}
-      </View>
-
-      <View style={styles.actions}>
-        <Button
-          label="Message"
-          icon="chatbubble-ellipses-outline"
-          variant="secondary"
-          size="sm"
-          style={styles.action}
-          onPress={() => thread && router.push(routes.trainer.thread(thread.id))}
-        />
-        <View style={[styles.goalPill, { borderColor: tint }]}>
-          <View style={[styles.goalDot, { backgroundColor: tint }]} />
-          <Text variant="label" numberOfLines={1}>
-            Goal {kg(client.targetWeightKg, 0)} · {GOAL_LABEL[client.goal]}
+        <View style={styles.heroText}>
+          <Text variant="title" align="center" numberOfLines={1}>
+            {client.name}
+          </Text>
+          <Text variant="caption" tone="secondary" align="center" numberOfLines={1}>
+            {GOAL_LABEL[client.goal]} · goal {kg(client.targetWeightKg, 0)}
           </Text>
         </View>
+        {client.invited ? null : (
+          <View style={[styles.statusPill, { backgroundColor: `${tint}1F` }]}>
+            <View style={[styles.statusDot, { backgroundColor: tint }]} />
+            <Text variant="label" color={tint}>
+              {statusLabel(client.compliance.status)} · {client.compliance.score}% adherence
+            </Text>
+          </View>
+        )}
       </View>
 
-      <SegmentedControl<DetailTab>
-        value={activeTab}
-        onChange={(v) => dispatch(clientDetailTabChanged(v))}
-        segments={tabs}
-        size="sm"
-      />
+      {client.invited ? (
+        <InviteCard client={client} />
+      ) : (
+        <Button
+          label="Message"
+          icon="chatbubble-ellipses"
+          fullWidth
+          disabled={!thread}
+          onPress={() => thread && router.push(routes.trainer.thread(thread.id))}
+        />
+      )}
+
+      {/* Snapshot — the last month in three numbers */}
+      <Card style={styles.big}>
+        <StatRow
+          items={[
+            {
+              label: 'Weight',
+              value: kg(summary.latestWeightKg),
+              hint: `${signed(summary.weightChange30d)} kg / 30d`,
+              hintColor: weightTrendGood ? colors.success : colors.warning,
+            },
+            ...(tracking.workout
+              ? [{ label: 'Sessions / 7d', value: `${summary.sessionsLast7}` }]
+              : []),
+            ...(tracking.nutrition
+              ? [
+                  {
+                    label: 'Logged / 7d',
+                    value: `${summary.loggedDaysLast7}d`,
+                    hint: `${kcal(summary.avgCaloriesLast7)} kcal avg`,
+                  },
+                ]
+              : []),
+          ]}
+        />
+      </Card>
+
+      <View style={styles.tabs}>
+        <SegmentedControl<DetailTab>
+          value={activeTab}
+          onChange={(v) => dispatch(clientDetailTabChanged(v))}
+          segments={tabs}
+        />
+      </View>
 
       {activeTab === 'metrics' ? (
         <MetricsTab clientId={clientId} targetWeightKg={client.targetWeightKg ?? undefined} />
@@ -201,9 +219,9 @@ function InviteCard({ client }: { client: ClientProfile }) {
   const [confirming, setConfirming] = useState(false);
 
   return (
-    <Card>
+    <Card style={styles.big}>
       <Text variant="h2">Invite pending</Text>
-      <Text variant="caption" tone="secondary" style={styles.chartCaption}>
+      <Text variant="caption" tone="secondary" style={styles.inviteCopy}>
         {client.name.split(' ')[0]} signs in with {client.email}. Set up their goals, habits and
         routine now — they will be waiting on day one.
       </Text>
@@ -256,45 +274,47 @@ function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeig
 
   return (
     <>
-      <Card>
-        <Text variant="h2">Body weight</Text>
-        <Text variant="micro" tone="tertiary" style={styles.chartCaption}>
-          Drag across the chart to inspect any day
-        </Text>
-        {series.length > 1 ? (
-          // ponytail: this target line is editable only from the Nutrition tab,
-          // which `shows()` hides from a workout-only coach — they see the goal
-          // but cannot set it. Give GoalsEditor a weight-only entry point here
-          // if that combination ever turns up.
-          <LineChart data={series} height={200} target={targetWeightKg} unit=" kg" />
-        ) : (
-          <EmptyState icon="analytics-outline" title="No weigh-ins yet" compact />
-        )}
-      </Card>
-
-      <SectionHeader
-        title="Daily habits"
-        caption="The goals you set — tap to tick one off for them"
-        actionLabel="Edit"
-        onAction={() => setEditingHabits(true)}
-      />
-      {habits.data && habits.data.length > 0 ? (
-        <HabitChecklist
-          habits={habits.data}
-          onToggle={(habit) => void toggleHabit({ id: habit.id, clientId, date: TODAY })}
-        />
-      ) : (
-        <Card>
-          <EmptyState
-            icon="list-outline"
-            title="No habits set"
-            message="Set the daily goals this client ticks off."
-            actionLabel="Add habits"
-            onAction={() => setEditingHabits(true)}
-            compact
-          />
+      <View style={styles.section}>
+        <SectionHeader title="Body weight" caption="Drag across the chart to inspect any day" />
+        <Card style={styles.big}>
+          {series.length > 1 ? (
+            // ponytail: this target line is editable only from the Nutrition tab,
+            // which `shows()` hides from a workout-only coach — they see the goal
+            // but cannot set it. Give GoalsEditor a weight-only entry point here
+            // if that combination ever turns up.
+            <LineChart data={series} height={200} target={targetWeightKg} unit=" kg" />
+          ) : (
+            <EmptyState icon="analytics-outline" title="No weigh-ins yet" compact />
+          )}
         </Card>
-      )}
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader
+          title="Habits"
+          caption="The goals you set — tap to tick one off for them"
+          actionLabel="Edit"
+          onAction={() => setEditingHabits(true)}
+        />
+        {habits.data && habits.data.length > 0 ? (
+          <HabitChecklist
+            habits={habits.data}
+            headless
+            onToggle={(habit) => void toggleHabit({ id: habit.id, clientId, date: TODAY })}
+          />
+        ) : (
+          <Card>
+            <EmptyState
+              icon="list-outline"
+              title="No habits set"
+              message="Set the daily goals this client ticks off."
+              actionLabel="Add habits"
+              onAction={() => setEditingHabits(true)}
+              compact
+            />
+          </Card>
+        )}
+      </View>
 
       <HabitEditor
         visible={editingHabits}
@@ -303,14 +323,18 @@ function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeig
         habits={habits.data ?? []}
       />
 
-      <SectionHeader title="Photos" caption="Shared by the client" />
-      {(photos.data ?? []).length > 0 ? (
-        <PhotoGallery photos={photos.data ?? []} />
-      ) : (
-        <Card>
-          <EmptyState icon="camera-outline" title="No photos shared" compact />
-        </Card>
-      )}
+      <View style={styles.section}>
+        {(photos.data ?? []).length > 0 ? (
+          <PhotoGallery photos={photos.data ?? []} limit={2} />
+        ) : (
+          <>
+            <SectionHeader title="Photos" caption="Shared by the client" />
+            <Card>
+              <EmptyState icon="camera-outline" title="No photos shared" compact />
+            </Card>
+          </>
+        )}
+      </View>
     </>
   );
 }
@@ -343,7 +367,7 @@ function NutritionTab({
                 ? colors.success
                 : share > 100
                   ? colors.warning
-                  : colors.primary,
+                  : colors.carbs,
         };
       }),
     [compliance.data]
@@ -353,33 +377,28 @@ function NutritionTab({
 
   if (compliance.isLoading) return <SkeletonCard lines={5} />;
 
+  const recent = (days.data ?? []).slice(0, 7);
+
   return (
     <>
-      <SectionHeader
-        title="Goals"
-        caption="What you are holding this client to"
-        actionLabel="Edit"
-        onAction={() => setEditingGoals(true)}
-      />
-      <Card>
-        <View style={styles.goals}>
-          {[
-            { label: 'GOAL', value: GOAL_LABEL[client.goal] },
-            { label: 'GOAL WEIGHT', value: kg(client.targetWeightKg, 0) },
-            { label: 'CALORIES', value: kcal(client.targets.calories) },
-            { label: 'PROTEIN', value: grams(client.targets.protein) },
-            { label: 'CARBS', value: grams(client.targets.carbs) },
-            { label: 'FAT', value: grams(client.targets.fat) },
-          ].map((goal) => (
-            <View key={goal.label} style={styles.goal}>
-              <Text variant="micro" tone="tertiary">
-                {goal.label}
-              </Text>
-              <Text variant="h2">{goal.value}</Text>
-            </View>
-          ))}
-        </View>
-      </Card>
+      <View style={styles.section}>
+        <SectionHeader
+          title="Targets"
+          caption={`${GOAL_LABEL[client.goal]} · goal weight ${kg(client.targetWeightKg, 0)}`}
+          actionLabel="Edit"
+          onAction={() => setEditingGoals(true)}
+        />
+        <Card style={styles.big}>
+          <StatRow
+            items={[
+              { label: 'kcal', value: kcal(client.targets.calories) },
+              { label: 'Protein', value: grams(client.targets.protein) },
+              { label: 'Carbs', value: grams(client.targets.carbs) },
+              { label: 'Fat', value: grams(client.targets.fat) },
+            ]}
+          />
+        </Card>
+      </View>
 
       {/* Mounted only while open so it always re-seeds from the server copy. */}
       {editingGoals ? (
@@ -390,31 +409,29 @@ function NutritionTab({
         />
       ) : null}
 
-      <Card>
-        <Text variant="h2">Weekly caloric compliance</Text>
-        <Text variant="micro" tone="tertiary" style={styles.chartCaption}>
-          Average daily intake per week against a {kcal(target ?? 0)} kcal target
-        </Text>
-        <BarSeries data={bars} height={110} target={target} />
-        <View style={styles.legendRow}>
-          {[
-            { color: colors.success, label: 'Within 8%' },
-            { color: colors.warning, label: 'Over' },
-            { color: colors.primary, label: 'Under' },
-          ].map((l) => (
-            <View key={l.label} style={styles.legendItem}>
-              <View style={[styles.legendSwatch, { backgroundColor: l.color }]} />
-              <Text variant="micro" tone="tertiary">
-                {l.label}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </Card>
+      <View style={styles.section}>
+        <SectionHeader
+          title="Weekly compliance"
+          caption={`Average daily intake against ${kcal(target ?? 0)} kcal`}
+        />
+        <Card style={styles.big}>
+          <BarSeries data={bars} height={110} target={target} />
+          <View style={styles.legendRow}>
+            {LEGEND.map((l) => (
+              <View key={l.label} style={styles.legendItem}>
+                <View style={[styles.legendSwatch, { backgroundColor: l.color }]} />
+                <Text variant="micro" tone="tertiary">
+                  {l.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </Card>
+      </View>
 
-      <Card>
-        <Text variant="h2">Adherence detail</Text>
-        <View style={styles.table}>
+      <View style={styles.section}>
+        <SectionHeader title="Week by week" />
+        <Card style={styles.big}>
           <View style={styles.tableHead}>
             <Text variant="micro" tone="tertiary" style={styles.colWeek}>
               WEEK
@@ -429,46 +446,61 @@ function NutritionTab({
               PROTEIN
             </Text>
           </View>
-          {[...(compliance.data ?? [])].reverse().map((row) => (
-            <View key={row.weekOf} style={styles.tableRow}>
-              <Text variant="caption" style={styles.colWeek}>
+          {[...(compliance.data ?? [])].reverse().map((row, i) => (
+            <View key={row.weekOf} style={[styles.tableRow, i > 0 && styles.tableRowRule]}>
+              <Text variant="label" style={styles.colWeek}>
                 {monthDay(row.weekOf)}
               </Text>
               <Text
-                variant="caption"
+                variant="label"
                 tone={row.loggedDays >= 6 ? 'success' : row.loggedDays >= 4 ? 'warning' : 'danger'}
                 style={styles.colNum}>
                 {row.loggedDays}/7
               </Text>
-              <Text variant="caption" style={styles.colNum}>
+              <Text variant="label" style={styles.colNum}>
                 {kcal(row.avgCalories)}
               </Text>
-              <Text variant="caption" style={styles.colNum}>
+              <Text variant="label" style={styles.colNum}>
                 {row.avgProtein}g
               </Text>
             </View>
           ))}
-        </View>
-      </Card>
-
-      <SectionHeader title="Recent days" caption="Last two weeks of logging" />
-      {(days.data ?? []).slice(0, 7).map((day) => (
-        <Card key={day.date}>
-          <View style={styles.dayHeader}>
-            <Text variant="h2">{monthDay(day.date)}</Text>
-            <Text
-              variant="label"
-              tone={
-                Math.abs(pct(day.consumed.calories, day.targets.calories) - 100) <= 10
-                  ? 'success'
-                  : 'warning'
-              }>
-              {kcal(day.consumed.calories)} / {kcal(day.targets.calories)} kcal
-            </Text>
-          </View>
-          <MacroBars consumed={day.consumed} targets={day.targets} compact />
         </Card>
-      ))}
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader title="Recent days" caption="The last week of logging" />
+        <Card padded={false}>
+          {recent.map((day, i) => {
+            const onTarget =
+              Math.abs(pct(day.consumed.calories, day.targets.calories) - 100) <= 10;
+            return (
+              <View key={day.date} style={[styles.day, i > 0 && styles.dayRule]}>
+                <View style={styles.dayHeader}>
+                  <Text variant="bodyStrong">{monthDay(day.date)}</Text>
+                  <Text variant="label" tone={onTarget ? 'success' : 'warning'}>
+                    {kcal(day.consumed.calories)}
+                    <Text variant="label" tone="tertiary">
+                      {' '}
+                      / {kcal(day.targets.calories)} kcal
+                    </Text>
+                  </Text>
+                </View>
+                <ProgressBar
+                  value={day.consumed.calories}
+                  target={day.targets.calories}
+                  color={onTarget ? colors.success : colors.warning}
+                  height={6}
+                />
+                <Text variant="caption" tone="tertiary" style={styles.dayMacros}>
+                  P {grams(day.consumed.protein)} · C {grams(day.consumed.carbs)} · F{' '}
+                  {grams(day.consumed.fat)}
+                </Text>
+              </View>
+            );
+          })}
+        </Card>
+      </View>
     </>
   );
 }
@@ -476,18 +508,27 @@ function NutritionTab({
 function WorkoutsTab({ clientId }: { clientId: string }) {
   const router = useRouter();
   const logs = useGetWorkoutLogsQuery({ clientId, limit: 30 });
+  const [showAll, setShowAll] = useState(false);
 
   if (logs.isLoading) return <SkeletonCard lines={4} />;
 
+  const all = logs.data ?? [];
+  const shown = showAll ? all : all.slice(0, HISTORY_PREVIEW);
+
   return (
-    <>
-      <SectionHeader title="Completed sessions" caption="Audit trail, newest first" />
-      {(logs.data ?? []).length === 0 ? (
+    <View style={styles.section}>
+      <SectionHeader
+        title="Sessions"
+        caption={all.length ? `${all.length} logged · newest first` : 'Audit trail, newest first'}
+        actionLabel={all.length > HISTORY_PREVIEW ? (showAll ? 'Show less' : 'Show all') : undefined}
+        onAction={() => setShowAll((v) => !v)}
+      />
+      {all.length === 0 ? (
         <Card>
           <EmptyState icon="barbell-outline" title="No sessions logged yet" compact />
         </Card>
       ) : (
-        (logs.data ?? []).map((log) => (
+        shown.map((log) => (
           <WorkoutLogRow
             key={log.id}
             log={log}
@@ -495,7 +536,7 @@ function WorkoutsTab({ clientId }: { clientId: string }) {
           />
         ))
       )}
-    </>
+    </View>
   );
 }
 
@@ -511,7 +552,7 @@ function PlanTab({ clientId, clientName }: { clientId: string; clientName: strin
   const assigned = assignments.data ?? [];
 
   return (
-    <>
+    <View style={styles.section}>
       <SectionHeader
         title="Current routine"
         caption="Their training week, repeating until you assign another"
@@ -562,57 +603,62 @@ function PlanTab({ clientId, clientName }: { clientId: string; clientName: strin
             .finally(() => setBusyRoutineId(null));
         }}
       />
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  tiles: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  actions: {
-    flexDirection: 'row',
+  hero: {
     alignItems: 'center',
     gap: spacing.md,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
   },
-  action: {
-    minWidth: 120,
+  heroText: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: spacing.xs,
   },
-  goalPill: {
-    flex: 1,
+  statusPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
-    height: 34,
-    backgroundColor: colors.surface,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radius.pill,
   },
-  goalDot: {
+  statusDot: {
     width: 7,
     height: 7,
     borderRadius: radius.pill,
   },
-  chartCaption: {
-    marginBottom: spacing.md,
+  big: {
+    padding: spacing.xl,
   },
-  goals: {
+  tabs: {
+    marginTop: spacing.sm,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  actions: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    rowGap: spacing.md,
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.lg,
   },
-  goal: {
-    // Five cells: the weight goal takes a full half-row of its own, the four
-    // macros share the rest evenly.
-    minWidth: '33%',
-    gap: spacing.xxs,
+  action: {
+    flex: 1,
+  },
+  inviteCopy: {
+    marginTop: spacing.xs,
   },
   legendRow: {
     flexDirection: 'row',
+    justifyContent: 'center',
     gap: spacing.lg,
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
   },
   legendItem: {
     flexDirection: 'row',
@@ -624,20 +670,17 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: radius.pill,
   },
-  table: {
-    marginTop: spacing.md,
-  },
   tableHead: {
     flexDirection: 'row',
     paddingBottom: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
   },
   tableRow: {
     flexDirection: 'row',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.divider,
+    paddingVertical: spacing.md,
+  },
+  tableRowRule: {
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
   },
   colWeek: {
     flex: 1.2,
@@ -646,10 +689,21 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right',
   },
+  day: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+  },
+  dayRule: {
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
+  },
   dayHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  dayMacros: {
+    marginTop: spacing.sm,
   },
 });

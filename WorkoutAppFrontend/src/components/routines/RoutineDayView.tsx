@@ -36,7 +36,7 @@ export function RoutineDayView({ day, weekday }: RoutineDayViewProps) {
   const named = Boolean(day.name?.trim());
 
   return (
-    <Card>
+    <Card style={styles.card}>
       <View style={styles.header}>
         <View style={styles.headerText}>
           <Text variant="micro" tone="primary">
@@ -78,6 +78,9 @@ export function RoutineDayView({ day, weekday }: RoutineDayViewProps) {
 }
 
 const styles = StyleSheet.create({
+  card: {
+    padding: spacing.xl,
+  },
   header: {
     flexDirection: 'row',
     gap: spacing.md,
@@ -95,8 +98,8 @@ const styles = StyleSheet.create({
   note: {
     flexDirection: 'row',
     gap: spacing.sm,
-    backgroundColor: colors.surfaceSunken,
-    borderRadius: radius.xs,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.sm,
     padding: spacing.md,
     marginTop: spacing.md,
   },

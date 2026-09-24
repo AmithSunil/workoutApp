@@ -9,7 +9,7 @@ import Animated, {
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 import { Text } from '@/components/ui';
-import { colors, motion, palette } from '@/theme';
+import { colors, motion } from '@/theme';
 import { kcal, ratio } from '@/utils/format';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -21,6 +21,8 @@ export interface CalorieGaugeProps {
   strokeWidth?: number;
   /** Caption under the big number; defaults to "left" / "over". */
   caption?: string;
+  /** Ring only — for when the numbers are printed beside it. */
+  bare?: boolean;
 }
 
 /**
@@ -33,6 +35,7 @@ export function CalorieGauge({
   size = 190,
   strokeWidth = 16,
   caption,
+  bare,
 }: CalorieGaugeProps) {
   const gradientId = `gauge-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   const radius = (size - strokeWidth) / 2;
@@ -59,7 +62,7 @@ export function CalorieGauge({
         <Defs>
           <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
             <Stop offset="0" stopColor={over ? colors.warning : colors.primary} />
-            <Stop offset="1" stopColor={over ? colors.danger : palette.violet500} />
+            <Stop offset="1" stopColor={over ? colors.danger : colors.primaryGlow} />
           </LinearGradient>
         </Defs>
         <Circle
@@ -84,6 +87,7 @@ export function CalorieGauge({
         />
       </Svg>
 
+      {bare ? null : (
       <View style={styles.center} pointerEvents="none">
         <Text variant="display" style={styles.value}>
           {kcal(Math.abs(remaining))}
@@ -95,6 +99,7 @@ export function CalorieGauge({
           {kcal(consumed)} of {kcal(target)}
         </Text>
       </View>
+      )}
     </View>
   );
 }

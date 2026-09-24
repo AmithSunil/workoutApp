@@ -1,14 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { useGetTrainerQuery, useUpdateTrainerMutation } from '@/api/endpoints/trainerApi';
-import { signOutEverywhere } from '@/auth';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import { PlanSummary } from '@/components/billing/PlanSummary';
-import { Avatar, Button, Card, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
+import { Avatar, Card, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
 import { TrackingPicker } from '@/components/trainer/TrackingPicker';
-import { routes } from '@/navigation/routes';
-import { colors, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 
 /**
  * The coach's own account screen, reached from the dashboard avatar.
@@ -18,79 +16,98 @@ import { colors, spacing } from '@/theme';
  * read-only identity.
  */
 export default function TrainerProfileScreen() {
-  const router = useRouter();
   const { data: trainer } = useGetTrainerQuery();
   const [updateTrainer, state] = useUpdateTrainerMutation();
 
   if (!trainer) {
     return (
-      <Screen title="Profile">
+      <Screen>
         <SkeletonCard lines={4} />
       </Screen>
     );
   }
 
   return (
-    <Screen title="Profile">
-      <Card>
-        <View style={styles.identity}>
-          <Avatar name={trainer.name} uri={trainer.avatarUrl} size={56} />
-          <View style={styles.identityText}>
-            <Text variant="h2" numberOfLines={1}>
-              {trainer.name}
-            </Text>
-            <Text variant="caption" tone="secondary" numberOfLines={2}>
+    <Screen>
+      {/* Identity — centred, matching the client's profile */}
+      <View style={styles.identity}>
+        <Avatar name={trainer.name} uri={trainer.avatarUrl} size={92} />
+        <View style={styles.identityText}>
+          <Text variant="title" align="center" numberOfLines={1}>
+            {trainer.name}
+          </Text>
+          {trainer.headline ? (
+            <Text variant="body" tone="secondary" align="center" numberOfLines={2}>
               {trainer.headline}
             </Text>
-            <Text variant="micro" tone="tertiary" numberOfLines={1}>
-              {trainer.email} · {trainer.clientIds.length} clients
-            </Text>
-          </View>
+          ) : null}
+          <Text variant="caption" tone="tertiary" align="center" numberOfLines={1}>
+            {trainer.email}
+          </Text>
         </View>
-      </Card>
+        <View style={styles.pill}>
+          <Ionicons name="people" size={13} color={colors.primaryText} />
+          <Text variant="label" tone="primary">
+            {trainer.clientIds.length} client{trainer.clientIds.length === 1 ? '' : 's'}
+          </Text>
+        </View>
+      </View>
 
-      <SectionHeader title="What you coach" caption="Changes what this app shows you" />
-      <Card>
-        <TrackingPicker
-          value={trainer.tracks}
-          busy={state.isLoading}
-          onChange={(tracks) => void updateTrainer({ tracks })}
-        />
-        {state.isError ? (
-          <View style={styles.banner} accessibilityRole="alert">
-            <Ionicons name="alert-circle-outline" size={16} color={colors.danger} />
-            <Text variant="caption" tone="danger" style={styles.bannerText}>
-              Could not save that. Check your connection and try again.
-            </Text>
-          </View>
-        ) : null}
-      </Card>
+      <View style={styles.section}>
+        <SectionHeader title="What you coach" caption="Changes what this app shows you" />
+        <Card style={styles.big}>
+          <TrackingPicker
+            value={trainer.tracks}
+            busy={state.isLoading}
+            onChange={(tracks) => void updateTrainer({ tracks })}
+          />
+          {state.isError ? (
+            <View style={styles.banner} accessibilityRole="alert">
+              <Ionicons name="alert-circle-outline" size={16} color={colors.danger} />
+              <Text variant="caption" tone="danger" style={styles.bannerText}>
+                Could not save that. Check your connection and try again.
+              </Text>
+            </View>
+          ) : null}
+        </Card>
+      </View>
 
-      <PlanSummary forRole="trainer" />
+      <View style={styles.section}>
+        <PlanSummary forRole="trainer" />
+      </View>
 
-      <Button
-        label="Sign out"
-        icon="log-out-outline"
-        variant="secondary"
-        fullWidth
-        style={styles.signOut}
-        onPress={() => {
-          void signOutEverywhere().then(() => router.replace(routes.welcome()));
-        }}
-      />
+      <SignOutButton style={styles.signOut} />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   identity: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.lg,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.md,
   },
   identityText: {
-    flex: 1,
-    gap: 2,
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: spacing.xs,
+  },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primarySoft,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  big: {
+    padding: spacing.xl,
   },
   banner: {
     flexDirection: 'row',
@@ -102,6 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   signOut: {
-    marginTop: spacing.xl,
+    marginTop: spacing.lg,
   },
 });

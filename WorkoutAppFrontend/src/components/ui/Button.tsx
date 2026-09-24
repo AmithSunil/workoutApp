@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { ActivityIndicator, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ActivityIndicator, StyleSheet, View, type ViewStyle } from 'react-native';
 
+import { PressableScale } from './PressableScale';
 import { Text } from './Text';
 import { colors, radius, spacing } from '@/theme';
 
@@ -22,20 +24,36 @@ export interface ButtonProps {
 
 const bg: Record<Variant, string> = {
   primary: colors.primary,
-  secondary: colors.surfaceMuted,
-  ghost: 'transparent',
+  secondary: colors.surface,
+  ghost: colors.primarySoft,
   danger: colors.danger,
 };
 
 const fg: Record<Variant, string> = {
   primary: colors.textOnPrimary,
   secondary: colors.text,
-  ghost: colors.primary,
+  ghost: colors.primaryText,
   danger: colors.textInverse,
 };
 
-const heights: Record<Size, number> = { sm: 34, md: 44, lg: 52 };
+/** Solid fills get a darker rim + a lit top edge; flat ones a hairline. */
+const edge: Record<Variant, string> = {
+  primary: colors.primaryPressed,
+  secondary: colors.border,
+  ghost: colors.primarySoft,
+  danger: colors.dangerPressed,
+};
+
+/** Solid fills are a soft top-lit gradient rather than one flat slab. */
+const gradient: Partial<Record<Variant, [string, string]>> = {
+  primary: [colors.primaryTop, colors.primary],
+  danger: [colors.dangerTop, colors.danger],
+};
+
+const heights: Record<Size, number> = { sm: 36, md: 46, lg: 52 };
 const paddings: Record<Size, number> = { sm: spacing.md, md: spacing.lg, lg: spacing.xl };
+/** Rounded rectangle, not a pill — softer than square, calmer than a capsule. */
+const corners: Record<Size, number> = { sm: radius.xs, md: radius.sm, lg: radius.md };
 
 export function Button({
   label,
@@ -50,77 +68,117 @@ export function Button({
   style,
 }: ButtonProps) {
   const inactive = disabled || loading;
-  const content = fg[variant];
+  const solid = variant === 'primary' || variant === 'danger';
+  // Disabled is a quiet neutral, not a washed-out brand colour.
+  const muted = disabled && !loading;
+  const content = muted ? colors.textTertiary : fg[variant];
+  const iconSize = size === 'sm' ? 15 : 17;
 
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityState={{ disabled: !!inactive, busy: !!loading }}
-      onPress={inactive ? undefined : onPress}
-      style={({ pressed }) => [
+      disabled={inactive}
+      onPress={onPress}
+      style={[
         styles.base,
         {
-          backgroundColor: bg[variant],
+          backgroundColor: muted ? colors.surfaceMuted : bg[variant],
+          borderColor: muted ? colors.surfaceMuted : edge[variant],
           height: heights[size],
           paddingHorizontal: paddings[size],
+          borderRadius: corners[size],
         },
-        variant === 'ghost' && styles.ghost,
+        solid && !muted && styles.lift,
         fullWidth && styles.fullWidth,
-        inactive && styles.disabled,
-        pressed && !inactive && styles.pressed,
         style,
       ]}>
+      {solid && !muted ? (
+        <>
+          {/* Own radius instead of overflow:hidden — clipping would eat the iOS shadow. */}
+          <LinearGradient
+            pointerEvents="none"
+            colors={gradient[variant]!}
+            style={[StyleSheet.absoluteFill, { borderRadius: corners[size] - 1 }]}
+          />
+          <View
+            pointerEvents="none"
+            style={[styles.highlight, { borderRadius: corners[size] }]}
+          />
+        </>
+      ) : null}
       {loading ? (
         <ActivityIndicator size="small" color={content} />
       ) : (
         <View style={styles.row}>
           {icon && iconPosition === 'left' ? (
-            <Ionicons name={icon} size={size === 'sm' ? 15 : 17} color={content} />
+            solid && !muted && size !== 'sm' ? (
+              // On a solid fill the icon sits in its own soft chip.
+              <View style={styles.iconChip}>
+                <Ionicons name={icon} size={iconSize - 1} color={content} />
+              </View>
+            ) : (
+              <Ionicons name={icon} size={iconSize} color={content} />
+            )
           ) : null}
           <Text
             variant="button"
             color={content}
             numberOfLines={1}
-            style={size === 'sm' && styles.smLabel}>
+            style={size === 'sm' ? styles.smLabel : size === 'lg' ? styles.lgLabel : undefined}>
             {label}
           </Text>
           {icon && iconPosition === 'right' ? (
-            <Ionicons name={icon} size={size === 'sm' ? 15 : 17} color={content} />
+            <Ionicons name={icon} size={iconSize} color={content} />
           ) : null}
         </View>
       )}
-    </Pressable>
+    </PressableScale>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
   },
-  ghost: {
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.primarySoftBorder,
-    backgroundColor: colors.primarySoft,
+  /** Tight, tinted contact shadow — sits on the surface, doesn't float. */
+  lift: {
+    shadowColor: colors.primaryPressed,
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
+  },
+  highlight: {
+    ...StyleSheet.absoluteFill,
+    borderTopWidth: 1,
+    borderColor: colors.highlight,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.sm + 2,
+  },
+  iconChip: {
+    width: 26,
+    height: 26,
+    borderRadius: radius.pill,
+    backgroundColor: colors.onPrimarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   smLabel: {
     fontSize: 13,
     lineHeight: 18,
   },
+  lgLabel: {
+    fontSize: 16,
+    lineHeight: 21,
+    letterSpacing: -0.2,
+  },
   fullWidth: {
     alignSelf: 'stretch',
-  },
-  disabled: {
-    opacity: 0.45,
-  },
-  pressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.985 }],
   },
 });

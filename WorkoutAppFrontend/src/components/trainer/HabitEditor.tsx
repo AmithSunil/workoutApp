@@ -1,15 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import {
   useCreateHabitMutation,
   useDeleteHabitMutation,
   useUpdateHabitMutation,
 } from '@/api/endpoints/progressApi';
-import { Button, EmptyState, Input, Sheet, Text } from '@/components/ui';
+import { Button, Card, EmptyState, PressableScale, Sheet, Text } from '@/components/ui';
 import { HABIT_ICONS } from '@/components/progress/HabitChecklist';
-import { colors, radius, spacing } from '@/theme';
+import { colors, fonts, radius, spacing } from '@/theme';
 import type { Habit } from '@/types/models';
 
 export interface HabitEditorProps {
@@ -43,113 +43,194 @@ export function HabitEditor({ visible, onClose, clientId, habits }: HabitEditorP
   };
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Daily habits" height="80%">
-      <Text variant="caption" tone="secondary" style={styles.hint}>
-        These are the goals your client ticks off each day. Renaming one keeps its history.
-      </Text>
+    <Sheet visible={visible} onClose={onClose} title="Daily habits" height="84%">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.list}>
+        <Text variant="caption" tone="secondary">
+          What your client ticks off each day. Changes save as you go, and renaming one keeps its
+          history.
+        </Text>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
+        {/* Add first — it's the most common reason to open this */}
+        <View style={styles.addRow}>
+          <TextInput
+            value={draft}
+            onChangeText={setDraft}
+            placeholder="Add a habit, e.g. 10k steps"
+            placeholderTextColor={colors.textTertiary}
+            returnKeyType="done"
+            onSubmitEditing={add}
+            style={styles.addInput}
+            accessibilityLabel="New habit"
+          />
+          <PressableScale
+            onPress={add}
+            disabled={!draft.trim() || creating.isLoading}
+            accessibilityRole="button"
+            accessibilityLabel="Add habit"
+            style={[styles.addButton, !draft.trim() && styles.addButtonOff]}>
+            <Ionicons
+              name="add"
+              size={22}
+              color={draft.trim() ? colors.textOnPrimary : colors.textTertiary}
+            />
+          </PressableScale>
+        </View>
+
         {habits.length === 0 ? (
           <EmptyState icon="list-outline" title="No habits yet" compact />
         ) : (
-          habits.map((habit) => (
-            <View key={habit.id} style={styles.row}>
-              <Input
-                defaultValue={habit.title}
-                placeholder="Habit"
-                returnKeyType="done"
-                containerStyle={styles.field}
-                onEndEditing={(e) => {
-                  const title = e.nativeEvent.text.trim();
-                  if (title && title !== habit.title) {
-                    void updateHabit({ id: habit.id, clientId, patch: { title } });
-                  }
-                }}
-              />
-
-              <View style={styles.icons}>
-                {ICON_KEYS.map((key) => (
-                  <Pressable
-                    key={key}
-                    onPress={() => void updateHabit({ id: habit.id, clientId, patch: { icon: key } })}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Use the ${key} icon`}
-                    style={[styles.iconChip, habit.icon === key && styles.iconChipActive]}>
+          <Card padded={false}>
+            {habits.map((habit, i) => (
+              <View key={habit.id} style={[styles.habit, i > 0 && styles.habitRule]}>
+                <View style={styles.titleRow}>
+                  <View style={styles.currentIcon}>
                     <Ionicons
-                      name={HABIT_ICONS[key]}
-                      size={15}
-                      color={habit.icon === key ? colors.primary : colors.textTertiary}
+                      name={HABIT_ICONS[habit.icon] ?? 'ellipse-outline'}
+                      size={18}
+                      color={colors.primaryText}
                     />
+                  </View>
+                  <TextInput
+                    defaultValue={habit.title}
+                    placeholder="Habit"
+                    placeholderTextColor={colors.textTertiary}
+                    returnKeyType="done"
+                    style={styles.titleInput}
+                    accessibilityLabel={`Rename ${habit.title}`}
+                    onEndEditing={(e) => {
+                      const title = e.nativeEvent.text.trim();
+                      if (title && title !== habit.title) {
+                        void updateHabit({ id: habit.id, clientId, patch: { title } });
+                      }
+                    }}
+                  />
+                  <Pressable
+                    onPress={() => void deleteHabit({ id: habit.id, clientId })}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Remove ${habit.title}`}
+                    hitSlop={10}>
+                    <Ionicons name="trash-outline" size={18} color={colors.textTertiary} />
                   </Pressable>
-                ))}
-                <Pressable
-                  onPress={() => void deleteHabit({ id: habit.id, clientId })}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Remove ${habit.title}`}
-                  hitSlop={8}
-                  style={styles.remove}>
-                  <Ionicons name="trash-outline" size={16} color={colors.danger} />
-                </Pressable>
-              </View>
-            </View>
-          ))
-        )}
+                </View>
 
-        <View style={styles.row}>
-          <Input
-            label="NEW HABIT"
-            value={draft}
-            onChangeText={setDraft}
-            placeholder="e.g. 10k steps"
-            returnKeyType="done"
-            onSubmitEditing={add}
-          />
-          <Button
-            label="Add habit"
-            icon="add"
-            variant="secondary"
-            fullWidth
-            disabled={!draft.trim() || creating.isLoading}
-            onPress={add}
-          />
-        </View>
+                <View style={styles.icons}>
+                  {ICON_KEYS.map((key) => {
+                    const on = habit.icon === key;
+                    return (
+                      <Pressable
+                        key={key}
+                        onPress={() =>
+                          void updateHabit({ id: habit.id, clientId, patch: { icon: key } })
+                        }
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: on }}
+                        accessibilityLabel={`Use the ${key} icon`}
+                        hitSlop={4}
+                        style={[styles.iconChip, on && styles.iconChipActive]}>
+                        <Ionicons
+                          name={HABIT_ICONS[key]}
+                          size={15}
+                          color={on ? colors.primaryText : colors.textTertiary}
+                        />
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            ))}
+          </Card>
+        )}
       </ScrollView>
+
+      <View style={styles.footer}>
+        <Button label="Done" variant="secondary" size="lg" fullWidth onPress={onClose} />
+      </View>
     </Sheet>
   );
 }
 
 const styles = StyleSheet.create({
-  hint: {
-    marginBottom: spacing.md,
-  },
   list: {
     gap: spacing.lg,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing.xl,
   },
-  row: {
+  addRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.sm,
   },
-  field: {
+  addInput: {
     flex: 1,
+    height: 50,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface,
+    color: colors.text,
+    fontFamily: fonts.regular,
+    fontSize: 15,
+  },
+  addButton: {
+    width: 50,
+    height: 50,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addButtonOff: {
+    backgroundColor: colors.surfaceMuted,
+  },
+  habit: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
+  },
+  habitRule: {
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  currentIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleInput: {
+    flex: 1,
+    paddingVertical: spacing.xs,
+    color: colors.text,
+    fontFamily: fonts.semibold,
+    fontSize: 15,
   },
   icons: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
+    paddingLeft: 36 + spacing.md,
   },
   iconChip: {
     width: 32,
     height: 32,
     borderRadius: radius.pill,
-    backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: 'transparent',
   },
   iconChipActive: {
+    borderColor: colors.primary,
     backgroundColor: colors.primarySoft,
   },
-  remove: {
-    marginLeft: 'auto',
-    padding: spacing.xs,
+  footer: {
+    paddingTop: spacing.md,
   },
 });

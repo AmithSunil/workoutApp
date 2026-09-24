@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type ViewProps, type ViewStyle } from 'react-native';
 
+import { PressableScale } from './PressableScale';
 import { Text } from './Text';
 import { colors, elevation, radius, spacing } from '@/theme';
 
@@ -31,12 +32,9 @@ export function Card({
 
   if (onPress) {
     return (
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [composed, pressed && styles.pressed]}
-        {...rest}>
+      <PressableScale onPress={onPress} scaleTo={0.985} style={composed} {...rest}>
         {children}
-      </Pressable>
+      </PressableScale>
     );
   }
 
@@ -83,10 +81,6 @@ const styles = StyleSheet.create({
   outlined: {
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderColor: colors.border,
-  },
-  pressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.997 }],
   },
   header: {
     flexDirection: 'row',

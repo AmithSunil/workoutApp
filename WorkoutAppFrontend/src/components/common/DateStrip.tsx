@@ -25,6 +25,7 @@ export function DateStrip({ value, onChange, days = 14, markedDates = [] }: Date
       ref={scrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.bleed}
       contentContainerStyle={styles.content}
       // Anchor to today. `contentOffset` is iOS-only, so scroll on layout instead.
       onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: false })}>
@@ -37,23 +38,18 @@ export function DateStrip({ value, onChange, days = 14, markedDates = [] }: Date
             onPress={() => onChange(date)}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
-            style={[styles.day, active && styles.dayActive]}>
-            <Text variant="micro" tone={active ? 'inverse' : 'tertiary'}>
+            style={styles.day}>
+            <Text variant="micro" tone={active ? 'default' : 'tertiary'}>
               {weekdayInitial(date)}
             </Text>
-            <Text
-              variant="bodyStrong"
-              color={active ? colors.textInverse : isToday ? colors.primary : colors.text}>
-              {parseISODate(date).getDate()}
-            </Text>
-            <View
-              style={[
-                styles.dot,
-                marked.has(date) && {
-                  backgroundColor: active ? colors.textInverse : colors.primary,
-                },
-              ]}
-            />
+            <View style={[styles.num, active && styles.numActive]}>
+              <Text
+                variant="bodyStrong"
+                color={active ? colors.textInverse : isToday ? colors.primaryText : colors.text}>
+                {parseISODate(date).getDate()}
+              </Text>
+            </View>
+            <View style={[styles.dot, marked.has(date) && styles.dotMarked]} />
           </Pressable>
         );
       })}
@@ -62,29 +58,34 @@ export function DateStrip({ value, onChange, days = 14, markedDates = [] }: Date
 }
 
 const styles = StyleSheet.create({
+  // Edge to edge: the strip scrolls under the screen gutters.
+  bleed: {
+    marginHorizontal: -spacing.xl,
+  },
   content: {
-    gap: spacing.sm,
-    paddingHorizontal: 2,
+    paddingHorizontal: spacing.lg,
   },
   day: {
-    width: 46,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.md,
+    width: 48,
     alignItems: 'center',
-    gap: 2,
-    backgroundColor: colors.surface,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    gap: spacing.xs,
   },
-  dayActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+  num: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  numActive: {
+    backgroundColor: colors.surfaceInk,
   },
   dot: {
-    width: 4,
-    height: 4,
+    width: 5,
+    height: 5,
     borderRadius: radius.pill,
-    backgroundColor: 'transparent',
-    marginTop: 2,
+  },
+  dotMarked: {
+    backgroundColor: colors.primary,
   },
 });

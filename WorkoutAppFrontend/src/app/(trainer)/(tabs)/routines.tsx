@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
@@ -6,16 +7,18 @@ import { useGetRoutinesQuery } from '@/api/endpoints/routinesApi';
 import { useGetClientsQuery } from '@/api/endpoints/trainerApi';
 import { RoutineCard, routineTotals } from '@/components/routines';
 import {
-  Button,
   Card,
   EmptyState,
+  PressableScale,
   Screen,
+  ScreenTitle,
   SectionHeader,
   SkeletonCard,
-  StatTile,
+  StatRow,
+  Text,
 } from '@/components/ui';
 import { routes } from '@/navigation/routes';
-import { spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import type { ClientProfile } from '@/types/models';
 
 /**
@@ -51,68 +54,96 @@ export default function RoutinesScreen() {
 
   return (
     <Screen
-      title="Routines"
-      subtitle="Build a week once, assign to anyone"
       refreshControl={
         <RefreshControl refreshing={routines.isFetching} onRefresh={() => void routines.refetch()} />
-      }
-      headerRight={
-        <Button
-          label="New"
-          icon="add"
-          size="sm"
-          onPress={() => router.push(routes.trainer.routineBuilder())}
-        />
       }>
-      <View style={styles.tiles}>
-        <StatTile label="Templates" value={`${list.length}`} icon="documents-outline" tone="primary" />
-        <StatTile
-          label="Clients covered"
-          value={`${assignedClientCount}`}
-          hint={`of ${clients.data?.length ?? 0}`}
-          icon="people-outline"
-          tone={assignedClientCount > 0 ? 'success' : 'warning'}
+      <ScreenTitle
+        eyebrow="Build a week once, assign to anyone"
+        title="Routines"
+        action={{
+          icon: 'add',
+          label: 'New routine',
+          onPress: () => router.push(routes.trainer.routineBuilder()),
+        }}
+      />
+
+      <Card style={styles.big}>
+        <StatRow
+          items={[
+            { label: 'Templates', value: `${list.length}` },
+            {
+              label: 'Clients covered',
+              value: `${assignedClientCount}/${clients.data?.length ?? 0}`,
+            },
+            { label: 'Sets written', value: `${prescribedSets}` },
+          ]}
         />
-        <StatTile label="Sets written" value={`${prescribedSets}`} icon="barbell-outline" />
+      </Card>
+
+      <View style={styles.section}>
+        <SectionHeader title="Library" caption="Newest changes first" />
+
+        {routines.isLoading ? (
+          <>
+            <SkeletonCard lines={3} />
+            <SkeletonCard lines={3} />
+          </>
+        ) : list.length === 0 ? (
+          <Card>
+            <EmptyState
+              icon="clipboard-outline"
+              title="No routines yet"
+              message="Build a training week — pick the days, add exercises with target sets, reps and rest — then assign it to as many clients as you like."
+              actionLabel="Build your first routine"
+              onAction={() => router.push(routes.trainer.routineBuilder())}
+            />
+          </Card>
+        ) : (
+          <>
+            {list.map((routine) => (
+              <RoutineCard
+                key={routine.id}
+                title={routine.title}
+                days={routine.days}
+                assignedTo={routine.assignedClientIds
+                  .map((id) => clientsById.get(id))
+                  .filter((client): client is ClientProfile => Boolean(client))}
+                onPress={() => router.push(routes.trainer.routineDetail(routine.id))}
+              />
+            ))}
+            <PressableScale
+              onPress={() => router.push(routes.trainer.routineBuilder())}
+              accessibilityRole="button"
+              style={styles.newCard}>
+              <Ionicons name="add" size={20} color={colors.textSecondary} />
+              <Text variant="bodyStrong" tone="secondary">
+                Build a new routine
+              </Text>
+            </PressableScale>
+          </>
+        )}
       </View>
-
-      <SectionHeader title="Your library" caption="Newest changes first" />
-
-      {routines.isLoading ? (
-        <>
-          <SkeletonCard lines={3} />
-          <SkeletonCard lines={3} />
-        </>
-      ) : list.length === 0 ? (
-        <Card>
-          <EmptyState
-            icon="clipboard-outline"
-            title="No routines yet"
-            message="Build a training week — pick the days, add exercises with target sets, reps and rest — then assign it to as many clients as you like."
-            actionLabel="Build your first routine"
-            onAction={() => router.push(routes.trainer.routineBuilder())}
-          />
-        </Card>
-      ) : (
-        list.map((routine) => (
-          <RoutineCard
-            key={routine.id}
-            title={routine.title}
-            days={routine.days}
-            assignedTo={routine.assignedClientIds
-              .map((id) => clientsById.get(id))
-              .filter((client): client is ClientProfile => Boolean(client))}
-            onPress={() => router.push(routes.trainer.routineDetail(routine.id))}
-          />
-        ))
-      )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  tiles: {
-    flexDirection: 'row',
+  big: {
+    padding: spacing.xl,
+  },
+  section: {
     gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  newCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.xl,
+    borderRadius: radius.lg,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: colors.borderStrong,
   },
 });

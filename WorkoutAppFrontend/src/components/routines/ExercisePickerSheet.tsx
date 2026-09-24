@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { useGetExercisesQuery } from '@/api/endpoints/workoutsApi';
-import { Button, Chip, EmptyState, Sheet, Skeleton, Text } from '@/components/ui';
+import { Button, Chip, EmptyState, PressableScale, Sheet, Skeleton, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { Exercise, MuscleGroup } from '@/types/models';
 
@@ -123,11 +123,11 @@ export function ExercisePickerSheet({
           renderItem={({ item }) => {
             const added = addedExerciseIds.includes(item.id);
             return (
-              <Pressable
+              <PressableScale
                 onPress={() => onAdd(item)}
                 accessibilityRole="button"
                 accessibilityLabel={`Add ${item.name}`}
-                style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+                style={[styles.row]}>
                 <View style={styles.rowText}>
                   <Text variant="body" numberOfLines={1}>
                     {item.name}
@@ -143,7 +143,7 @@ export function ExercisePickerSheet({
                     color={added ? colors.success : colors.textOnPrimary}
                   />
                 </View>
-              </Pressable>
+              </PressableScale>
             );
           }}
         />
@@ -204,9 +204,6 @@ const styles = StyleSheet.create({
   },
   addButtonAdded: {
     backgroundColor: colors.successSoft,
-  },
-  pressed: {
-    opacity: 0.7,
   },
   done: {
     marginTop: spacing.sm,

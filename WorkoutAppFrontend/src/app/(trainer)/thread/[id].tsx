@@ -8,15 +8,7 @@ import { useGetNutritionRangeQuery } from '@/api/endpoints/nutritionApi';
 import { useGetClientQuery } from '@/api/endpoints/trainerApi';
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { ThreadView } from '@/components/messaging/ThreadView';
-import {
-  Avatar,
-  EmptyState,
-  Screen,
-  SegmentedControl,
-  Sheet,
-  Skeleton,
-  Text,
-} from '@/components/ui';
+import { Avatar, EmptyState, PressableScale, Screen, SegmentedControl, Sheet, Skeleton, Text } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
@@ -120,13 +112,13 @@ export default function TrainerThreadScreen() {
               <EmptyState icon="barbell-outline" title="No sessions to attach" compact />
             ) : (
               (logs.data ?? []).map((log) => (
-                <Pressable
+                <PressableScale
                   key={log.id}
                   onPress={() => {
                     setPending({ kind: 'workout', logId: log.id });
                     setPickerOpen(false);
                   }}
-                  style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+                  style={[styles.row]}>
                   <View style={[styles.badge, { backgroundColor: colors.primary }]}>
                     <Ionicons name="barbell" size={15} color={colors.textInverse} />
                   </View>
@@ -140,7 +132,7 @@ export default function TrainerThreadScreen() {
                     </Text>
                   </View>
                   <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
-                </Pressable>
+                </PressableScale>
               ))
             )
           ) : (days.data ?? []).length === 0 ? (
@@ -149,13 +141,13 @@ export default function TrainerThreadScreen() {
             (days.data ?? []).map((day) => {
               const share = pct(day.consumed.calories, day.targets.calories);
               return (
-                <Pressable
+                <PressableScale
                   key={day.date}
                   onPress={() => {
                     setPending({ kind: 'nutrition', date: day.date });
                     setPickerOpen(false);
                   }}
-                  style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+                  style={[styles.row]}>
                   <View
                     style={[
                       styles.badge,
@@ -178,7 +170,7 @@ export default function TrainerThreadScreen() {
                     </Text>
                   </View>
                   <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
-                </Pressable>
+                </PressableScale>
               );
             })
           )}
@@ -215,8 +207,5 @@ const styles = StyleSheet.create({
   },
   rowText: {
     flex: 1,
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

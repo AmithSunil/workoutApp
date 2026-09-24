@@ -39,7 +39,7 @@ export function RoutineCard({
   const trainingDays = days.map((day) => day.weekday);
 
   return (
-    <Card onPress={onPress}>
+    <Card onPress={onPress} style={styles.card}>
       <View style={styles.header}>
         <View style={styles.headerText}>
           <Text variant="h1" numberOfLines={2}>
@@ -56,11 +56,9 @@ export function RoutineCard({
               {badge}
             </Text>
           </View>
-        ) : (
-          <View style={styles.icon}>
-            <Ionicons name="calendar-outline" size={17} color={colors.primary} />
-          </View>
-        )}
+        ) : onPress ? (
+          <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
+        ) : null}
       </View>
 
       <View style={styles.week}>
@@ -68,7 +66,7 @@ export function RoutineCard({
           const training = trainingDays.includes(weekday);
           return (
             <View key={weekday} style={[styles.dayPip, training && styles.dayPipTraining]}>
-              <Text variant="micro" color={training ? colors.primary : colors.textTertiary}>
+              <Text variant="micro" color={training ? colors.textOnPrimary : colors.textTertiary}>
                 {WEEKDAY_ABBR[weekday].charAt(0)}
               </Text>
             </View>
@@ -108,6 +106,9 @@ export function RoutineCard({
 }
 
 const styles = StyleSheet.create({
+  card: {
+    padding: spacing.xl,
+  },
   header: {
     flexDirection: 'row',
     gap: spacing.md,
@@ -115,14 +116,6 @@ const styles = StyleSheet.create({
   headerText: {
     flex: 1,
     gap: 2,
-  },
-  icon: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.sm,
-    backgroundColor: colors.primarySoft,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   badge: {
     alignSelf: 'flex-start',
@@ -138,14 +131,14 @@ const styles = StyleSheet.create({
   },
   dayPip: {
     flex: 1,
-    height: 28,
-    borderRadius: radius.xs,
+    height: 32,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
   dayPipTraining: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.primary,
   },
   footer: {
     flexDirection: 'row',

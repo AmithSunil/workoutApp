@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Sparkline } from '@/components/charts';
-import { Avatar, Card, Text } from '@/components/ui';
+import { Avatar, Text } from '@/components/ui';
 import { colors, radius, spacing, statusColor, statusLabel } from '@/theme';
 import type { ClientProfile } from '@/types/models';
 import { timeAgo } from '@/utils/date';
@@ -15,25 +15,38 @@ export interface ClientRosterRowProps {
   onPress: () => void;
 }
 
+/**
+ * One client as a list row — meant to sit inside a shared card, separated by
+ * hairlines, rather than being a card of its own. Status reads from the avatar
+ * dot and the coloured score; the label goes to screen readers.
+ */
 export function ClientRosterRow({ client, trend, onPress }: ClientRosterRowProps) {
   const status = client.compliance.status;
   const tint = statusColor(status);
 
   return (
-    <Card padded={false} onPress={onPress} variant="flat" style={styles.card}>
-      <View style={styles.row}>
-        <Avatar
-          name={client.name}
-          uri={client.avatarUrl}
-          size={44}
-          status={client.invited ? undefined : status}
-        />
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={
+        client.invited
+          ? `${client.name}, invite pending`
+          : `${client.name}, ${statusLabel(status)}, ${client.compliance.score}% adherence`
+      }
+      style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+      <Avatar
+        name={client.name}
+        uri={client.avatarUrl}
+        size={48}
+        status={client.invited ? undefined : status}
+      />
 
-        <View style={styles.text}>
-          <Text variant="h2" numberOfLines={1}>
-            {client.name}
-          </Text>
-          <Text variant="micro" tone="tertiary" numberOfLines={1}>
+      <View style={styles.text}>
+        <Text variant="bodyStrong" numberOfLines={1}>
+          {client.name}
+        </Text>
+        <View style={styles.meta}>
+          <Text variant="caption" tone="tertiary" numberOfLines={1} style={styles.metaText}>
             {client.invited
               ? client.email
               : `${GOAL_LABEL[client.goal]} · ${
@@ -42,69 +55,59 @@ export function ClientRosterRow({ client, trend, onPress }: ClientRosterRowProps
                     : 'never logged'
                 }`}
           </Text>
-          {client.invited ? (
-            <View style={styles.statusRow}>
-              <View style={[styles.pill, { backgroundColor: colors.primarySoft }]}>
-                <Text variant="micro" tone="primary">
-                  Invite pending
-                </Text>
-              </View>
-            </View>
-          ) : (
-          <View style={styles.statusRow}>
-            <View style={[styles.pill, { backgroundColor: `${tint}1A` }]}>
-              <Text variant="micro" color={tint}>
-                {statusLabel(status)} · {client.compliance.score}%
+          {!client.invited && client.compliance.streakDays > 0 ? (
+            <View style={styles.streak}>
+              <Ionicons name="flame" size={11} color={colors.primary} />
+              <Text variant="caption" tone="tertiary">
+                {client.compliance.streakDays}d
               </Text>
             </View>
-            {client.compliance.streakDays > 0 ? (
-              <View style={styles.streak}>
-                <Ionicons name="flame" size={10} color={colors.warning} />
-                <Text variant="micro" tone="tertiary">
-                  {client.compliance.streakDays}d
-                </Text>
-              </View>
-            ) : null}
-          </View>
-          )}
-        </View>
-
-        <View style={styles.right}>
-          {trend && trend.length > 1 ? (
-            <Sparkline values={trend} color={tint} width={58} height={26} />
           ) : null}
-          <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
         </View>
       </View>
-    </Card>
+
+      {client.invited ? (
+        <View style={styles.pending}>
+          <Text variant="micro" tone="primary">
+            Invited
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.right}>
+          <Text variant="bodyStrong" color={tint}>
+            {client.compliance.score}%
+          </Text>
+          {trend && trend.length > 1 ? (
+            <Sparkline values={trend} color={tint} width={52} height={20} />
+          ) : null}
+        </View>
+      )}
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    padding: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  pressed: {
+    backgroundColor: colors.surfaceMuted,
   },
   text: {
     flex: 1,
     gap: 2,
   },
-  statusRow: {
+  meta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginTop: 3,
   },
-  pill: {
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
+  metaText: {
+    flexShrink: 1,
   },
   streak: {
     flexDirection: 'row',
@@ -113,6 +116,12 @@ const styles = StyleSheet.create({
   },
   right: {
     alignItems: 'flex-end',
-    gap: spacing.xs,
+    gap: 2,
+  },
+  pending: {
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    backgroundColor: colors.primarySoft,
   },
 });

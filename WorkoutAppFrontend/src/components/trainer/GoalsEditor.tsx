@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useUpdateClientMutation } from '@/api/endpoints/trainerApi';
@@ -16,11 +16,11 @@ export interface GoalsEditorProps {
 
 /** Every field is one positive number, so one list drives the form and the save. */
 const FIELDS = [
-  { key: 'weight', label: 'GOAL WEIGHT', unit: 'kg', decimal: true },
-  { key: 'calories', label: 'CALORIES', unit: 'kcal', decimal: false },
-  { key: 'protein', label: 'PROTEIN', unit: 'g', decimal: false },
-  { key: 'carbs', label: 'CARBS', unit: 'g', decimal: false },
-  { key: 'fat', label: 'FAT', unit: 'g', decimal: false },
+  { key: 'weight', label: 'Goal weight', unit: 'kg', decimal: true },
+  { key: 'calories', label: 'Calories', unit: 'kcal', decimal: false },
+  { key: 'protein', label: 'Protein', unit: 'g', decimal: false },
+  { key: 'carbs', label: 'Carbs', unit: 'g', decimal: false },
+  { key: 'fat', label: 'Fat', unit: 'g', decimal: false },
 ] as const;
 
 type FieldKey = (typeof FIELDS)[number]['key'];
@@ -78,60 +78,83 @@ export function GoalsEditor({ client, currentWeightKg, onClose }: GoalsEditorPro
       .catch(() => undefined);
   };
 
+  const field = (key: FieldKey, style?: object) => {
+    const i = FIELDS.findIndex((f) => f.key === key);
+    const f = FIELDS[i];
+    return (
+      <Input
+        label={f.label}
+        suffix={f.unit}
+        value={draft[key]}
+        onChangeText={(text) => edit(key, text)}
+        keyboardType={f.decimal ? 'decimal-pad' : 'number-pad'}
+        returnKeyType="done"
+        selectTextOnFocus
+        containerStyle={style}
+        error={bad[i] ? (f.decimal ? 'Enter a number' : 'Whole number') : null}
+      />
+    );
+  };
+
+  // The macros imply a calorie number of their own; say so when it drifts
+  // from the target the coach typed, rather than silently saving both.
+  const macroKcal = [protein, carbs, fat].every(Number.isFinite)
+    ? Math.round(protein * 4 + carbs * 4 + fat * 9)
+    : null;
+  const drift = macroKcal !== null && Number.isFinite(calories) ? macroKcal - calories : 0;
+
   return (
-    <Sheet visible onClose={onClose} title="Goals" height="86%">
-      <Text variant="caption" tone="secondary" style={styles.hint}>
-        What this client is working towards. Days already logged keep the targets they were held
-        to — the new ones apply from today.
-      </Text>
+    <Sheet visible onClose={onClose} title="Goals" height="88%">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.list}>
+        <Text variant="caption" tone="secondary">
+          Days already logged keep the targets they were held to. New ones apply from today.
+        </Text>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
-        {FIELDS.map((field, i) => (
-          <Fragment key={field.key}>
-            <Input
-              label={`${field.label} (${field.unit})`}
-              value={draft[field.key]}
-              onChangeText={(text) => edit(field.key, text)}
-              keyboardType={field.decimal ? 'decimal-pad' : 'number-pad'}
-              returnKeyType="done"
-              selectTextOnFocus
-              error={bad[i] ? (field.decimal ? 'Enter a number' : 'Enter a whole number') : null}
+        {/* Where the scale should land, and what that makes the programme */}
+        <View style={styles.group}>
+          <Text variant="h2">Body</Text>
+          {field('weight')}
+          <View style={styles.goal}>
+            <SegmentedControl
+              value={goal}
+              segments={GOAL_SEGMENTS}
+              size="sm"
+              onChange={(value) => {
+                setGoal(value);
+                setPinned(true);
+              }}
             />
+            <Text variant="caption" tone="tertiary">
+              {current === null
+                ? 'No weigh-in yet, so pick the goal yourself.'
+                : pinned
+                  ? `Set by you · ${current.toFixed(1)} kg today`
+                  : `Follows the goal weight against ${current.toFixed(1)} kg today. Tap one to fix it.`}
+            </Text>
+          </View>
+        </View>
 
-            {field.key === 'weight' ? (
-              <View style={styles.goal}>
-                <Text variant="label" tone="secondary">
-                  GOAL
-                </Text>
-                <SegmentedControl
-                  value={goal}
-                  segments={GOAL_SEGMENTS}
-                  size="sm"
-                  onChange={(value) => {
-                    setGoal(value);
-                    setPinned(true);
-                  }}
-                />
-                <Text variant="micro" tone="tertiary">
-                  {current === null
-                    ? 'No weigh-in yet, so pick the goal yourself.'
-                    : pinned
-                      ? `Set by you — ${current.toFixed(1)} kg today.`
-                      : `Follows the goal weight against the ${current.toFixed(1)} kg they weigh today. Pick one to fix it.`}
-                </Text>
-              </View>
-            ) : null}
-          </Fragment>
-        ))}
-
-        <Button
-          label="Save goals"
-          icon="checkmark"
-          fullWidth
-          loading={saving.isLoading}
-          disabled={bad.some(Boolean) || saving.isLoading}
-          onPress={save}
-        />
+        {/* What they eat to get there */}
+        <View style={styles.group}>
+          <Text variant="h2">Daily targets</Text>
+          {field('calories')}
+          <View style={styles.row}>
+            {field('protein', styles.cell)}
+            {field('carbs', styles.cell)}
+            {field('fat', styles.cell)}
+          </View>
+          {macroKcal !== null ? (
+            <Text variant="caption" tone={Math.abs(drift) > 50 ? 'warning' : 'tertiary'}>
+              Macros add up to {macroKcal.toLocaleString('en-US')} kcal
+              {Math.abs(drift) > 50
+                ? ` — ${Math.abs(drift)} ${drift > 0 ? 'over' : 'under'} the calorie target`
+                : ''}
+            </Text>
+          ) : null}
+        </View>
 
         {saving.isError ? (
           <Text variant="caption" tone="danger">
@@ -139,19 +162,40 @@ export function GoalsEditor({ client, currentWeightKg, onClose }: GoalsEditorPro
           </Text>
         ) : null}
       </ScrollView>
+
+      <View style={styles.footer}>
+        <Button
+          label="Save goals"
+          size="lg"
+          fullWidth
+          loading={saving.isLoading}
+          disabled={bad.some(Boolean) || saving.isLoading}
+          onPress={save}
+        />
+      </View>
     </Sheet>
   );
 }
 
 const styles = StyleSheet.create({
-  hint: {
-    marginBottom: spacing.md,
-  },
   list: {
-    gap: spacing.lg,
-    paddingBottom: spacing.xxl,
+    gap: spacing.xl,
+    paddingBottom: spacing.xl,
+  },
+  group: {
+    gap: spacing.md,
   },
   goal: {
     gap: spacing.sm,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  cell: {
+    flex: 1,
+  },
+  footer: {
+    paddingTop: spacing.md,
   },
 });

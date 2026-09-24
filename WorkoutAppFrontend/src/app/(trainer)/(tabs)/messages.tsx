@@ -5,7 +5,16 @@ import { Pressable, RefreshControl, StyleSheet, TextInput, View } from 'react-na
 
 import { useGetThreadsQuery } from '@/api/endpoints/messagingApi';
 import { useGetClientsQuery } from '@/api/endpoints/trainerApi';
-import { Avatar, Card, EmptyState, Screen, SkeletonCard, Text } from '@/components/ui';
+import {
+  Avatar,
+  Card,
+  EmptyState,
+  Screen,
+  ScreenTitle,
+  SectionHeader,
+  SkeletonCard,
+  Text,
+} from '@/components/ui';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing } from '@/theme';
 import { relativeTime } from '@/utils/date';
@@ -40,15 +49,72 @@ export default function MessagesScreen() {
 
   const totalUnread = (threads.data ?? []).reduce((s, t) => s + t.unreadForTrainer, 0);
 
+  const unreadRows = rows.filter(({ thread }) => thread.unreadForTrainer > 0);
+  const readRows = rows.filter(({ thread }) => thread.unreadForTrainer === 0);
+
+  const renderRows = (list: typeof rows) => (
+    <Card padded={false} style={styles.list}>
+      {list.map(({ thread, client }, i) => {
+        const unread = thread.unreadForTrainer > 0;
+        return (
+          <View key={thread.id}>
+            {i > 0 ? <View style={styles.divider} /> : null}
+            <Pressable
+              onPress={() => router.push(routes.trainer.thread(thread.id))}
+              accessibilityRole="button"
+              accessibilityLabel={`${client?.name ?? 'Client'}${unread ? `, ${thread.unreadForTrainer} unread` : ''}`}
+              style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+              <Avatar
+                name={client?.name ?? 'Client'}
+                uri={client?.avatarUrl}
+                size={48}
+                status={client?.compliance.status}
+              />
+              <View style={styles.text}>
+                <View style={styles.titleRow}>
+                  <Text variant="bodyStrong" numberOfLines={1} style={styles.name}>
+                    {client?.name ?? 'Client'}
+                  </Text>
+                  <Text variant="caption" color={unread ? colors.primaryText : colors.textTertiary}>
+                    {relativeTime(thread.lastMessageAt)}
+                  </Text>
+                </View>
+                <View style={styles.titleRow}>
+                  <Text
+                    variant="caption"
+                    tone={unread ? 'default' : 'tertiary'}
+                    numberOfLines={1}
+                    style={styles.name}>
+                    {thread.lastMessagePreview}
+                  </Text>
+                  {unread ? (
+                    <View style={styles.badge}>
+                      <Text variant="micro" color={colors.textOnPrimary}>
+                        {thread.unreadForTrainer}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+              </View>
+            </Pressable>
+          </View>
+        );
+      })}
+    </Card>
+  );
+
   return (
     <Screen
-      title="Messages"
-      subtitle={totalUnread > 0 ? `${totalUnread} unread` : 'All caught up'}
       refreshControl={
         <RefreshControl refreshing={threads.isFetching} onRefresh={() => void threads.refetch()} />
       }>
+      <ScreenTitle
+        eyebrow={totalUnread > 0 ? `${totalUnread} unread` : 'All caught up'}
+        title="Messages"
+      />
+
       <View style={styles.searchRow}>
-        <Ionicons name="search" size={16} color={colors.textTertiary} />
+        <Ionicons name="search" size={18} color={colors.textTertiary} />
         <TextInput
           value={query}
           onChangeText={setQuery}
@@ -57,6 +123,11 @@ export default function MessagesScreen() {
           style={styles.input}
           autoCorrect={false}
         />
+        {query.length > 0 ? (
+          <Pressable onPress={() => setQuery('')} hitSlop={8}>
+            <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
+          </Pressable>
+        ) : null}
       </View>
 
       {threads.isLoading ? (
@@ -75,53 +146,20 @@ export default function MessagesScreen() {
           />
         </Card>
       ) : (
-        <Card padded={false}>
-          {rows.map(({ thread, client }, i) => (
-            <Pressable
-              key={thread.id}
-              onPress={() => router.push(routes.trainer.thread(thread.id))}
-              style={({ pressed }) => [
-                styles.row,
-                i > 0 && styles.rowBordered,
-                pressed && styles.pressed,
-              ]}>
-              <Avatar
-                name={client?.name ?? 'Client'}
-                uri={client?.avatarUrl}
-                size={44}
-                status={client?.compliance.status}
-              />
-              <View style={styles.text}>
-                <View style={styles.titleRow}>
-                  <Text
-                    variant={thread.unreadForTrainer > 0 ? 'bodyStrong' : 'body'}
-                    numberOfLines={1}
-                    style={styles.name}>
-                    {client?.name ?? 'Client'}
-                  </Text>
-                  <Text variant="micro" tone="tertiary">
-                    {relativeTime(thread.lastMessageAt)}
-                  </Text>
-                </View>
-                <Text
-                  variant="caption"
-                  tone={thread.unreadForTrainer > 0 ? 'default' : 'secondary'}
-                  numberOfLines={1}>
-                  {thread.lastMessagePreview}
-                </Text>
-              </View>
-              {thread.unreadForTrainer > 0 ? (
-                <View style={styles.badge}>
-                  <Text variant="micro" color={colors.textInverse}>
-                    {thread.unreadForTrainer}
-                  </Text>
-                </View>
-              ) : (
-                <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
-              )}
-            </Pressable>
-          ))}
-        </Card>
+        <>
+          {unreadRows.length > 0 ? (
+            <View style={styles.section}>
+              <SectionHeader title="Unread" />
+              {renderRows(unreadRows)}
+            </View>
+          ) : null}
+          {readRows.length > 0 ? (
+            <View style={styles.section}>
+              <SectionHeader title={unreadRows.length > 0 ? 'Earlier' : 'Conversations'} />
+              {renderRows(readRows)}
+            </View>
+          ) : null}
+        </>
       )}
     </Screen>
   );
@@ -134,16 +172,26 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    height: 44,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    paddingHorizontal: spacing.lg,
+    height: 50,
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     color: colors.text,
     paddingVertical: 0,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  list: {
+    paddingVertical: spacing.xs,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth * 2,
+    backgroundColor: colors.divider,
+    marginLeft: spacing.lg + 48 + spacing.md,
   },
   row: {
     flexDirection: 'row',
@@ -152,17 +200,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
-  rowBordered: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-  },
   text: {
     flex: 1,
     gap: 2,
   },
   titleRow: {
     flexDirection: 'row',
-    alignItems: 'baseline',
+    alignItems: 'center',
     justifyContent: 'space-between',
     gap: spacing.sm,
   },

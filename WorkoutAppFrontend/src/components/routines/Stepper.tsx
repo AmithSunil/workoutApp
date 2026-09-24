@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Text } from '@/components/ui';
+import { PressableScale, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 
 export interface StepperProps {
@@ -43,37 +43,37 @@ export function Stepper({
         {label.toUpperCase()}
       </Text>
       <View style={styles.control}>
-        <Pressable
+        <PressableScale
           onPress={() => !atMin && onChange(Math.max(min, value - step))}
           disabled={atMin}
           hitSlop={6}
           accessibilityRole="button"
           accessibilityLabel={`Decrease ${label}${suffix}`}
-          style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+          style={[styles.button]}>
           <Ionicons
             name="remove"
             size={14}
             color={atMin ? colors.borderStrong : colors.textSecondary}
           />
-        </Pressable>
+        </PressableScale>
 
         <Text variant="bodyStrong" align="center" style={styles.value}>
           {format ? format(value) : value}
         </Text>
 
-        <Pressable
+        <PressableScale
           onPress={() => !atMax && onChange(Math.min(max, value + step))}
           disabled={atMax}
           hitSlop={6}
           accessibilityRole="button"
           accessibilityLabel={`Increase ${label}${suffix}`}
-          style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+          style={[styles.button]}>
           <Ionicons
             name="add"
             size={14}
             color={atMax ? colors.borderStrong : colors.textSecondary}
           />
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );
@@ -96,9 +96,6 @@ const styles = StyleSheet.create({
     height: 32,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.5,
   },
   value: {
     flex: 1,

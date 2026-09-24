@@ -13,6 +13,8 @@ export interface HabitChecklistProps {
   /** Renders the trailing 7-day dot grid next to each row. */
   showHistory?: boolean;
   readOnly?: boolean;
+  /** Drops the built-in title row — for screens that label the section themselves. */
+  headless?: boolean;
 }
 
 /** The icons a habit can carry — the editor offers exactly this set. */
@@ -31,12 +33,14 @@ export function HabitChecklist({
   onToggle,
   showHistory = true,
   readOnly,
+  headless,
 }: HabitChecklistProps) {
   const week = lastNDays(7, date);
   const doneToday = habits.filter((h) => h.completedDates.includes(date)).length;
 
   return (
     <Card padded={false}>
+      {headless ? null : (
       <View style={styles.header}>
         <View>
           <Text variant="h2">Daily habits</Text>
@@ -50,8 +54,9 @@ export function HabitChecklist({
           </Text>
         </View>
       </View>
+      )}
 
-      {habits.map((habit) => {
+      {habits.map((habit, i) => {
         const done = habit.completedDates.includes(date);
         return (
           <Pressable
@@ -59,7 +64,11 @@ export function HabitChecklist({
             onPress={() => !readOnly && onToggle(habit)}
             accessibilityRole="checkbox"
             accessibilityState={{ checked: done }}
-            style={({ pressed }) => [styles.row, pressed && !readOnly && styles.pressed]}>
+            style={({ pressed }) => [
+              styles.row,
+              headless && i === 0 && styles.rowFirst,
+              pressed && !readOnly && styles.pressed,
+            ]}>
             <View style={[styles.check, done && styles.checkDone]}>
               {done ? <Ionicons name="checkmark" size={14} color={colors.textOnPrimary} /> : null}
             </View>
@@ -127,13 +136,16 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
   },
+  rowFirst: {
+    borderTopWidth: 0,
+  },
   pressed: {
     backgroundColor: colors.surfaceMuted,
   },
   check: {
-    width: 22,
-    height: 22,
-    borderRadius: radius.xs,
+    width: 24,
+    height: 24,
+    borderRadius: radius.pill,
     borderWidth: 1.5,
     borderColor: colors.borderStrong,
     alignItems: 'center',

@@ -1,9 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useMemo, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { FlatList, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { useGetAiSuggestionsQuery, useSearchFoodsQuery } from '@/api/endpoints/nutritionApi';
-import { Button, EmptyState, SegmentedControl, Sheet, Skeleton, Text } from '@/components/ui';
+import {
+  Button,
+  Chip,
+  EmptyState,
+  PressableScale,
+  SegmentedControl,
+  Sheet,
+  Skeleton,
+  Text,
+} from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { AiFoodSuggestion, FoodItem, MealSlot } from '@/types/models';
 import { grams, kcal } from '@/utils/format';
@@ -13,6 +22,8 @@ import { MEAL_META } from './MealSection';
 export interface FoodPickerSheetProps {
   visible: boolean;
   slot: MealSlot;
+  /** The meal row at the top of the sheet — lets the user fix a guessed slot. */
+  onSlotChange: (slot: MealSlot) => void;
   onClose: () => void;
   onPickFood: (food: FoodItem, servings: number) => void;
   onPickAi: (suggestion: AiFoodSuggestion) => void;
@@ -20,14 +31,24 @@ export interface FoodPickerSheetProps {
 
 type Mode = 'search' | 'ai';
 
+const SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner', 'snack'];
+/** How long a row shows its ✓ after being added. */
+const ADDED_MS = 1400;
+
 /**
  * Two ways into the same log: exact search for people who know what they ate,
  * and a free-text AI parser for everyone else. The AI path always routes
  * through the confirmation card rather than writing directly.
+ *
+ * The meal is chosen up front (pre-set from the time of day) and stays
+ * editable. Tapping a food row adds it straight away; the row flashes a ✓ and
+ * the footer counts what has gone in, so several foods can be logged in one
+ * visit and it's always obvious they landed.
  */
 export function FoodPickerSheet({
   visible,
   slot,
+  onSlotChange,
   onClose,
   onPickFood,
   onPickAi,
@@ -36,6 +57,29 @@ export function FoodPickerSheet({
   const [query, setQuery] = useState('');
   const [transcript, setTranscript] = useState('');
   const [servings, setServings] = useState<Record<string, number>>({});
+  const [addedCount, setAddedCount] = useState(0);
+  const [justAdded, setJustAdded] = useState<string | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Each visit starts clean.
+  useEffect(() => {
+    if (visible) {
+      setAddedCount(0);
+      setJustAdded(null);
+    }
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, [visible]);
+
+  const add = (item: FoodItem) => {
+    onPickFood(item, servings[item.id] ?? 1);
+    setServings((prev) => ({ ...prev, [item.id]: 1 }));
+    setAddedCount((n) => n + 1);
+    setJustAdded(item.id);
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setJustAdded(null), ADDED_MS);
+  };
 
   const { data: foods = [], isLoading } = useSearchFoodsQuery(query, { skip: !visible });
   const { data: aiSuggestions = [] } = useGetAiSuggestionsQuery(undefined, { skip: !visible });
@@ -63,7 +107,23 @@ export function FoodPickerSheet({
     }));
 
   return (
-    <Sheet visible={visible} onClose={onClose} title={`Add to ${MEAL_META[slot].label}`} height="82%">
+    <Sheet visible={visible} onClose={onClose} title="Log food" height="86%">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.slotsScroll}
+        contentContainerStyle={styles.slots}>
+        {SLOTS.map((s) => (
+          <Chip
+            key={s}
+            label={MEAL_META[s].label}
+            selected={s === slot}
+            accent={colors.surfaceInk}
+            onPress={() => onSlotChange(s)}
+          />
+        ))}
+      </ScrollView>
+
       <SegmentedControl<Mode>
         value={mode}
         onChange={setMode}
@@ -74,7 +134,7 @@ export function FoodPickerSheet({
       />
 
       {mode === 'search' ? (
-        <>
+        <View style={styles.pane}>
           <View style={styles.searchRow}>
             <Ionicons name="search" size={16} color={colors.textTertiary} />
             <TextInput
@@ -116,8 +176,14 @@ export function FoodPickerSheet({
               }
               renderItem={({ item }) => {
                 const count = servings[item.id] ?? 1;
+                const added = justAdded === item.id;
                 return (
-                  <View style={styles.foodRow}>
+                  <PressableScale
+                    onPress={() => add(item)}
+                    scaleTo={0.985}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Add ${item.name} to ${MEAL_META[slot].label}`}
+                    style={styles.foodRow}>
                     <View style={styles.emojiWrap}>
                       <Text style={styles.emoji}>{item.emoji}</Text>
                     </View>
@@ -142,21 +208,33 @@ export function FoodPickerSheet({
                         <Ionicons name="add" size={13} color={colors.textSecondary} />
                       </Pressable>
                     </View>
-                    <Pressable
-                      onPress={() => {
-                        onPickFood(item, count);
-                        setServings((prev) => ({ ...prev, [item.id]: 1 }));
-                      }}
-                      style={({ pressed }) => [styles.addBtn, pressed && styles.pressed]}
-                      accessibilityLabel={`Add ${item.name}`}>
-                      <Ionicons name="add" size={16} color={colors.textOnPrimary} />
-                    </Pressable>
-                  </View>
+                    <View style={[styles.addBtn, added && styles.addBtnDone]}>
+                      <Ionicons
+                        name={added ? 'checkmark' : 'add'}
+                        size={18}
+                        color={added ? colors.textOnPrimary : colors.primaryText}
+                      />
+                    </View>
+                  </PressableScale>
                 );
               }}
             />
           )}
-        </>
+
+          {addedCount > 0 ? (
+            <View style={styles.footer}>
+              <View style={styles.footerText}>
+                <Text variant="bodyStrong">
+                  {addedCount} added to {MEAL_META[slot].label}
+                </Text>
+                <Text variant="caption" tone="tertiary">
+                  Keep tapping to add more
+                </Text>
+              </View>
+              <Button label="Done" onPress={onClose} />
+            </View>
+          ) : null}
+        </View>
       ) : (
         <View style={styles.aiPane}>
           <Text variant="caption" tone="secondary">
@@ -200,6 +278,29 @@ export function FoodPickerSheet({
 }
 
 const styles = StyleSheet.create({
+  slotsScroll: {
+    flexGrow: 0,
+    marginHorizontal: -spacing.xl,
+    marginBottom: spacing.md,
+  },
+  slots: {
+    gap: spacing.sm,
+    paddingHorizontal: spacing.xl,
+  },
+  pane: {
+    flex: 1,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
+  },
+  footerText: {
+    flex: 1,
+  },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -268,15 +369,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   addBtn: {
-    width: 30,
-    height: 30,
+    width: 34,
+    height: 34,
     borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: {
-    opacity: 0.7,
+  addBtnDone: {
+    backgroundColor: colors.success,
   },
   aiPane: {
     gap: spacing.md,

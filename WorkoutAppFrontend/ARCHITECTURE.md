@@ -133,12 +133,16 @@ RTK Query owns anything the server owns. Plain slices own only what it doesn't:
 type scale. `src/components/ui/` wraps them into primitives — `Text` is the only
 text component in the app, so the type scale stays auditable in one file.
 
-The system is light, airy and deliberately soft. Its rules, and why they live in
-tokens rather than per screen:
+The system is light and energetic, and deliberately uncluttered. Its rules, and
+why they live in tokens rather than per screen:
 
-- **Off-white canvas, white cards, calm indigo accent.** `#F8F9FC` ground,
-  `#5B6CF0` primary. No pure black: text bottoms out at `#1A1F2B`, so nothing
-  on screen is a maximum-contrast edge.
+- **Neutral canvas, white cards, one blaze-orange accent.** `#F4F5F7` ground,
+  `#DD4410` primary (fills, icons, rings; 4.3:1 under white text) and
+  `primaryText` `#B23508` for accent text on light surfaces (5.3:1) — `Text`'s
+  `tone="primary"` resolves to it. Energy comes from that one accent and heavy
+  display type (Inter 800 on `title`/`display`/metrics), never from extra cards,
+  gradients or icons. `surfaceInk` is the single dark surface — today's workout
+  hero — used at most once per screen. Text bottoms out at `#111318`.
 - **Rounding is a token, never a local decision.** The `radius` scale
   (`xs: 10` … `xxl: 36`, plus `pill`) is deliberately generous — nothing in the
   product is square-cornered, and even the smallest step is visibly soft, so a
@@ -165,8 +169,15 @@ tokens rather than per screen:
 - **Numbers get tabular figures rather than a second family.** `metric` and
   `metricLg` carry `fontVariant: ['tabular-nums']`, which is what keeps columns
   of loads and totals aligned without pulling in a monospace face.
-- **Press feedback settles, it doesn't snap.** Pressed states sit around 0.9
-  opacity and a ~0.99 scale; `motion` durations are unhurried on purpose.
+- **Motion is fast and lives on the UI thread.** Every tappable surface (card,
+  button, chip, tile, FAB) goes through `PressableScale` (Reanimated shared
+  value, scale to `motion.pressScale` 0.97 in ~120ms, strong ease-out) rather
+  than a `({ pressed })` opacity callback. Full-bleed list rows inside a card
+  keep a pressed highlight instead — a scaling row looks detached from its card.
+  `Sheet` fades its backdrop and springs the panel up, exits faster than it
+  enters; `SegmentedControl` slides one thumb. Tab switches never animate.
+  Curves live in `motion.easeOut` / `motion.easeDrawer`; `ease-in` is never used.
+  Reduced motion is Reanimated's default `ReduceMotion.System` (snaps).
 - **Fonts gate the first paint.** `src/app/_layout.tsx` holds the splash screen
   until `useFonts` settles, so no screen paints in a fallback face and reflows.
   A font *error* also counts as settled — a missing file must not wedge the app.

@@ -5,28 +5,42 @@
  * Screens and components must never hard-code a hex value or a magic number —
  * import from here so the whole product can be re-skinned in one place.
  *
- * The system is light, airy and soft: an off-white canvas, white cards that
- * float on wide low-opacity shadows rather than hard rules, generously rounded
- * corners on every surface, and a calm indigo accent. Nothing should read as
- * sharp, boxy or heavy — there are no square corners in this system.
+ * The system is light and energetic: a clean neutral canvas, white cards on
+ * barely-there shadows, generously rounded corners, heavy display type, and one
+ * vivid blaze-orange accent that carries every action and every bit of progress.
+ * Energy comes from that single accent and the type weight — never from extra
+ * cards, gradients or icons. There are no square corners in this system.
  */
 
 export const palette = {
-  // Neutrals — a soft, very slightly cool ramp. No pure black anywhere.
+  // Neutrals — near-neutral, a hair cool. Ink bottoms out short of pure black.
   white: '#FFFFFF',
-  grey25: '#FCFDFE',
-  grey50: '#F8F9FC',
-  grey100: '#F2F4F8',
-  grey200: '#EAEDF3',
-  grey300: '#DCE1EA',
-  grey400: '#B2BAC9',
-  grey500: '#858FA3',
-  grey600: '#616B7F',
-  grey700: '#454E60',
-  grey800: '#2B3242',
-  grey900: '#1A1F2B',
+  grey25: '#FBFBFC',
+  grey50: '#F4F5F7',
+  grey100: '#ECEEF1',
+  grey200: '#E3E6EA',
+  grey300: '#D2D6DC',
+  grey400: '#A9AFB9',
+  grey500: '#7D8491',
+  grey600: '#5C6370',
+  grey700: '#3E444F',
+  grey800: '#23272F',
+  grey900: '#111318',
 
-  // Brand — a calm indigo. Softer and dustier than a primary blue.
+  // Brand — blaze orange. 500 is the fill (4.3:1 against white text); 700 is
+  // the text-safe step (5.3:1 on white) for links and inline labels.
+  blaze50: '#FFF1EB',
+  blaze100: '#FFDCCD',
+  blaze300: '#FF9A6E',
+  blaze400: '#F2622A',
+  blaze500: '#DD4410',
+  blaze600: '#C23A0B',
+  blaze700: '#B23508',
+  amber400: '#FFA928',
+  sky50: '#EAF4FE',
+  sky500: '#2F8FE6',
+
+  // Indigo — no longer the brand; kept for avatar monogram tints.
   indigo50: '#F0F2FE',
   indigo100: '#E0E4FD',
   indigo200: '#C6CDFB',
@@ -40,9 +54,10 @@ export const palette = {
   green600: '#22A272',
   amber50: '#FEF5E8',
   amber500: '#F0A63C',
-  red50: '#FDEEEC',
-  red500: '#EF6B62',
-  red600: '#DB5249',
+  red50: '#FDEDEF',
+  red400: '#EE5F63',
+  red500: '#E5484D',
+  red600: '#CE3A40',
 
   // Macro accents
   violet50: '#F3EFFE',
@@ -58,6 +73,8 @@ export const colors = {
   background: palette.grey50,
   /** Cards, sheets, elevated rows */
   surface: palette.white,
+  /** The one dark surface: today's workout hero. Use sparingly — once per screen. */
+  surfaceInk: palette.grey900,
   /** Inset areas inside a card (track backgrounds, chips) */
   surfaceMuted: palette.grey100,
   surfaceSunken: palette.grey25,
@@ -71,10 +88,14 @@ export const colors = {
   textInverse: palette.white,
   textOnPrimary: palette.white,
 
-  primary: palette.indigo500,
-  primaryPressed: palette.indigo600,
-  primarySoft: palette.indigo50,
-  primarySoftBorder: palette.indigo100,
+  primary: palette.blaze500,
+  primaryPressed: palette.blaze600,
+  /** Text-safe accent — what `tone="primary"` resolves to on light surfaces. */
+  primaryText: palette.blaze700,
+  primarySoft: palette.blaze50,
+  primarySoftBorder: palette.blaze100,
+  /** Second stop of progress gradients (calorie ring). */
+  primaryGlow: palette.amber400,
 
   success: palette.green500,
   successSoft: palette.green50,
@@ -85,10 +106,10 @@ export const colors = {
   dangerSoft: palette.red50,
 
   /** Macronutrient identity colours, reused by gauges, bars and legends */
-  protein: palette.indigo500,
-  proteinSoft: palette.indigo50,
-  carbs: palette.peach500,
-  carbsSoft: palette.peach50,
+  protein: palette.blaze500,
+  proteinSoft: palette.blaze50,
+  carbs: palette.sky500,
+  carbsSoft: palette.sky50,
   fat: palette.violet500,
   fatSoft: palette.violet50,
 
@@ -97,7 +118,14 @@ export const colors = {
   statusYellow: palette.amber500,
   statusRed: palette.red500,
 
-  overlay: 'rgba(26, 31, 43, 0.38)',
+  overlay: 'rgba(17, 19, 24, 0.42)',
+  /** 1px top edge on solid buttons — reads as light catching a raised surface. */
+  highlight: 'rgba(255, 255, 255, 0.24)',
+  /** Icon chip sitting on a solid brand fill. */
+  onPrimarySoft: 'rgba(255, 255, 255, 0.2)',
+  /** Top stops of the solid button gradients (bottom stop is the flat colour). */
+  primaryTop: palette.blaze400,
+  dangerTop: palette.red400,
   skeleton: palette.grey100,
 } as const;
 
@@ -191,31 +219,31 @@ export interface TypographySpec {
 export const typography = {
   display: {
     family: 'sans',
-    fontFamily: fonts.bold,
-    fontSize: 34,
+    fontFamily: fonts.extrabold,
+    fontSize: 36,
     lineHeight: 42,
-    letterSpacing: -0.8,
+    letterSpacing: -1.2,
   },
   title: {
     family: 'sans',
-    fontFamily: fonts.bold,
-    fontSize: 26,
-    lineHeight: 33,
-    letterSpacing: -0.6,
+    fontFamily: fonts.extrabold,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.9,
   },
   h1: {
     family: 'sans',
-    fontFamily: fonts.semibold,
+    fontFamily: fonts.bold,
     fontSize: 20,
-    lineHeight: 27,
-    letterSpacing: -0.3,
+    lineHeight: 26,
+    letterSpacing: -0.4,
   },
   h2: {
     family: 'sans',
-    fontFamily: fonts.semibold,
+    fontFamily: fonts.bold,
     fontSize: 17,
-    lineHeight: 24,
-    letterSpacing: -0.1,
+    lineHeight: 23,
+    letterSpacing: -0.25,
   },
   /** Button faces — sentence case, never shouted. */
   button: {
@@ -255,27 +283,27 @@ export const typography = {
   },
   micro: {
     family: 'sans',
-    fontFamily: fonts.medium,
+    fontFamily: fonts.semibold,
     fontSize: 11,
     lineHeight: 15,
-    letterSpacing: 0.1,
+    letterSpacing: 0.3,
   },
   /** Readouts — totals, loads, timers. */
   metric: {
     family: 'sans',
-    fontFamily: fonts.bold,
+    fontFamily: fonts.extrabold,
     fontSize: 28,
     lineHeight: 34,
-    letterSpacing: -0.8,
+    letterSpacing: -1,
     fontVariant: ['tabular-nums'],
   },
   /** Hero readout on progress / session headers. */
   metricLg: {
     family: 'sans',
     fontFamily: fonts.extrabold,
-    fontSize: 44,
-    lineHeight: 50,
-    letterSpacing: -1.6,
+    fontSize: 48,
+    lineHeight: 52,
+    letterSpacing: -2,
     fontVariant: ['tabular-nums'],
   },
 } as const satisfies Record<string, TypographySpec>;
@@ -291,25 +319,36 @@ export const elevation = {
   none: {},
   /** Resting cards */
   card: {
-    shadowColor: '#1A1F2B',
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 2,
+    shadowColor: '#111318',
+    shadowOpacity: 0.04,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
   },
   /** Floating action button, sheets */
   floating: {
-    shadowColor: '#1A1F2B',
-    shadowOpacity: 0.13,
+    shadowColor: '#111318',
+    shadowOpacity: 0.14,
     shadowRadius: 32,
     shadowOffset: { width: 0, height: 14 },
     elevation: 10,
   },
 } as const;
 
-/** Duration tokens for Reanimated / LayoutAnimation. Unhurried by design. */
+/**
+ * Motion. UI responds fast and settles: presses 160ms, sheets and toggles
+ * ~240ms, data fills a touch slower so the change reads. Curves are strong
+ * ease-outs — `ease-in` is never used for UI. Pass a curve to
+ * `Easing.bezier(...curve)`.
+ */
 export const motion = {
-  fast: 180,
-  normal: 260,
-  slow: 420,
+  fast: 160,
+  normal: 240,
+  slow: 380,
+  /** Enter / respond: starts fast, lands soft. */
+  easeOut: [0.23, 1, 0.32, 1],
+  /** iOS-style drawer curve for sheets. */
+  easeDrawer: [0.32, 0.72, 0, 1],
+  /** Press-down scale for anything tappable. */
+  pressScale: 0.97,
 } as const;

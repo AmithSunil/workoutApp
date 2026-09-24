@@ -6,7 +6,16 @@ import { Pressable, RefreshControl, ScrollView, StyleSheet, TextInput, View } fr
 import { useGetClientsQuery } from '@/api/endpoints/trainerApi';
 import { Paywall } from '@/components/billing/Paywall';
 import { ClientRosterItem } from '@/components/trainer/ClientRosterItem';
-import { Button, Card, Chip, EmptyState, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
+import {
+  Card,
+  Chip,
+  EmptyState,
+  Screen,
+  ScreenTitle,
+  SectionHeader,
+  SkeletonCard,
+  Text,
+} from '@/components/ui';
 import { useSubscription } from '@/hooks/useSubscription';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -65,23 +74,25 @@ export default function RosterScreen() {
   // reason rather than an empty roster.
   if (!planOk) return <Paywall />;
 
+  const filterLabel = FILTERS.find((f) => f.value === filter)?.label ?? 'All';
+
   return (
     <Screen
-      title="Clients"
-      subtitle={`${counts.all} active · ${counts.red + counts.yellow} need attention`}
-      headerRight={
-        <Button
-          label="Add"
-          icon="person-add-outline"
-          size="sm"
-          onPress={() => router.push(routes.trainer.invite())}
-        />
-      }
       refreshControl={
         <RefreshControl refreshing={clients.isFetching} onRefresh={() => void clients.refetch()} />
       }>
+      <ScreenTitle
+        eyebrow={`${counts.all} active · ${counts.red + counts.yellow} need attention`}
+        title="Clients"
+        action={{
+          icon: 'person-add',
+          label: 'Add a client',
+          onPress: () => router.push(routes.trainer.invite()),
+        }}
+      />
+
       <View style={styles.searchRow}>
-        <Ionicons name="search" size={16} color={colors.textTertiary} />
+        <Ionicons name="search" size={18} color={colors.textTertiary} />
         <TextInput
           value={query}
           onChangeText={(t) => dispatch(rosterQueryChanged(t))}
@@ -93,7 +104,7 @@ export default function RosterScreen() {
         />
         {query.length > 0 ? (
           <Pressable onPress={() => dispatch(rosterQueryChanged(''))} hitSlop={8}>
-            <Ionicons name="close-circle" size={16} color={colors.borderStrong} />
+            <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
           </Pressable>
         ) : null}
       </View>
@@ -101,12 +112,13 @@ export default function RosterScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.bleed}
         contentContainerStyle={styles.filters}>
         {FILTERS.map((f) => (
           <Chip
             key={f.value}
             label={f.label}
-            accent={f.accent}
+            accent={f.accent ?? colors.surfaceInk}
             count={counts[f.value]}
             selected={filter === f.value}
             onPress={() => dispatch(rosterFilterChanged(f.value))}
@@ -144,23 +156,31 @@ export default function RosterScreen() {
           />
         </Card>
       ) : (
-        <>
-          <Text variant="micro" tone="tertiary">
-            SORTED BY LOWEST ADHERENCE FIRST
-          </Text>
-          {filtered.map((client) => (
-            <ClientRosterItem key={client.id} client={client} onPress={() => open(client.id)} />
-          ))}
-        </>
+        <View style={styles.section}>
+          <SectionHeader title={filterLabel} caption="Lowest adherence first" />
+          <Card padded={false} style={styles.list}>
+            {filtered.map((client, i) => (
+              <View key={client.id}>
+                {i > 0 ? <View style={styles.divider} /> : null}
+                <ClientRosterItem client={client} onPress={() => open(client.id)} />
+              </View>
+            ))}
+          </Card>
+        </View>
       )}
 
       {invited.length > 0 ? (
-        <>
+        <View style={styles.section}>
           <SectionHeader title="Invited" caption="Not signed in yet — set them up now" />
-          {invited.map((client) => (
-            <ClientRosterItem key={client.id} client={client} onPress={() => open(client.id)} />
-          ))}
-        </>
+          <Card padded={false} style={styles.list}>
+            {invited.map((client, i) => (
+              <View key={client.id}>
+                {i > 0 ? <View style={styles.divider} /> : null}
+                <ClientRosterItem client={client} onPress={() => open(client.id)} />
+              </View>
+            ))}
+          </Card>
+        </View>
       ) : null}
     </Screen>
   );
@@ -173,19 +193,33 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    height: 44,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    paddingHorizontal: spacing.lg,
+    height: 50,
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     color: colors.text,
     paddingVertical: 0,
   },
+  bleed: {
+    marginHorizontal: -spacing.xl,
+  },
   filters: {
     gap: spacing.sm,
+    paddingHorizontal: spacing.xl,
     paddingVertical: 2,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  list: {
+    paddingVertical: spacing.xs,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth * 2,
+    backgroundColor: colors.divider,
+    marginLeft: spacing.lg + 48 + spacing.md,
   },
 });

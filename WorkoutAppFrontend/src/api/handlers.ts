@@ -212,7 +212,8 @@ const weeklyCompliance = (clientId: string, weeks: number) => {
   return Array.from({ length: weeks }, (_, i) => {
     const weekOf = addDays(thisWeek, -(weeks - 1 - i) * 7);
     const days = db.nutritionDays.filter(
-      (d) => d.clientId === clientId && d.date >= weekOf && d.date < addDays(weekOf, 7)
+      (d) =>
+        d.clientId === clientId && d.entries.length > 0 && d.date >= weekOf && d.date < addDays(weekOf, 7)
     );
     const logged = days.length;
     const avgCalories = logged

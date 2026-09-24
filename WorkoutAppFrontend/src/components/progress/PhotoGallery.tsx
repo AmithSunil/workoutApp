@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { Card, Text } from '@/components/ui';
+import { Card, PressableScale, Text } from '@/components/ui';
 import { colors, palette, radius, spacing } from '@/theme';
 import type { ISODate, ProgressPhoto } from '@/types/models';
 import { monthDay } from '@/utils/date';
@@ -14,6 +14,8 @@ export interface PhotoGalleryProps {
   photos: ProgressPhoto[];
   onAdd?: () => void;
   onPressPhoto?: (photo: ProgressPhoto) => void;
+  /** Show only the newest N shoots, with a toggle for the rest. */
+  limit?: number;
 }
 
 const TILE_W = 108;
@@ -23,7 +25,8 @@ const TILE_H = 144;
  * Progress photos grouped into shoot sessions, newest first. Each session is a
  * horizontal row so front/side/back stay side by side for comparison.
  */
-export function PhotoGallery({ photos, onAdd, onPressPhoto }: PhotoGalleryProps) {
+export function PhotoGallery({ photos, onAdd, onPressPhoto, limit }: PhotoGalleryProps) {
+  const [expanded, setExpanded] = useState(false);
   const groups = useMemo(() => {
     const map = new Map<ISODate, ProgressPhoto[]>();
     for (const photo of photos) {
@@ -53,7 +56,7 @@ export function PhotoGallery({ photos, onAdd, onPressPhoto }: PhotoGalleryProps)
         ) : null}
       </View>
 
-      {groups.map(([date, group], groupIndex) => (
+      {(limit && !expanded ? groups.slice(0, limit) : groups).map(([date, group], groupIndex) => (
         <View key={date} style={styles.group}>
           <View style={styles.groupHeader}>
             <Text variant="label">{monthDay(date)}</Text>
@@ -67,14 +70,14 @@ export function PhotoGallery({ photos, onAdd, onPressPhoto }: PhotoGalleryProps)
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.strip}>
             {group.map((photo) => (
-              <Pressable
+              <PressableScale
                 key={photo.id}
                 onPress={() => onPressPhoto?.(photo)}
-                style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+                style={[styles.tile]}>
                 {/* Gradient sits under the image so the tile still reads if the
                     remote asset is unavailable offline. */}
                 <LinearGradient
-                  colors={[palette.indigo100, palette.grey200]}
+                  colors={[palette.grey100, palette.grey200]}
                   style={StyleSheet.absoluteFill}
                 />
                 <Image
@@ -88,11 +91,27 @@ export function PhotoGallery({ photos, onAdd, onPressPhoto }: PhotoGalleryProps)
                     {photo.pose.toUpperCase()}
                   </Text>
                 </View>
-              </Pressable>
+              </PressableScale>
             ))}
           </ScrollView>
         </View>
       ))}
+
+      {limit && groups.length > limit ? (
+        <Pressable
+          onPress={() => setExpanded((v) => !v)}
+          accessibilityRole="button"
+          style={styles.more}>
+          <Text variant="label" tone="primary">
+            {expanded ? 'Show fewer' : `Show all ${groups.length} shoots`}
+          </Text>
+          <Ionicons
+            name={expanded ? 'chevron-up' : 'chevron-down'}
+            size={14}
+            color={colors.primaryText}
+          />
+        </Pressable>
+      ) : null}
     </Card>
   );
 }
@@ -113,6 +132,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: 6,
     borderRadius: radius.pill,
+  },
+  more: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
   },
   group: {
     paddingBottom: spacing.lg,
@@ -143,8 +171,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: radius.xs,
-  },
-  pressed: {
-    opacity: 0.8,
   },
 });

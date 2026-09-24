@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, type Href } from 'expo-router';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Text, TAB_BAR_HEIGHT } from '@/components/ui';
+import { PressableScale, Text, TAB_BAR_HEIGHT } from '@/components/ui';
 import { colors, elevation, radius, spacing } from '@/theme';
 
 export interface ChatFabProps {
@@ -18,15 +18,12 @@ export function ChatFab({ href, unread = 0, label = 'Message coach' }: ChatFabPr
   const insets = useSafeAreaInsets();
 
   return (
-    <Pressable
+    <PressableScale
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={() => router.push(href)}
-      style={({ pressed }) => [
-        styles.fab,
-        { bottom: TAB_BAR_HEIGHT + insets.bottom + spacing.md },
-        pressed && styles.pressed,
-      ]}>
+      scaleTo={0.94}
+      style={[styles.fab, { bottom: TAB_BAR_HEIGHT + insets.bottom + spacing.md }]}>
       <Ionicons name="chatbubble-ellipses" size={22} color={colors.textOnPrimary} />
       {unread > 0 ? (
         <View style={styles.badge}>
@@ -35,7 +32,7 @@ export function ChatFab({ href, unread = 0, label = 'Message coach' }: ChatFabPr
           </Text>
         </View>
       ) : null}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -43,17 +40,13 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: spacing.xl,
-    width: 54,
-    height: 54,
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.surfaceInk,
     ...elevation.floating,
-  },
-  pressed: {
-    opacity: 0.92,
-    transform: [{ scale: 0.98 }],
   },
   badge: {
     position: 'absolute',
@@ -64,7 +57,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderRadius: radius.pill,
     borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.surfaceInk,
     backgroundColor: colors.danger,
     alignItems: 'center',
     justifyContent: 'center',

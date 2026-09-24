@@ -88,19 +88,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
-    height: 52,
-    borderRadius: radius.sm,
+    height: 58,
+    borderRadius: radius.md,
     backgroundColor: colors.surfaceMuted,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: 'transparent',
   },
   cellTraining: {
     backgroundColor: colors.surface,
-    borderColor: colors.primarySoftBorder,
   },
   cellActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: colors.surfaceInk,
   },
   marker: {
     width: 5,
@@ -112,9 +108,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   markerActive: {
-    backgroundColor: colors.textOnPrimary,
+    backgroundColor: colors.primaryGlow,
   },
   pressed: {
-    opacity: 0.7,
+    transform: [{ scale: 0.96 }],
   },
 });

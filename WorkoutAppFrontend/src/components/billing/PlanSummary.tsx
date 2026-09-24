@@ -31,7 +31,7 @@ export function PlanSummary({ forRole }: { forRole: 'trainer' | 'client' }) {
   return (
     <>
       <SectionHeader title="Subscription" caption="Tap to change or cancel" />
-      <Card onPress={() => router.push(routes.plans())}>
+      <Card onPress={() => router.push(routes.plans())} style={styles.card}>
         <View style={styles.row}>
           <View style={styles.text}>
             <Text variant="label" tone="secondary">
@@ -55,6 +55,7 @@ export function PlanSummary({ forRole }: { forRole: 'trainer' | 'client' }) {
 }
 
 const styles = StyleSheet.create({
+  card: { padding: spacing.xl },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   text: { flex: 1, gap: 2 },
 });

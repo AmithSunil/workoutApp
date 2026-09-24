@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { Button, Card, Text } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { colors, palette, radius, spacing } from '@/theme';
 import type { RoutineDay } from '@/types/models';
 import { WEEKDAY_LABEL } from '@/utils/date';
 import { plural } from '@/utils/format';
@@ -23,6 +23,9 @@ export interface TodayCardProps {
  *
  * There are no dated sessions: the routine is the week and it repeats until the
  * trainer changes it, so "today" is just the day whose weekday matches.
+ *
+ * The one ink surface on the client home — the day's single most important
+ * action gets the contrast; everything around it stays light.
  */
 export function TodayCard({ day, routineTitle, done, onStart, onPress }: TodayCardProps) {
   const sets = day.exercises.reduce((sum, e) => sum + e.sets, 0);
@@ -35,35 +38,35 @@ export function TodayCard({ day, routineTitle, done, onStart, onPress }: TodayCa
             <Ionicons
               name={done ? 'checkmark-circle' : 'today-outline'}
               size={12}
-              color={done ? colors.success : colors.primary}
+              color={done ? colors.success : colors.primaryGlow}
             />
-            <Text variant="micro" color={done ? colors.success : colors.primary}>
+            <Text variant="micro" color={done ? colors.success : colors.primaryGlow}>
               {done ? 'LOGGED TODAY' : `${WEEKDAY_LABEL[day.weekday].toUpperCase()} · TODAY`}
             </Text>
           </View>
-          <Text variant="h1" numberOfLines={1} style={styles.title}>
+          <Text variant="title" color={colors.textInverse} numberOfLines={1} style={styles.title}>
             {day.name || WEEKDAY_LABEL[day.weekday]}
           </Text>
-          <Text variant="caption" tone="secondary">
+          <Text variant="caption" color={palette.grey400}>
             {routineTitle} · {plural(day.exercises.length, 'exercise')} · {sets} sets
           </Text>
         </View>
         <View style={styles.focus}>
-          <Ionicons name="barbell-outline" size={17} color={colors.primary} />
+          <Ionicons name="barbell" size={18} color={colors.primaryGlow} />
         </View>
       </View>
 
       <View style={styles.preview}>
         {day.exercises.slice(0, 4).map((ex) => (
           <View key={ex.id} style={styles.pill}>
-            <Text variant="micro" tone="secondary" numberOfLines={1}>
+            <Text variant="micro" color={palette.grey300} numberOfLines={1}>
               {ex.name}
             </Text>
           </View>
         ))}
         {day.exercises.length > 4 ? (
           <View style={styles.pill}>
-            <Text variant="micro" tone="tertiary">
+            <Text variant="micro" color={palette.grey500}>
               +{day.exercises.length - 4}
             </Text>
           </View>
@@ -73,7 +76,7 @@ export function TodayCard({ day, routineTitle, done, onStart, onPress }: TodayCa
       {onStart ? (
         <Button
           label={done ? "Edit today's workout" : 'Start workout'}
-          icon="play"
+          size="lg"
           variant={done ? 'secondary' : 'primary'}
           fullWidth
           onPress={onStart}
@@ -86,8 +89,8 @@ export function TodayCard({ day, routineTitle, done, onStart, onPress }: TodayCa
 
 const styles = StyleSheet.create({
   featured: {
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.primarySoftBorder,
+    backgroundColor: colors.surfaceInk,
+    padding: spacing.xl,
   },
   header: {
     flexDirection: 'row',
@@ -103,13 +106,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   title: {
-    marginTop: 2,
+    marginTop: spacing.xs,
   },
   focus: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.sm,
-    backgroundColor: colors.primarySoft,
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    backgroundColor: palette.grey800,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -117,16 +120,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
-    marginTop: spacing.md,
+    marginTop: spacing.lg,
   },
   pill: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: palette.grey800,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
     paddingVertical: 5,
     maxWidth: 150,
   },
   cta: {
-    marginTop: spacing.lg,
+    marginTop: spacing.xl,
   },
 });

@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Redirect, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
@@ -12,20 +13,19 @@ import {
   Button,
   Card,
   EmptyState,
+  PressableScale,
   Screen,
   SectionHeader,
-  SegmentedControl,
   SkeletonCard,
-  StatTile,
+  StatRow,
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
-import { spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import {
   TODAY,
-  WEEKDAY_LABEL,
   addDays,
   diffInDays,
   startOfWeek,
@@ -34,7 +34,8 @@ import {
 } from '@/utils/date';
 import { volume } from '@/utils/format';
 
-type Tab = 'upcoming' | 'history';
+/** History shows this many sessions until the user asks for all of them. */
+const HISTORY_PREVIEW = 5;
 
 /** Only reachable while the client's coach tracks workouts — a deep link lands on home. */
 export default function WorkoutsRoute() {
@@ -45,7 +46,7 @@ export default function WorkoutsRoute() {
 function WorkoutsScreen() {
   const router = useRouter();
   const { clientId } = useSession();
-  const [tab, setTab] = useState<Tab>('upcoming');
+  const [showAllHistory, setShowAllHistory] = useState(false);
 
   const logs = useGetWorkoutLogsQuery({ clientId: clientId ?? '', limit: 40 }, { skip: !clientId });
   const routines = useGetClientRoutinesQuery({ clientId: clientId ?? '' }, { skip: !clientId });
@@ -77,6 +78,8 @@ function WorkoutsScreen() {
         label: weekdayInitial(date),
         value: log ? Math.round(log.totalVolumeKg / 100) : 0,
         caption: log ? `${log.durationMinutes}m` : '',
+        // Rest days read as empty track, not a sliver of brand colour.
+        color: log ? undefined : colors.surfaceMuted,
       };
     });
   }, [logs.data]);
@@ -86,10 +89,11 @@ function WorkoutsScreen() {
     ? Math.round(weekLogs.reduce((s, l) => s + l.durationMinutes, 0) / weekLogs.length)
     : 0;
 
+  const history = logs.data ?? [];
+  const shownHistory = showAllHistory ? history : history.slice(0, HISTORY_PREVIEW);
+
   return (
     <Screen
-      title="Workouts"
-      subtitle="Your routine, written by your coach"
       refreshControl={
         <RefreshControl
           refreshing={routines.isFetching || logs.isFetching}
@@ -99,144 +103,182 @@ function WorkoutsScreen() {
           }}
         />
       }>
-      <View style={styles.tiles}>
-        <StatTile label="Sessions / 7d" value={`${weekLogs.length}`} icon="checkmark-done" tone="primary" />
-        <StatTile label="Volume / 7d" value={volume(totalVolume)} icon="stats-chart" tone="success" />
-        <StatTile
-          label="Avg session"
-          value={avgMinutes ? `${avgMinutes}m` : '—'}
-          icon="time-outline"
-        />
+      <View style={styles.hello}>
+        <Text variant="micro" tone="tertiary">
+          YOUR TRAINING
+        </Text>
+        <Text variant="display">Workouts</Text>
       </View>
 
-      <Card>
-        <View style={styles.chartHeader}>
-          <View>
-            <Text variant="h2">This week's load</Text>
-            <Text variant="micro" tone="tertiary">
-              Volume in hundreds of kg · minutes below each bar
-            </Text>
-          </View>
-        </View>
-        <BarSeries data={weekBars} height={96} />
-      </Card>
-
-      <SegmentedControl<Tab>
-        value={tab}
-        onChange={setTab}
-        segments={[
-          { value: 'upcoming', label: 'Programme' },
-          { value: 'history', label: `History (${logs.data?.length ?? 0})` },
-        ]}
-      />
-
-      {tab === 'upcoming' ? (
-        <>
-          <SectionHeader
-            title="Today"
-            caption={todayLog ? 'Done' : todayDay ? WEEKDAY_LABEL[today] : 'Rest day'}
-          />
-          {routines.isLoading || logs.isLoading ? (
-            <SkeletonCard lines={3} />
-          ) : todayLog ? (
-            <>
-              <WorkoutLogRow
-                log={todayLog}
-                onPress={() => router.push(routes.workoutLog(todayLog.id))}
-              />
-              <Button
-                label="Edit today's workout"
-                icon="create-outline"
-                variant="secondary"
-                fullWidth
-                onPress={editToday}
-              />
-            </>
-          ) : todayDay && current ? (
-            <TodayCard
-              day={todayDay}
-              routineTitle={current.title}
-              onStart={editToday}
-              onPress={() => router.push(routes.client.routine(current.assignmentId))}
+      {/* Today — the one thing to do on this screen */}
+      <View style={styles.section}>
+        <SectionHeader title="Today" />
+        {routines.isLoading || logs.isLoading ? (
+          <SkeletonCard lines={3} />
+        ) : todayLog ? (
+          <>
+            <WorkoutLogRow
+              log={todayLog}
+              onPress={() => router.push(routes.workoutLog(todayLog.id))}
             />
-          ) : (
-            <Card>
-              <EmptyState
-                icon={current ? 'bed-outline' : 'calendar-outline'}
-                title={current ? 'Rest day' : 'No routine yet'}
-                message={
-                  current
-                    ? 'Nothing programmed for today. Move a little, eat well, sleep more.'
-                    : "Your coach hasn't given you a routine yet. Message them if you're unsure."
-                }
-                compact
-              />
-            </Card>
-          )}
-
-          {todayLog ? null : (
             <Button
-              label="Train something else today"
-              icon="swap-horizontal"
+              label="Edit today's workout"
+              icon="create-outline"
               variant="secondary"
               fullWidth
-              onPress={() => router.push(routes.client.trainCustom())}
+              onPress={editToday}
             />
-          )}
+          </>
+        ) : todayDay && current ? (
+          <TodayCard
+            day={todayDay}
+            routineTitle={current.title}
+            onStart={editToday}
+            onPress={() => router.push(routes.client.routine(current.assignmentId))}
+          />
+        ) : (
+          <Card style={styles.restRow}>
+            <View style={styles.restIcon}>
+              <Ionicons
+                name={current ? 'moon-outline' : 'calendar-clear-outline'}
+                size={20}
+                color={colors.textSecondary}
+              />
+            </View>
+            <View style={styles.flex}>
+              <Text variant="h2">{current ? 'Rest day' : 'No routine yet'}</Text>
+              <Text variant="caption" tone="secondary">
+                {current
+                  ? 'Nothing programmed. Move a little, sleep more.'
+                  : 'Your coach will send one soon.'}
+              </Text>
+            </View>
+          </Card>
+        )}
 
-          {(routines.data ?? []).length > 0 ? (
-            <>
-              <SectionHeader
-                title="Your routine"
-                caption="Written for you by your coach"
-              />
-              {(routines.data ?? []).map((assigned) => (
-                <RoutineCard
-                  key={assigned.assignmentId}
-                  title={assigned.title}
-                  days={assigned.days}
-                  showAssignment={false}
-                  onPress={() => router.push(routes.client.routine(assigned.assignmentId))}
-                />
-              ))}
-            </>
-          ) : null}
-        </>
-      ) : (
-        <>
-          <SectionHeader title="Completed sessions" caption="Newest first" />
-          {logs.isLoading ? (
-            <SkeletonCard lines={3} />
-          ) : (logs.data ?? []).length === 0 ? (
-            <Card>
-              <EmptyState
-                icon="barbell-outline"
-                title="No sessions logged"
-                message="Start a workout from your routine and it will appear here."
-                compact
-              />
-            </Card>
-          ) : (
-            (logs.data ?? []).map((log) => (
-              <WorkoutLogRow
-                key={log.id}
-                log={log}
-                onPress={() => router.push(routes.workoutLog(log.id))}
-              />
-            ))
-          )}
-        </>
-      )}
+        {todayLog ? null : (
+          <PressableScale
+            onPress={() => router.push(routes.client.trainCustom())}
+            accessibilityRole="button"
+            style={styles.altLink}>
+            <Ionicons name="swap-horizontal" size={16} color={colors.primaryText} />
+            <Text variant="label" tone="primary">
+              Train something else today
+            </Text>
+          </PressableScale>
+        )}
+      </View>
+
+      {/* This week — headline numbers over the daily load */}
+      <View style={styles.section}>
+        <SectionHeader title="This week" />
+        <Card style={styles.big}>
+          <StatRow
+            items={[
+              { label: 'Sessions', value: `${weekLogs.length}` },
+              { label: 'Volume', value: volume(totalVolume) },
+              { label: 'Avg session', value: avgMinutes ? `${avgMinutes}m` : '—' },
+            ]}
+          />
+          <View style={styles.chart}>
+            <BarSeries data={weekBars} height={88} />
+          </View>
+          <Text variant="micro" tone="tertiary" align="center" style={styles.chartNote}>
+            Daily volume · minutes under each bar
+          </Text>
+        </Card>
+      </View>
+
+      {/* Programme */}
+      {(routines.data ?? []).length > 0 ? (
+        <View style={styles.section}>
+          <SectionHeader title="Your routine" caption="Written for you by your coach" />
+          {(routines.data ?? []).map((assigned) => (
+            <RoutineCard
+              key={assigned.assignmentId}
+              title={assigned.title}
+              days={assigned.days}
+              showAssignment={false}
+              onPress={() => router.push(routes.client.routine(assigned.assignmentId))}
+            />
+          ))}
+        </View>
+      ) : null}
+
+      {/* History */}
+      <View style={styles.section}>
+        <SectionHeader
+          title="History"
+          caption={history.length ? `${history.length} sessions logged` : undefined}
+          actionLabel={
+            history.length > HISTORY_PREVIEW ? (showAllHistory ? 'Show less' : 'Show all') : undefined
+          }
+          onAction={() => setShowAllHistory((v) => !v)}
+        />
+        {logs.isLoading ? (
+          <SkeletonCard lines={3} />
+        ) : history.length === 0 ? (
+          <Card>
+            <EmptyState
+              icon="barbell-outline"
+              title="No sessions logged"
+              message="Start a workout from your routine and it will appear here."
+              compact
+            />
+          </Card>
+        ) : (
+          shownHistory.map((log) => (
+            <WorkoutLogRow
+              key={log.id}
+              log={log}
+              onPress={() => router.push(routes.workoutLog(log.id))}
+            />
+          ))
+        )}
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  tiles: {
+  flex: {
+    flex: 1,
+  },
+  hello: {
+    gap: spacing.xs,
+    paddingTop: spacing.lg,
+  },
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  big: {
+    padding: spacing.xl,
+  },
+  chart: {
+    marginTop: spacing.xl,
+  },
+  chartNote: {
+    marginTop: spacing.md,
+  },
+  restRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.md,
   },
-  chartHeader: {
-    marginBottom: spacing.md,
+  restIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  altLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
   },
 });

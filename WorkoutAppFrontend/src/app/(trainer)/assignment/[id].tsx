@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   useCustomiseAssignmentMutation,
@@ -27,11 +28,11 @@ import {
   Screen,
   SectionHeader,
   SkeletonCard,
-  StatTile,
+  StatRow,
   Text,
 } from '@/components/ui';
 import { routes } from '@/navigation/routes';
-import { colors, spacing } from '@/theme';
+import { colors, elevation, radius, spacing } from '@/theme';
 import type { Weekday } from '@/types/models';
 import { WEEKDAY_LABEL, byWeekday } from '@/utils/date';
 import { firstName, plural, restLabel } from '@/utils/format';
@@ -50,6 +51,7 @@ import { firstName, plural, restLabel } from '@/utils/format';
 export default function AssignmentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const assignmentId = id ?? '';
   const assignment = useGetAssignmentQuery(assignmentId, { skip: !assignmentId });
@@ -105,200 +107,230 @@ export default function AssignmentScreen() {
       .catch(() => setError('Could not save these changes. Every day needs at least one exercise.'));
   };
 
+  const discard = () => {
+    setDraft(null);
+    setError(null);
+  };
+
   return (
-    <Screen
-      title={data.title}
-      subtitle={`For ${name}${data.customised ? ' · customised' : ''}`}
-      showBack
-      tabBarPadding={false}
-      headerRight={
-        editing ? (
-          <Button label="Save" size="sm" disabled={!canSave} loading={saving} onPress={save} />
-        ) : (
-          <Button
-            label="Customise"
-            size="sm"
-            variant="secondary"
-            onPress={() => setDraft(draftDaysFrom(data.days))}
-          />
-        )
-      }>
-      {editing ? (
-        <Card style={styles.editingCard}>
-          <View style={styles.noteRow}>
-            <Ionicons name="create-outline" size={15} color={colors.primary} />
-            <Text variant="caption" tone="secondary" style={styles.noteText}>
-              You are editing {firstName(name)}&apos;s copy. Nobody else on this routine is
-              affected, and this copy will stop following later edits to the template.
+    <>
+      <Screen
+        showBack
+        tabBarPadding={false}
+        contentStyle={editing ? styles.roomForBar : undefined}>
+        <View style={styles.hello}>
+          <Text variant="micro" tone="tertiary">
+            FOR {name.toUpperCase()}
+            {data.customised ? ' · CUSTOMISED' : ''}
+          </Text>
+          <Text variant="title" numberOfLines={2}>
+            {data.title}
+          </Text>
+        </View>
+
+        {editing ? (
+          <View style={styles.banner}>
+            <Ionicons name="create-outline" size={18} color={colors.primaryText} />
+            <Text variant="caption" style={styles.flex}>
+              Editing {firstName(name)}&apos;s copy. Nobody else on this routine is affected, and
+              it stops following later edits to the template.
             </Text>
           </View>
-        </Card>
-      ) : data.customised ? (
-        <Card style={styles.customisedCard}>
-          <View style={styles.noteRow}>
-            <Ionicons name="git-branch-outline" size={15} color={colors.warning} />
-            <View style={styles.noteText}>
-              <Text variant="h2">Tailored for {firstName(name)}</Text>
-              <Text variant="caption" tone="secondary">
-                This copy has been changed for them and no longer follows the library template.
-              </Text>
-            </View>
-          </View>
-          <Button
-            label="Reset to template"
-            icon="refresh-outline"
-            variant="secondary"
-            size="sm"
-            loading={resetting}
-            style={styles.resetButton}
-            onPress={() => void reset(assignmentId)}
-          />
-        </Card>
-      ) : (
-        <View style={styles.tiles}>
-          <StatTile
-            label="Days / week"
-            value={`${totals.days}`}
-            icon="calendar-outline"
-            tone="primary"
-          />
-          <StatTile label="Working sets" value={`${totals.sets}`} icon="barbell-outline" />
-          <StatTile label="Avg rest" value={restLabel(avgRest)} icon="time-outline" />
-        </View>
-      )}
+        ) : (
+          <>
+            <Card style={styles.big}>
+              <StatRow
+                items={[
+                  { label: 'Days / week', value: `${totals.days}` },
+                  { label: 'Working sets', value: `${totals.sets}` },
+                  { label: 'Avg rest', value: restLabel(avgRest) },
+                ]}
+              />
+            </Card>
 
-      {data.notes && !editing ? (
-        <Card style={styles.noteCard}>
-          <View style={styles.noteRow}>
-            <Ionicons name="chatbubble-ellipses-outline" size={15} color={colors.primary} />
-            <Text variant="caption" tone="secondary" style={styles.noteText}>
+            {data.customised ? (
+              <View style={[styles.banner, styles.bannerWarn]}>
+                <Ionicons name="git-branch-outline" size={18} color={colors.warning} />
+                <View style={styles.flex}>
+                  <Text variant="bodyStrong">Tailored for {firstName(name)}</Text>
+                  <Text variant="caption" tone="secondary">
+                    Changed for them — it no longer follows the library template.
+                  </Text>
+                </View>
+                <Button
+                  label="Reset"
+                  variant="secondary"
+                  size="sm"
+                  loading={resetting}
+                  onPress={() => void reset(assignmentId)}
+                />
+              </View>
+            ) : null}
+
+            <Button
+              label={`Customise for ${firstName(name)}`}
+              icon="create-outline"
+              fullWidth
+              onPress={() => setDraft(draftDaysFrom(data.days))}
+            />
+          </>
+        )}
+
+        {data.notes && !editing ? (
+          <View style={styles.banner}>
+            <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.primaryText} />
+            <Text variant="caption" style={styles.flex}>
               {data.notes}
             </Text>
           </View>
-        </Card>
-      ) : null}
+        ) : null}
 
-      <SectionHeader
-        title="The week"
-        caption={editing ? 'Adjust any day — the day set stays as the template set it' : 'What they see, day by day'}
-      />
-      <WeekdayStrip
-        trainingDays={shown.map((day) => day.weekday)}
-        active={activeWeekday}
-        onPress={setActive}
-      />
-
-      {editing && draft && draftDay ? (
-        <RoutineDayEditor
-          key={activeWeekday}
-          day={draftDay}
-          onChange={(next) =>
-            setDraft(draft.map((day) => (day.weekday === next.weekday ? next : day)))
-          }
-          onAddExercise={() => setPickerOpen(true)}
-        />
-      ) : editing ? null : (
-        <RoutineDayView day={viewDay} weekday={activeWeekday} />
-      )}
-
-      {error ? (
-        <Card style={styles.errorCard}>
-          <Text variant="caption" tone="danger">
-            {error}
-          </Text>
-        </Card>
-      ) : null}
-
-      {editing ? (
-        <>
-          <Button
-            label="Save for this client"
-            icon="checkmark"
-            fullWidth
-            size="lg"
-            disabled={!canSave}
-            loading={saving}
-            onPress={save}
+        <View style={styles.section}>
+          <SectionHeader
+            title="The week"
+            caption={
+              editing
+                ? 'Adjust any day — the days themselves stay as the template set them'
+                : 'What they see, day by day'
+            }
           />
+          <WeekdayStrip
+            trainingDays={shown.map((day) => day.weekday)}
+            active={activeWeekday}
+            onPress={setActive}
+          />
+        </View>
+
+        {editing && draft && draftDay ? (
+          <RoutineDayEditor
+            key={activeWeekday}
+            day={draftDay}
+            onChange={(next) =>
+              setDraft(draft.map((day) => (day.weekday === next.weekday ? next : day)))
+            }
+            onAddExercise={() => setPickerOpen(true)}
+          />
+        ) : editing ? null : (
+          <RoutineDayView day={viewDay} weekday={activeWeekday} />
+        )}
+
+        {error ? (
+          <View style={[styles.banner, styles.bannerDanger]}>
+            <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
+            <Text variant="caption" tone="danger" style={styles.flex}>
+              {error}
+            </Text>
+          </View>
+        ) : null}
+
+        {editing ? null : (
+          <>
+            <Button
+              label="Open the template"
+              icon="albums-outline"
+              variant="secondary"
+              fullWidth
+              onPress={() => router.push(routes.trainer.routineDetail(data.routineId))}
+            />
+            <Text variant="caption" tone="tertiary" align="center">
+              {firstName(name)} follows one routine at a time. Assigning a different one from
+              their profile replaces this{data.customised ? ', customisation included' : ''}.
+            </Text>
+          </>
+        )}
+
+        <ExercisePickerSheet
+          visible={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          addedExerciseIds={(draftDay?.exercises ?? []).map((e) => e.exerciseId)}
+          title={`Add to ${WEEKDAY_LABEL[activeWeekday]}`}
+          onAdd={(exercise) =>
+            setDraft((prev) =>
+              (prev ?? []).map((day) =>
+                day.weekday === activeWeekday
+                  ? withExercises(day, [...day.exercises, draftFromExercise(exercise)])
+                  : day
+              )
+            )
+          }
+        />
+      </Screen>
+
+      {/* While editing, save and discard stay in reach however far down they are */}
+      {editing ? (
+        <View style={[styles.bar, { paddingBottom: insets.bottom + spacing.md }]}>
           {emptyDays.length > 0 ? (
-            <Text variant="micro" tone="tertiary" align="center">
+            <Text variant="caption" tone="warning" align="center">
               {emptyDays.map((day) => WEEKDAY_LABEL[day.weekday]).join(', ')}{' '}
               {emptyDays.length === 1 ? 'has' : 'have'} no exercises left.
             </Text>
           ) : null}
-          <Button
-            label="Discard changes"
-            variant="ghost"
-            fullWidth
-            onPress={() => {
-              setDraft(null);
-              setError(null);
-            }}
-          />
-        </>
-      ) : (
-        <>
-          <Button
-            label="Open the template"
-            icon="albums-outline"
-            variant="secondary"
-            fullWidth
-            onPress={() => router.push(routes.trainer.routineDetail(data.routineId))}
-          />
-          <Text variant="micro" tone="tertiary" align="center">
-            {firstName(name)} follows one routine at a time. Assigning a different
-            one from their profile replaces this
-            {data.customised ? ', customisation included' : ''}.
-          </Text>
-        </>
-      )}
-
-      <ExercisePickerSheet
-        visible={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        addedExerciseIds={(draftDay?.exercises ?? []).map((e) => e.exerciseId)}
-        title={`Add to ${WEEKDAY_LABEL[activeWeekday]}`}
-        onAdd={(exercise) =>
-          setDraft((prev) =>
-            (prev ?? []).map((day) =>
-              day.weekday === activeWeekday
-                ? withExercises(day, [...day.exercises, draftFromExercise(exercise)])
-                : day
-            )
-          )
-        }
-      />
-    </Screen>
+          <View style={styles.barButtons}>
+            <Button label="Discard" variant="secondary" size="lg" onPress={discard} style={styles.barDiscard} />
+            <Button
+              label={`Save for ${firstName(name)}`}
+              size="lg"
+              disabled={!canSave}
+              loading={saving}
+              onPress={save}
+              style={styles.flex}
+            />
+          </View>
+        </View>
+      ) : null}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  tiles: {
-    flexDirection: 'row',
+  flex: {
+    flex: 1,
+  },
+  hello: {
+    gap: spacing.xs,
+  },
+  big: {
+    padding: spacing.xl,
+  },
+  section: {
     gap: spacing.md,
+    marginTop: spacing.sm,
   },
-  noteCard: {
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
     backgroundColor: colors.primarySoft,
   },
-  editingCard: {
-    backgroundColor: colors.primarySoft,
-  },
-  customisedCard: {
+  bannerWarn: {
     backgroundColor: colors.warningSoft,
   },
-  noteRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  noteText: {
-    flex: 1,
-    gap: 2,
-  },
-  resetButton: {
-    marginTop: spacing.md,
-    alignSelf: 'flex-start',
-  },
-  errorCard: {
+  bannerDanger: {
     backgroundColor: colors.dangerSoft,
+  },
+  roomForBar: {
+    paddingBottom: 140,
+  },
+  bar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    gap: spacing.sm,
+    paddingTop: spacing.md,
+    paddingHorizontal: spacing.xl,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    ...elevation.floating,
+  },
+  barButtons: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  barDiscard: {
+    paddingHorizontal: spacing.xl,
   },
 });

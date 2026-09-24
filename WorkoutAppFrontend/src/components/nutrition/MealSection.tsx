@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Card, Divider, Text } from '@/components/ui';
+import { Card, PressableScale, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { FoodEntry, MealSlot } from '@/types/models';
 import { clockTime } from '@/utils/date';
@@ -27,124 +27,93 @@ export function MealSection({ slot, entries, onAdd, onRemove, readOnly }: MealSe
   const total = entries.reduce((sum, e) => sum + e.calories, 0);
 
   return (
-    <Card padded={false} style={styles.card}>
+    <Card padded={false}>
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.iconWrap}>
-            <Ionicons name={meta.icon} size={15} color={colors.textSecondary} />
-          </View>
-          <View>
-            <Text variant="h2">{meta.label}</Text>
-            <Text variant="micro" tone="tertiary">
-              {entries.length === 0 ? 'Nothing logged' : `${entries.length} item${entries.length > 1 ? 's' : ''}`}
+        <View style={styles.headerText}>
+          <Text variant="h2">{meta.label}</Text>
+          <Text variant="caption" tone="tertiary">
+            {entries.length === 0
+              ? 'Nothing logged yet'
+              : `${kcal(total)} kcal · ${entries.length} item${entries.length > 1 ? 's' : ''}`}
+          </Text>
+        </View>
+        {!readOnly ? (
+          <PressableScale
+            onPress={() => onAdd(slot)}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={`Add to ${meta.label}`}
+            style={styles.add}>
+            <Ionicons name="add" size={20} color={colors.primaryText} />
+          </PressableScale>
+        ) : null}
+      </View>
+
+      {entries.map((entry) => (
+        <View key={entry.id} style={styles.entry}>
+          <View style={styles.entryText}>
+            <View style={styles.entryTitle}>
+              <Text variant="body" numberOfLines={1} style={styles.entryName}>
+                {entry.name}
+              </Text>
+              {entry.source === 'ai' ? (
+                <Ionicons name="sparkles" size={11} color={colors.primary} />
+              ) : null}
+            </View>
+            <Text variant="micro" tone="tertiary" numberOfLines={1}>
+              {entry.servings === 1 ? '1 serving' : `${entry.servings} servings`} · P{' '}
+              {grams(entry.protein)} · C {grams(entry.carbs)} · F {grams(entry.fat)} ·{' '}
+              {clockTime(entry.loggedAt)}
             </Text>
           </View>
-        </View>
-        <View style={styles.headerRight}>
-          <Text variant="bodyStrong">{kcal(total)}</Text>
-          {!readOnly ? (
+          <Text variant="label">{kcal(entry.calories)}</Text>
+          {onRemove && !readOnly ? (
             <Pressable
-              onPress={() => onAdd(slot)}
-              hitSlop={8}
-              accessibilityLabel={`Add to ${meta.label}`}
-              style={({ pressed }) => [styles.add, pressed && styles.pressed]}>
-              <Ionicons name="add" size={17} color={colors.textOnPrimary} />
+              onPress={() => onRemove(entry)}
+              hitSlop={10}
+              accessibilityRole="button"
+              accessibilityLabel={`Remove ${entry.name}`}>
+              <Ionicons name="close" size={16} color={colors.textTertiary} />
             </Pressable>
           ) : null}
         </View>
-      </View>
-
-      {entries.length > 0 ? (
-        <View style={styles.entries}>
-          {entries.map((entry, i) => (
-            <View key={entry.id}>
-              {i > 0 ? <Divider inset={spacing.lg} /> : null}
-              <View style={styles.entry}>
-                <View style={styles.entryText}>
-                  <View style={styles.entryTitle}>
-                    <Text variant="body" numberOfLines={1} style={styles.entryName}>
-                      {entry.name}
-                    </Text>
-                    {entry.source === 'ai' ? (
-                      <Ionicons name="sparkles" size={11} color={colors.primary} />
-                    ) : null}
-                  </View>
-                  <Text variant="micro" tone="tertiary" numberOfLines={1}>
-                    {entry.servings === 1 ? '1 serving' : `${entry.servings} servings`} ·{' '}
-                    {grams(entry.protein)}P {grams(entry.carbs)}C {grams(entry.fat)}F ·{' '}
-                    {clockTime(entry.loggedAt)}
-                  </Text>
-                </View>
-                <Text variant="label" tone="secondary">
-                  {kcal(entry.calories)}
-                </Text>
-                {onRemove && !readOnly ? (
-                  <Pressable onPress={() => onRemove(entry)} hitSlop={8}>
-                    <Ionicons name="close-circle" size={17} color={colors.borderStrong} />
-                  </Pressable>
-                ) : null}
-              </View>
-            </View>
-          ))}
-        </View>
-      ) : null}
+      ))}
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    overflow: 'hidden',
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.lg,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  iconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surfaceMuted,
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerText: {
+    flex: 1,
+    gap: 2,
   },
   add: {
-    width: 28,
-    height: 28,
+    width: 36,
+    height: 36,
     borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  entries: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-    backgroundColor: colors.surfaceSunken,
   },
   entry: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    paddingHorizontal: spacing.lg,
+    marginHorizontal: spacing.xl,
     paddingVertical: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderTopColor: colors.divider,
   },
   entryText: {
     flex: 1,
+    gap: 2,
   },
   entryTitle: {
     flexDirection: 'row',

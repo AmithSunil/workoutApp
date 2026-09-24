@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { Card, Divider, Text } from '@/components/ui';
+import { Card, Divider, PressableScale, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { LoggedExercise, LoggedSet } from '@/types/models';
 
@@ -127,12 +127,12 @@ export function ExerciseLogCard({
         </View>
       ))}
 
-      <Pressable onPress={onAddSet} style={({ pressed }) => [styles.addSet, pressed && styles.pressed]}>
+      <PressableScale onPress={onAddSet} style={[styles.addSet]}>
         <Ionicons name="add" size={15} color={colors.primary} />
         <Text variant="label" tone="primary">
           Add set
         </Text>
-      </Pressable>
+      </PressableScale>
     </Card>
   );
 }
@@ -231,8 +231,5 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border,
-  },
-  pressed: {
-    opacity: 0.6,
   },
 });

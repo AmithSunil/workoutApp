@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { Button, Card, Chip, EmptyState, Text } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { colors, fonts, radius, spacing } from '@/theme';
 import type { MuscleGroup } from '@/types/models';
 import { WEEKDAY_LABEL } from '@/utils/date';
 import { plural } from '@/utils/format';
@@ -56,12 +56,10 @@ export function RoutineDayEditor({
 
   return (
     <>
-      <Card>
+      <Card style={styles.card}>
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text variant="micro" tone="primary">
-              {WEEKDAY_LABEL[day.weekday].toUpperCase()}
-            </Text>
+            <Text variant="h2">{WEEKDAY_LABEL[day.weekday]}</Text>
             <Text variant="caption" tone="secondary">
               {plural(day.exercises.length, 'exercise')} ·{' '}
               {plural(totalSets(day.exercises), 'set')}
@@ -78,8 +76,8 @@ export function RoutineDayEditor({
           ) : null}
         </View>
 
-        <Text variant="micro" tone="tertiary" style={styles.fieldLabel}>
-          DAY NAME (OPTIONAL)
+        <Text variant="label" tone="secondary" style={styles.fieldLabel}>
+          Day name
         </Text>
         <TextInput
           value={day.name ?? ''}
@@ -91,8 +89,8 @@ export function RoutineDayEditor({
           returnKeyType="done"
         />
 
-        <Text variant="micro" tone="tertiary" style={styles.fieldLabel}>
-          FOCUS
+        <Text variant="label" tone="secondary" style={styles.fieldLabel}>
+          Focus
         </Text>
         <ScrollView
           horizontal
@@ -108,8 +106,8 @@ export function RoutineDayEditor({
           ))}
         </ScrollView>
 
-        <Text variant="micro" tone="tertiary" style={styles.fieldLabel}>
-          NOTE FOR THIS DAY (OPTIONAL)
+        <Text variant="label" tone="secondary" style={styles.fieldLabel}>
+          Note for this day
         </Text>
         <TextInput
           value={day.notes ?? ''}
@@ -160,6 +158,9 @@ export function RoutineDayEditor({
 }
 
 const styles = StyleSheet.create({
+  card: {
+    padding: spacing.xl,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -174,9 +175,9 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     marginTop: spacing.xs,
-    fontSize: 17,
-    lineHeight: 23,
-    fontWeight: '600',
+    fontSize: 20,
+    lineHeight: 26,
+    fontFamily: fonts.bold,
     color: colors.text,
     paddingVertical: spacing.xs,
     borderBottomWidth: StyleSheet.hairlineWidth * 2,
@@ -190,10 +191,9 @@ const styles = StyleSheet.create({
   notesInput: {
     marginTop: spacing.sm,
     minHeight: 52,
-    backgroundColor: colors.surfaceSunken,
+    backgroundColor: colors.surfaceMuted,
     borderRadius: radius.sm,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    fontFamily: fonts.regular,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     fontSize: 14,

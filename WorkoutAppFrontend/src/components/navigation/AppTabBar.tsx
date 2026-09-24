@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Text } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { PressableScale, Text } from '@/components/ui';
+import { colors, elevation, radius, spacing } from '@/theme';
 
 export interface TabMeta {
   name: string;
@@ -17,6 +17,9 @@ export interface TabMeta {
 /**
  * Shared bottom bar for both role shells. Custom rather than the stock bar so
  * the active pill, badge treatment and spacing match the rest of the system.
+ *
+ * Tab switches never animate — they happen dozens of times a session. Only the
+ * press itself gives feedback (the shared scale).
  *
  * NOTE: react-navigation invokes the `tabBar` prop as a plain function rather
  * than rendering it as a component, so nothing in here may call a hook. Safe
@@ -43,7 +46,7 @@ export function createAppTabBar(tabs: TabMeta[]) {
           };
 
           return (
-            <Pressable
+            <PressableScale
               key={route.key}
               onPress={onPress}
               accessibilityRole="tab"
@@ -53,7 +56,7 @@ export function createAppTabBar(tabs: TabMeta[]) {
               <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
                 <Ionicons
                   name={focused ? meta.iconActive : meta.icon}
-                  size={20}
+                  size={21}
                   color={focused ? colors.primary : colors.textTertiary}
                 />
                 {meta.badge ? (
@@ -64,10 +67,14 @@ export function createAppTabBar(tabs: TabMeta[]) {
                   </View>
                 ) : null}
               </View>
-              <Text variant="micro" tone={focused ? 'primary' : 'tertiary'} numberOfLines={1}>
+              <Text
+                variant="micro"
+                tone={focused ? 'default' : 'tertiary'}
+                weight={focused ? '700' : '500'}
+                numberOfLines={1}>
                 {meta.label}
               </Text>
-            </Pressable>
+            </PressableScale>
           );
         })}
       </View>
@@ -79,10 +86,13 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     backgroundColor: colors.surface,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-    paddingTop: spacing.sm,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    paddingTop: spacing.sm + 2,
     paddingHorizontal: spacing.sm,
+    ...elevation.card,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.05,
   },
   tab: {
     flex: 1,
@@ -91,7 +101,7 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     paddingHorizontal: spacing.lg,
-    paddingVertical: 5,
+    paddingVertical: 6,
     borderRadius: radius.pill,
   },
   iconWrapActive: {

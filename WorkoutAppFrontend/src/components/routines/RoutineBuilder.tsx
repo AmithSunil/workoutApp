@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState, type ReactNode } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 
-import { Button, Card, EmptyState, Screen, SectionHeader, Text } from '@/components/ui';
+import { Button, Card, EmptyState, PressableScale, Screen, SectionHeader, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { ClientProfile, RoutineDay, Weekday } from '@/types/models';
 import type { RoutineDayInput } from '@/api/handlers';
@@ -195,11 +195,11 @@ export function RoutineBuilder({
       {assignment ? (
         <>
           <SectionHeader title="Assign" caption="Optional — you can do this later" />
-          <Pressable
+          <PressableScale
             onPress={() => setAssignOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Choose clients"
-            style={({ pressed }) => [styles.assignRow, pressed && styles.pressed]}>
+            style={[styles.assignRow]}>
             <Ionicons name="people-outline" size={17} color={colors.primary} />
             <Text variant="body" numberOfLines={1} style={styles.assignText}>
               {assignedNames.length === 0
@@ -209,7 +209,7 @@ export function RoutineBuilder({
                   : `${assignedNames.length} clients selected`}
             </Text>
             <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
-          </Pressable>
+          </PressableScale>
         </>
       ) : null}
 
@@ -308,9 +308,6 @@ const styles = StyleSheet.create({
   },
   assignText: {
     flex: 1,
-  },
-  pressed: {
-    opacity: 0.72,
   },
   errorCard: {
     backgroundColor: colors.dangerSoft,

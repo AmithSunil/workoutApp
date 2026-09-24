@@ -29,7 +29,7 @@ export function RoutineExerciseRow({ exercise, index }: RoutineExerciseRowProps)
         <Text variant="h2" numberOfLines={2}>
           {exercise.name}
         </Text>
-        <Text variant="micro" tone="tertiary">
+        <Text variant="caption" tone="tertiary" style={styles.muscle}>
           {exercise.muscleGroup}
         </Text>
 
@@ -65,10 +65,13 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingVertical: spacing.md,
   },
+  muscle: {
+    textTransform: 'capitalize',
+  },
   index: {
-    width: 26,
-    height: 26,
-    borderRadius: radius.xs,
+    width: 28,
+    height: 28,
+    borderRadius: radius.pill,
     backgroundColor: colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',

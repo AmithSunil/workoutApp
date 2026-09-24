@@ -10,23 +10,22 @@ import {
   useGetNutritionRangeQuery,
   useRemoveFoodEntryMutation,
 } from '@/api/endpoints/nutritionApi';
-import { CalorieGauge, MacroBars } from '@/components/charts';
 import { DateStrip } from '@/components/common/DateStrip';
 import { AiConfirmationCard } from '@/components/nutrition/AiConfirmationCard';
 import { FoodPickerSheet } from '@/components/nutrition/FoodPickerSheet';
-import { MealSection } from '@/components/nutrition/MealSection';
+import { MEAL_META, MealSection } from '@/components/nutrition/MealSection';
+import { NutritionSummary } from '@/components/nutrition/NutritionSummary';
 import { QuickAddCarousel } from '@/components/nutrition/QuickAddCarousel';
-import { Card, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
+import { Button, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { activeDateChanged } from '@/store/slices/sessionSlice';
 import { pendingMealSlotChanged } from '@/store/slices/uiSlice';
-import { colors, spacing } from '@/theme';
+import { spacing } from '@/theme';
 import type { AiFoodSuggestion, FoodEntry, FoodItem, MealSlot } from '@/types/models';
 import { TODAY, friendlyDate, longDate } from '@/utils/date';
-import { kcal } from '@/utils/format';
 
 const SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -133,11 +132,18 @@ function LogScreen() {
   return (
     <>
       <Screen
-        title="Nutrition"
-        subtitle={activeDate === TODAY ? longDate(TODAY) : longDate(activeDate)}
         refreshControl={
           <RefreshControl refreshing={day.isFetching} onRefresh={() => void day.refetch()} />
         }>
+        <View style={styles.hello}>
+          <Text variant="micro" tone="tertiary">
+            {longDate(activeDate).toUpperCase()}
+          </Text>
+          <Text variant="display">
+            {activeDate === TODAY ? 'Today' : friendlyDate(activeDate)}
+          </Text>
+        </View>
+
         <DateStrip
           value={activeDate}
           onChange={(date) => dispatch(activeDateChanged(date))}
@@ -147,24 +153,19 @@ function LogScreen() {
         {day.isLoading || !day.data ? (
           <SkeletonCard lines={5} />
         ) : (
-          <Card>
-            <View style={styles.gaugeWrap}>
-              <CalorieGauge
-                consumed={day.data.consumed.calories}
-                target={day.data.targets.calories}
-              />
-            </View>
-            <View style={styles.macros}>
-              <MacroBars consumed={day.data.consumed} targets={day.data.targets} />
-            </View>
-            <View style={styles.summary}>
-              <Text variant="micro" tone="tertiary">
-                {friendlyDate(activeDate).toUpperCase()} ·{' '}
-                {kcal(day.data.consumed.calories)} of {kcal(day.data.targets.calories)} kcal logged
-              </Text>
-            </View>
-          </Card>
+          <NutritionSummary
+            day={day.data}
+            label={activeDate === TODAY ? 'kcal left today' : 'kcal left'}
+          />
         )}
+
+        <Button
+          label="Log food"
+          icon="add"
+          size="lg"
+          fullWidth
+          onPress={() => openPicker(slotForNow())}
+        />
 
         {aiSuggestion ? (
           <AiConfirmationCard
@@ -180,31 +181,39 @@ function LogScreen() {
           />
         ) : null}
 
-        <SectionHeader title="Quick add" caption="Your most-logged foods" />
-        <QuickAddCarousel
-          foods={frequent}
-          onAdd={(food) => quickAdd(food, 1, slotForNow())}
-          onBrowse={() => openPicker(slotForNow())}
-        />
-
-        <SectionHeader title="Meals" caption="Tap + to add to a meal" />
-        {SLOTS.map((slot) => (
-          <MealSection
-            key={slot}
-            slot={slot}
-            entries={entriesBySlot[slot]}
-            onAdd={openPicker}
-            onRemove={(entry) =>
-              clientId &&
-              void removeEntry({ id: entry.id, clientId, date: activeDate })
-            }
+        <View style={styles.section}>
+          <SectionHeader
+            title="Quick add"
+            caption={`One tap adds to ${MEAL_META[slotForNow()].label}`}
           />
-        ))}
+          <QuickAddCarousel
+            foods={frequent}
+            onAdd={(food) => quickAdd(food, 1, slotForNow())}
+            onBrowse={() => openPicker(slotForNow())}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="Meals" />
+          {SLOTS.map((slot) => (
+            <MealSection
+              key={slot}
+              slot={slot}
+              entries={entriesBySlot[slot]}
+              onAdd={openPicker}
+              onRemove={(entry) =>
+                clientId &&
+                void removeEntry({ id: entry.id, clientId, date: activeDate })
+              }
+            />
+          ))}
+        </View>
       </Screen>
 
       <FoodPickerSheet
         visible={pickerOpen}
         slot={pendingSlot}
+        onSlotChange={(slot) => dispatch(pendingMealSlotChanged(slot))}
         onClose={() => setPickerOpen(false)}
         onPickFood={(food, servings) => quickAdd(food, servings, pendingSlot, 'search')}
         onPickAi={(suggestion) => {
@@ -217,18 +226,12 @@ function LogScreen() {
 }
 
 const styles = StyleSheet.create({
-  gaugeWrap: {
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  macros: {
-    marginTop: spacing.lg,
+  hello: {
+    gap: spacing.xs,
     paddingTop: spacing.lg,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
   },
-  summary: {
-    alignItems: 'center',
-    marginTop: spacing.md,
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
   },
 });

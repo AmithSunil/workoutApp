@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { PressableScale } from './PressableScale';
 import { Text } from './Text';
 import { colors, radius, spacing } from '@/theme';
 
@@ -25,8 +26,6 @@ const toneStyles = {
 export function StatTile({ label, value, icon, tone = 'default', hint, onPress }: StatTileProps) {
   const t = toneStyles[tone];
 
-  // `View` silently ignores a function style, which would strip the card
-  // entirely — so only the pressable branch uses the callback form.
   const body = (
     <>
       {icon ? (
@@ -50,13 +49,13 @@ export function StatTile({ label, value, icon, tone = 'default', hint, onPress }
 
   if (onPress) {
     return (
-      <Pressable
+      <PressableScale
         onPress={onPress}
         accessibilityRole="button"
         accessibilityLabel={`${label}: ${value}`}
-        style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+        style={styles.tile}>
         {body}
-      </Pressable>
+      </PressableScale>
     );
   }
 
@@ -68,8 +67,8 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 90,
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    padding: spacing.md,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
     gap: 2,
   },
   iconWrap: {
@@ -86,8 +85,5 @@ const styles = StyleSheet.create({
   },
   hint: {
     marginTop: 2,
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

@@ -23,21 +23,21 @@ export function CheckInCard({ checkIn, client, onReview, onOpenClient, busy }: C
   const onTarget = Math.abs(caloriePct - 100) <= 8;
 
   return (
-    <Card>
+    <Card style={styles.card}>
       <View style={styles.header}>
-        {client ? <Avatar name={client.name} uri={client.avatarUrl} size={38} /> : null}
+        {client ? <Avatar name={client.name} uri={client.avatarUrl} size={40} /> : null}
         <View style={styles.headerText}>
           <Text variant="h2" numberOfLines={1}>
             {client?.name ?? 'Client'}
           </Text>
-          <Text variant="micro" tone="tertiary">
+          <Text variant="caption" tone="tertiary">
             Week of {monthDay(checkIn.weekOf)}
           </Text>
         </View>
         {checkIn.status === 'pending' ? (
           <View style={styles.pending}>
             <Text variant="micro" tone="warning">
-              PENDING
+              Pending
             </Text>
           </View>
         ) : (
@@ -79,13 +79,7 @@ export function CheckInCard({ checkIn, client, onReview, onOpenClient, busy }: C
 
       <View style={styles.actions}>
         {onOpenClient ? (
-          <Button
-            label="Open client"
-            variant="secondary"
-            size="sm"
-            onPress={onOpenClient}
-            style={styles.action}
-          />
+          <Button label="Open client" variant="secondary" size="sm" onPress={onOpenClient} />
         ) : null}
         {onReview && checkIn.status === 'pending' ? (
           <Button
@@ -94,7 +88,6 @@ export function CheckInCard({ checkIn, client, onReview, onOpenClient, busy }: C
             icon="checkmark"
             loading={busy}
             onPress={onReview}
-            style={styles.action}
           />
         ) : null}
       </View>
@@ -131,11 +124,14 @@ function Metric({
 }
 
 const styles = StyleSheet.create({
+  card: {
+    padding: spacing.xl,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   headerText: {
     flex: 1,
@@ -148,9 +144,10 @@ const styles = StyleSheet.create({
   },
   metrics: {
     flexDirection: 'row',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.sm,
     paddingVertical: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth * 2,
+    borderBottomWidth: StyleSheet.hairlineWidth * 2,
+    borderColor: colors.divider,
   },
   metric: {
     flex: 1,
@@ -168,10 +165,8 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    gap: spacing.md,
+    justifyContent: 'flex-end',
+    gap: spacing.sm,
     marginTop: spacing.lg,
-  },
-  action: {
-    flex: 1,
   },
 });

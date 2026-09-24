@@ -1,11 +1,14 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import {
   useGetBodyMetricsQuery,
   useLogBodyMetricMutation,
 } from '@/api/endpoints/progressApi';
 import { LogWeightSheet } from '@/components/progress/LogWeightSheet';
-import { Card, EmptyState } from '@/components/ui';
+import { Button, Card, Text } from '@/components/ui';
+import { colors, radius, spacing } from '@/theme';
 import { TODAY, monthDay, startOfWeek } from '@/utils/date';
 
 export interface WeighInPromptProps {
@@ -36,19 +39,21 @@ export function WeighInPrompt({ clientId, startWeightKg }: WeighInPromptProps) {
 
   return (
     <>
-      <Card>
-        <EmptyState
-          icon="scale-outline"
-          title={monday === TODAY ? 'Weigh-in day' : 'Weigh-in still open'}
-          message={
-            monday === TODAY
-              ? 'Mondays are your weigh-in. Same time, before breakfast, and the trend stays comparable.'
-              : `Nothing logged since Monday ${monthDay(monday)}. Weigh in today and the week still counts.`
-          }
-          actionLabel="Log weight"
-          onAction={() => setOpen(true)}
-          compact
-        />
+      <Card style={styles.banner}>
+        <View style={styles.icon}>
+          <Ionicons name="scale-outline" size={20} color={colors.primary} />
+        </View>
+        <View style={styles.text}>
+          <Text variant="bodyStrong">
+            {monday === TODAY ? 'Weigh-in day' : 'Weigh-in still open'}
+          </Text>
+          <Text variant="caption" tone="secondary">
+            {monday === TODAY
+              ? 'Before breakfast keeps the trend honest.'
+              : `Nothing since Mon ${monthDay(monday)} — today still counts.`}
+          </Text>
+        </View>
+        <Button label="Log" size="sm" onPress={() => setOpen(true)} />
       </Card>
 
       <LogWeightSheet
@@ -64,3 +69,23 @@ export function WeighInPrompt({ clientId, startWeightKg }: WeighInPromptProps) {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  icon: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    flex: 1,
+    gap: 2,
+  },
+});

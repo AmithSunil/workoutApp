@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { PressableScale } from './PressableScale';
 import { Text } from './Text';
 import { colors, radius, spacing } from '@/theme';
 
@@ -44,9 +45,9 @@ export function Chip({ label, selected, onPress, icon, accent, count }: ChipProp
 
   if (!onPress) return body;
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => pressed && styles.pressed}>
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: !!selected }}>
       {body}
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
     paddingHorizontal: spacing.md,
-    height: 32,
+    height: 34,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
     borderWidth: StyleSheet.hairlineWidth * 2,
@@ -73,8 +74,5 @@ const styles = StyleSheet.create({
   },
   countSelected: {
     backgroundColor: 'rgba(255,255,255,0.24)',
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

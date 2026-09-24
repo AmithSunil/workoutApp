@@ -153,7 +153,7 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.root}>
       <LinearGradient
-        colors={[palette.indigo50, colors.background]}
+        colors={[colors.primarySoft, colors.background]}
         style={[styles.gradient, { height: 320 + insets.top }]}
       />
 

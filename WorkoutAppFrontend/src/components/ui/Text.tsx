@@ -17,7 +17,7 @@ const toneMap: Record<NonNullable<TextProps['tone']>, string> = {
   secondary: colors.textSecondary,
   tertiary: colors.textTertiary,
   inverse: colors.textInverse,
-  primary: colors.primary,
+  primary: colors.primaryText,
   success: colors.success,
   warning: colors.warning,
   danger: colors.danger,
