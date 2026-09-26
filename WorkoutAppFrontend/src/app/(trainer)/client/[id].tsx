@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useGetThreadsQuery } from '@/api/endpoints/messagingApi';
 import { useGetNutritionRangeQuery } from '@/api/endpoints/nutritionApi';
@@ -9,7 +10,6 @@ import {
   useGetBodyMetricsQuery,
   useGetHabitsQuery,
   useGetProgressPhotosQuery,
-  useToggleHabitMutation,
 } from '@/api/endpoints/progressApi';
 import {
   useCreateAssignmentMutation,
@@ -21,9 +21,13 @@ import {
   useGetClientOverviewQuery,
   useGetTrainerQuery,
   useGetWeeklyComplianceQuery,
+  useRemoveClientMutation,
   useRevokeInviteMutation,
 } from '@/api/endpoints/trainerApi';
 import { BarSeries, LineChart, type BarDatum } from '@/components/charts';
+import { DateStrip } from '@/components/common/DateStrip';
+import { MEAL_META, MealSection } from '@/components/nutrition/MealSection';
+import { NutritionSummary } from '@/components/nutrition/NutritionSummary';
 import { HabitChecklist } from '@/components/progress/HabitChecklist';
 import { GoalsEditor } from '@/components/trainer/GoalsEditor';
 import { HabitEditor } from '@/components/trainer/HabitEditor';
@@ -36,10 +40,10 @@ import {
   Button,
   Card,
   EmptyState,
-  ProgressBar,
   Screen,
   SectionHeader,
   SegmentedControl,
+  Sheet,
   SkeletonCard,
   StatRow,
   Text,
@@ -49,11 +53,11 @@ import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clientDetailTabChanged, type UiState } from '@/store/slices/uiSlice';
-import { colors, radius, spacing, statusColor, statusLabel } from '@/theme';
-import { TODAY, monthDay } from '@/utils/date';
+import { colors, elevation, radius, spacing, statusColor, statusLabel } from '@/theme';
+import { TODAY, friendlyDate, monthDay } from '@/utils/date';
 import { shows, type TrackingDomain } from '@/utils/tracking';
 import { GOAL_LABEL } from '@/utils/goal';
-import type { ClientProfile } from '@/types/models';
+import type { ClientProfile, MealSlot } from '@/types/models';
 import { grams, kcal, kg, pct, signed } from '@/utils/format';
 import { shareInvite } from '@/utils/invite';
 
@@ -119,7 +123,10 @@ export default function ClientDetailScreen() {
   const weightTrendGood = summary.weightChange30d <= 0;
 
   return (
-    <Screen showBack tabBarPadding={false}>
+    <Screen
+      showBack
+      tabBarPadding={false}
+      headerRight={client.invited ? null : <ClientMenu client={client} />}>
       {/* Who — centred, with status stated in words and colour */}
       <View style={styles.hero}>
         <Avatar
@@ -200,6 +207,7 @@ export default function ClientDetailScreen() {
       ) : null}
       {activeTab === 'workouts' ? <WorkoutsTab clientId={clientId} /> : null}
       {activeTab === 'plan' ? <PlanTab clientId={clientId} clientName={client.name} /> : null}
+
     </Screen>
   );
 }
@@ -259,13 +267,97 @@ function InviteCard({ client }: { client: ClientProfile }) {
   );
 }
 
+/**
+ * Detaches, never deletes: the client keeps their account and history and
+ * carries on as an individual. Lives behind the header's ⋯ menu and confirms
+ * in a Sheet — Alert.alert is a no-op on web.
+ */
+function ClientMenu({ client }: { client: ClientProfile }) {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const [remove, removing] = useRemoveClientMutation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const first = client.name.split(' ')[0];
+
+  return (
+    <>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="More actions"
+        onPress={() => setMenuOpen(true)}
+        hitSlop={12}
+        style={styles.menuButton}>
+        <Ionicons name="ellipsis-horizontal" size={20} color={colors.text} />
+      </Pressable>
+
+      {/* ponytail: one item, so a plain transparent Modal; a shared Menu primitive when a second screen needs one */}
+      <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
+        <Pressable style={styles.menuBackdrop} onPress={() => setMenuOpen(false)} accessibilityLabel="Dismiss">
+          <Card style={[styles.menu, { top: insets.top + spacing.sm + 44 }]}>
+            <Pressable
+              accessibilityRole="menuitem"
+              onPress={() => {
+                setMenuOpen(false);
+                setOpen(true);
+              }}
+              style={styles.menuItem}>
+              <Ionicons name="person-remove-outline" size={18} color={colors.danger} />
+              <Text variant="bodyStrong" tone="danger">
+                Remove from roster
+              </Text>
+            </Pressable>
+          </Card>
+        </Pressable>
+      </Modal>
+
+      <Sheet visible={open} onClose={() => setOpen(false)} title={`Remove ${first}?`} height="42%">
+        <View style={styles.removeSheet}>
+          <Text tone="secondary">
+            {first} leaves your roster and you lose access to their logs and progress. They keep
+            their account and history, and continue training on their own.
+          </Text>
+          {removing.isError ? (
+            <Text variant="caption" tone="danger">
+              Could not remove this client. Try again.
+            </Text>
+          ) : null}
+          <View style={styles.actions}>
+            <Button
+              label="Cancel"
+              variant="secondary"
+              style={styles.action}
+              disabled={removing.isLoading}
+              onPress={() => setOpen(false)}
+            />
+            <Button
+              label="Remove"
+              variant="danger"
+              style={styles.action}
+              loading={removing.isLoading}
+              onPress={() =>
+                void remove(client.id)
+                  .unwrap()
+                  .then(() => {
+                    setOpen(false);
+                    router.replace(routes.trainer.roster());
+                  })
+                  .catch(() => undefined)
+              }
+            />
+          </View>
+        </View>
+      </Sheet>
+    </>
+  );
+}
+
 /* ------------------------------------------------------------------ tabs */
 
 function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeightKg?: number }) {
   const metrics = useGetBodyMetricsQuery({ clientId });
   const photos = useGetProgressPhotosQuery({ clientId });
   const habits = useGetHabitsQuery({ clientId });
-  const [toggleHabit] = useToggleHabitMutation();
   const [editingHabits, setEditingHabits] = useState(false);
 
   const series = (metrics.data ?? []).map((m) => ({ date: m.date, value: m.weightKg }));
@@ -292,7 +384,7 @@ function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeig
       <View style={styles.section}>
         <SectionHeader
           title="Habits"
-          caption="The goals you set — tap to tick one off for them"
+          caption="The daily goals you set — ticked off by them"
           actionLabel="Edit"
           onAction={() => setEditingHabits(true)}
         />
@@ -300,7 +392,8 @@ function MetricsTab({ clientId, targetWeightKg }: { clientId: string; targetWeig
           <HabitChecklist
             habits={habits.data}
             headless
-            onToggle={(habit) => void toggleHabit({ id: habit.id, clientId, date: TODAY })}
+            readOnly
+            onToggle={() => undefined}
           />
         ) : (
           <Card>
@@ -350,6 +443,14 @@ function NutritionTab({
   const compliance = useGetWeeklyComplianceQuery({ clientId, weeks: 6 });
   const days = useGetNutritionRangeQuery({ clientId, days: 14 });
   const [editingGoals, setEditingGoals] = useState(false);
+  const [date, setDate] = useState(TODAY);
+  const [weekKey, setWeekKey] = useState<string>();
+  const [showFood, setShowFood] = useState(false);
+  const day = days.data?.find((d) => d.date === date);
+  const logged = useMemo(
+    () => (days.data ?? []).filter((d) => d.entries.length > 0).map((d) => d.date),
+    [days.data]
+  );
 
   const bars = useMemo<BarDatum[]>(
     () =>
@@ -357,9 +458,9 @@ function NutritionTab({
         const share = pct(row.avgCalories, row.targetCalories);
         return {
           key: row.weekOf,
-          label: monthDay(row.weekOf).split(' ')[1],
+          label: monthDay(row.weekOf),
           value: row.avgCalories,
-          caption: `${share}%`,
+          caption: row.loggedDays ? `${share}%` : '—',
           color:
             share === 0
               ? colors.border
@@ -373,11 +474,12 @@ function NutritionTab({
     [compliance.data]
   );
 
-  const target = compliance.data?.[0]?.targetCalories;
+  const target = client.targets.calories;
+  // Tapped week, else the latest one.
+  const week =
+    compliance.data?.find((r) => r.weekOf === weekKey) ?? compliance.data?.[compliance.data.length - 1];
 
-  if (compliance.isLoading) return <SkeletonCard lines={5} />;
-
-  const recent = (days.data ?? []).slice(0, 7);
+  if (compliance.isLoading || days.isLoading) return <SkeletonCard lines={5} />;
 
   return (
     <>
@@ -410,12 +512,87 @@ function NutritionTab({
       ) : null}
 
       <View style={styles.section}>
+        <SectionHeader title="Daily log" caption={date === TODAY ? 'Today' : friendlyDate(date)} />
+        <DateStrip
+          value={date}
+          onChange={(d) => {
+            setDate(d);
+            setShowFood(false);
+          }}
+          markedDates={logged}
+        />
+        {!day || day.entries.length === 0 ? (
+          <Card>
+            <EmptyState icon="restaurant-outline" title="Nothing logged this day" compact />
+          </Card>
+        ) : (
+          <>
+            <NutritionSummary day={day} label="kcal left" />
+            <Pressable
+              onPress={() => setShowFood((v) => !v)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: showFood }}
+              style={styles.foodToggle}>
+              <Text variant="label" tone="primary">
+                {showFood ? 'Hide food' : `Show food · ${day.entries.length} item${day.entries.length > 1 ? 's' : ''}`}
+              </Text>
+              <Ionicons
+                name={showFood ? 'chevron-up' : 'chevron-down'}
+                size={14}
+                color={colors.primaryText}
+              />
+            </Pressable>
+            {showFood
+              ? (Object.keys(MEAL_META) as MealSlot[]).map((slot) => {
+                  const entries = day.entries.filter((e) => e.slot === slot);
+                  return entries.length ? (
+                    <MealSection key={slot} slot={slot} entries={entries} readOnly />
+                  ) : null;
+                })
+              : null}
+          </>
+        )}
+      </View>
+
+      <View style={styles.section}>
         <SectionHeader
           title="Weekly compliance"
-          caption={`Average daily intake against ${kcal(target ?? 0)} kcal`}
+          caption={`Tap a week for detail · line is today's ${kcal(target)} kcal target`}
         />
         <Card style={styles.big}>
-          <BarSeries data={bars} height={110} target={target} />
+          {week ? (
+            <View style={styles.weekHead}>
+              <Text variant="micro" tone="tertiary">
+                WEEK OF {monthDay(week.weekOf).toUpperCase()}
+              </Text>
+              {week.loggedDays ? (
+                <>
+                  <Text variant="metricLg">
+                    {kcal(week.avgCalories)}
+                    <Text variant="label" tone="tertiary">
+                      {' '}
+                      kcal / day
+                    </Text>
+                  </Text>
+                  <Text variant="caption" tone="secondary">
+                    {pct(week.avgCalories, week.targetCalories)}% of {kcal(week.targetCalories)} ·{' '}
+                    {week.avgProtein}g protein · {week.loggedDays}/7 days logged
+                  </Text>
+                </>
+              ) : (
+                <Text variant="bodyStrong" tone="secondary">
+                  Nothing logged this week
+                </Text>
+              )}
+            </View>
+          ) : null}
+          <BarSeries
+            data={bars}
+            height={140}
+            target={target}
+            activeKey={week?.weekOf}
+            onPressBar={(d) => setWeekKey(d.key)}
+          />
           <View style={styles.legendRow}>
             {LEGEND.map((l) => (
               <View key={l.label} style={styles.legendItem}>
@@ -468,39 +645,6 @@ function NutritionTab({
         </Card>
       </View>
 
-      <View style={styles.section}>
-        <SectionHeader title="Recent days" caption="The last week of logging" />
-        <Card padded={false}>
-          {recent.map((day, i) => {
-            const onTarget =
-              Math.abs(pct(day.consumed.calories, day.targets.calories) - 100) <= 10;
-            return (
-              <View key={day.date} style={[styles.day, i > 0 && styles.dayRule]}>
-                <View style={styles.dayHeader}>
-                  <Text variant="bodyStrong">{monthDay(day.date)}</Text>
-                  <Text variant="label" tone={onTarget ? 'success' : 'warning'}>
-                    {kcal(day.consumed.calories)}
-                    <Text variant="label" tone="tertiary">
-                      {' '}
-                      / {kcal(day.targets.calories)} kcal
-                    </Text>
-                  </Text>
-                </View>
-                <ProgressBar
-                  value={day.consumed.calories}
-                  target={day.targets.calories}
-                  color={onTarget ? colors.success : colors.warning}
-                  height={6}
-                />
-                <Text variant="caption" tone="tertiary" style={styles.dayMacros}>
-                  P {grams(day.consumed.protein)} · C {grams(day.consumed.carbs)} · F{' '}
-                  {grams(day.consumed.fat)}
-                </Text>
-              </View>
-            );
-          })}
-        </Card>
-      </View>
     </>
   );
 }
@@ -635,6 +779,34 @@ const styles = StyleSheet.create({
   big: {
     padding: spacing.xl,
   },
+  menuButton: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+    ...elevation.card,
+  },
+  menuBackdrop: {
+    flex: 1,
+  },
+  menu: {
+    position: 'absolute',
+    right: spacing.xl,
+    padding: spacing.xs,
+    ...elevation.floating,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  removeSheet: {
+    gap: spacing.lg,
+  },
   tabs: {
     marginTop: spacing.sm,
   },
@@ -653,6 +825,17 @@ const styles = StyleSheet.create({
   },
   inviteCopy: {
     marginTop: spacing.xs,
+  },
+  foodToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.sm,
+  },
+  weekHead: {
+    gap: spacing.xs,
+    marginBottom: spacing.xl,
   },
   legendRow: {
     flexDirection: 'row',
@@ -688,22 +871,5 @@ const styles = StyleSheet.create({
   colNum: {
     flex: 1,
     textAlign: 'right',
-  },
-  day: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-  },
-  dayRule: {
-    borderTopWidth: StyleSheet.hairlineWidth * 2,
-    borderTopColor: colors.divider,
-  },
-  dayHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: spacing.sm,
-  },
-  dayMacros: {
-    marginTop: spacing.sm,
   },
 });

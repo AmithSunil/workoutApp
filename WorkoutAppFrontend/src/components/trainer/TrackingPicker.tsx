@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { SegmentedControl, Text } from '@/components/ui';
+import { Button, SegmentedControl, Text } from '@/components/ui';
 import { spacing } from '@/theme';
 import type { TrackingMode } from '@/types/models';
 
@@ -22,26 +23,68 @@ export interface TrackingPickerProps {
   busy?: boolean;
 }
 
-/** The one control behind the tracking choice, shared by profile and first run. */
+/**
+ * The one control behind the tracking choice, shared by profile and first run.
+ * A first choice (value null) saves on tap; switching an existing choice asks
+ * first, inline — Alert.alert is a no-op on web.
+ */
 export function TrackingPicker({ value, onChange, busy }: TrackingPickerProps) {
+  const [pending, setPending] = useState<TrackingMode | null>(null);
+  const shown = pending ?? value ?? 'both';
+
   return (
     <View style={styles.root}>
       <SegmentedControl<TrackingMode>
         segments={SEGMENTS}
-        value={value ?? 'both'}
+        value={shown}
         onChange={(mode) => {
-          if (!busy && mode !== value) onChange(mode);
+          if (busy) return;
+          if (mode === value) setPending(null);
+          else if (value === null) onChange(mode);
+          else setPending(mode);
         }}
       />
       <Text variant="caption" tone="secondary">
-        {BLURB[value ?? 'both']}
+        {BLURB[shown]}
       </Text>
+      {pending ? (
+        <View style={styles.confirm} accessibilityRole="alert">
+          <Text variant="caption" tone="danger">
+            Switch from {LABEL[value ?? 'both']} to {LABEL[pending]}? This changes what you and
+            all your clients see.
+          </Text>
+          <View style={styles.actions}>
+            <Button label="Cancel" variant="secondary" size="sm" style={styles.action} onPress={() => setPending(null)} />
+            <Button
+              label="Switch"
+              size="sm"
+              style={styles.action}
+              onPress={() => {
+                onChange(pending);
+                setPending(null);
+              }}
+            />
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
 
+const LABEL = Object.fromEntries(SEGMENTS.map((s) => [s.value, s.label])) as Record<TrackingMode, string>;
+
 const styles = StyleSheet.create({
   root: {
     gap: spacing.md,
+  },
+  confirm: {
+    gap: spacing.sm,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  action: {
+    flex: 1,
   },
 });

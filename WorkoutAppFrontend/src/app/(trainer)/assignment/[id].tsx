@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   useCustomiseAssignmentMutation,
@@ -23,6 +22,8 @@ import {
   type DraftDay,
 } from '@/components/routines';
 import {
+  ACTION_BAR_SPACE,
+  ActionBar,
   Button,
   Card,
   Screen,
@@ -32,7 +33,7 @@ import {
   Text,
 } from '@/components/ui';
 import { routes } from '@/navigation/routes';
-import { colors, elevation, radius, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import type { Weekday } from '@/types/models';
 import { WEEKDAY_LABEL, byWeekday } from '@/utils/date';
 import { firstName, plural, restLabel } from '@/utils/format';
@@ -51,7 +52,6 @@ import { firstName, plural, restLabel } from '@/utils/format';
 export default function AssignmentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   const assignmentId = id ?? '';
   const assignment = useGetAssignmentQuery(assignmentId, { skip: !assignmentId });
@@ -258,25 +258,24 @@ export default function AssignmentScreen() {
 
       {/* While editing, save and discard stay in reach however far down they are */}
       {editing ? (
-        <View style={[styles.bar, { paddingBottom: insets.bottom + spacing.md }]}>
-          {emptyDays.length > 0 ? (
-            <Text variant="caption" tone="warning" align="center">
-              {emptyDays.map((day) => WEEKDAY_LABEL[day.weekday]).join(', ')}{' '}
-              {emptyDays.length === 1 ? 'has' : 'have'} no exercises left.
-            </Text>
-          ) : null}
-          <View style={styles.barButtons}>
-            <Button label="Discard" variant="secondary" size="lg" onPress={discard} style={styles.barDiscard} />
-            <Button
-              label={`Save for ${firstName(name)}`}
-              size="lg"
-              disabled={!canSave}
-              loading={saving}
-              onPress={save}
-              style={styles.flex}
-            />
-          </View>
-        </View>
+        <ActionBar
+          note={
+            emptyDays.length > 0
+              ? `${emptyDays.map((day) => WEEKDAY_LABEL[day.weekday]).join(', ')} ${
+                  emptyDays.length === 1 ? 'has' : 'have'
+                } no exercises left.`
+              : null
+          }>
+          <Button label="Discard" variant="secondary" size="lg" onPress={discard} style={styles.barDiscard} />
+          <Button
+            label={`Save for ${firstName(name)}`}
+            size="lg"
+            disabled={!canSave}
+            loading={saving}
+            onPress={save}
+            style={styles.flex}
+          />
+        </ActionBar>
       ) : null}
     </>
   );
@@ -311,24 +310,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dangerSoft,
   },
   roomForBar: {
-    paddingBottom: 140,
-  },
-  bar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    gap: spacing.sm,
-    paddingTop: spacing.md,
-    paddingHorizontal: spacing.xl,
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    ...elevation.floating,
-  },
-  barButtons: {
-    flexDirection: 'row',
-    gap: spacing.sm,
+    paddingBottom: ACTION_BAR_SPACE,
   },
   barDiscard: {
     paddingHorizontal: spacing.xl,

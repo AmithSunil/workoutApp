@@ -74,6 +74,12 @@ export const trainerApi = baseApi.injectEndpoints({
       invalidatesTags: ['ClientList', 'Trainer', 'TrainerSummary', 'Thread'],
     }),
 
+    /** Detaches a signed-up client; they carry on as an individual. */
+    removeClient: build.mutation<{ id: string }, string>({
+      query: (id) => ({ url: `/clients/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['ClientList', 'Trainer', 'TrainerSummary', 'Thread'],
+    }),
+
     /** The client's own first-run setup. Clears the onboarding redirect. */
     completeIntake: build.mutation<null, { clientId: string; input: IntakeInput }>({
       query: ({ clientId, input }) => ({
@@ -141,6 +147,7 @@ export const {
   useCreateProfileMutation,
   useInviteClientMutation,
   useRevokeInviteMutation,
+  useRemoveClientMutation,
   useCompleteIntakeMutation,
   useGetTrainerSummaryQuery,
   useGetAlertsQuery,

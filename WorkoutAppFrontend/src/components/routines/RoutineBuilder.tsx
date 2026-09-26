@@ -2,8 +2,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState, type ReactNode } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
-import { Button, Card, EmptyState, PressableScale, Screen, SectionHeader, Text } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import {
+  ACTION_BAR_SPACE,
+  ActionBar,
+  Avatar,
+  Button,
+  Card,
+  EmptyState,
+  PressableScale,
+  Screen,
+  SectionHeader,
+  Text,
+} from '@/components/ui';
+import { colors, fonts, radius, spacing } from '@/theme';
 import type { ClientProfile, RoutineDay, Weekday } from '@/types/models';
 import type { RoutineDayInput } from '@/api/handlers';
 import { WEEKDAY_LABEL, byWeekday } from '@/utils/date';
@@ -111,205 +122,224 @@ export function RoutineBuilder({
     .map((id) => assignment?.clients.find((c) => c.id === id)?.name)
     .filter((name): name is string => Boolean(name));
 
+  const submit = () =>
+    onSubmit({ title: title.trim(), notes: notes.trim() || undefined, days: toRoutineDays(days) });
+
   return (
-    <Screen
-      title={screenTitle}
-      subtitle={
-        totals.exercises
-          ? `${plural(totals.days, 'day')} · ${plural(totals.exercises, 'exercise')} · ${plural(totals.sets, 'set')}`
-          : 'Pick the training days, then fill each one'
-      }
-      showBack
-      tabBarPadding={false}
-      headerRight={
+    <>
+      <Screen showBack tabBarPadding={false} contentStyle={styles.roomForBar}>
+        {/* The name is the title — typed straight into the header */}
+        <View style={styles.hello}>
+          <Text variant="micro" tone="tertiary">
+            {screenTitle.toUpperCase()}
+            {totals.exercises
+              ? ` · ${plural(totals.days, 'day')} · ${plural(totals.exercises, 'exercise')} · ${plural(totals.sets, 'set')}`
+              : ''}
+          </Text>
+          <TextInput
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Name this routine"
+            placeholderTextColor={colors.textTertiary}
+            style={styles.titleInput}
+            accessibilityLabel="Routine name"
+            returnKeyType="done"
+          />
+          <TextInput
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Add a note for your clients (optional)"
+            placeholderTextColor={colors.textTertiary}
+            style={styles.notesInput}
+            accessibilityLabel="Note for the client"
+            multiline
+          />
+        </View>
+
+        {notice}
+
+        <View style={styles.section}>
+          <SectionHeader title="The week" caption="Tap a day to train on it — the rest are rest days" />
+          <WeekdayStrip
+            trainingDays={days.map((day) => day.weekday)}
+            active={active}
+            onPress={pressWeekday}
+            allowRestPress
+          />
+        </View>
+
+        {activeDay ? (
+          <RoutineDayEditor
+            key={activeDay.key}
+            day={activeDay}
+            onChange={patchDay}
+            onRemove={removeActiveDay}
+            onAddExercise={() => setPickerOpen(true)}
+          />
+        ) : (
+          <Card>
+            <EmptyState
+              icon="moon-outline"
+              title={`${WEEKDAY_LABEL[active]} is a rest day`}
+              message="Make it a training day to start adding exercises."
+              actionLabel="Train on this day"
+              onAction={() => pressWeekday(active)}
+              compact
+            />
+          </Card>
+        )}
+
+        {assignment ? (
+          <View style={styles.section}>
+            <SectionHeader title="Assign" caption="Optional — you can do this later" />
+            <PressableScale
+              onPress={() => setAssignOpen(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Choose clients"
+              style={styles.assignRow}>
+              {assignedNames.length > 0 ? (
+                <View style={styles.faces}>
+                  {(assignment.selectedIds ?? []).slice(0, 3).map((id, i) => {
+                    const c = assignment.clients.find((x) => x.id === id);
+                    return c ? (
+                      <View key={id} style={[styles.face, i > 0 && styles.faceOverlap]}>
+                        <Avatar name={c.name} uri={c.avatarUrl} size={28} />
+                      </View>
+                    ) : null;
+                  })}
+                </View>
+              ) : (
+                <View style={styles.assignIcon}>
+                  <Ionicons name="person-add" size={16} color={colors.primaryText} />
+                </View>
+              )}
+              <Text variant="bodyStrong" numberOfLines={1} style={styles.flex}>
+                {assignedNames.length === 0
+                  ? 'Choose clients'
+                  : assignedNames.length === 1
+                    ? assignedNames[0]
+                    : `${assignedNames.length} clients`}
+              </Text>
+              <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
+            </PressableScale>
+          </View>
+        ) : null}
+
+        {error ? (
+          <View style={styles.errorBanner}>
+            <Ionicons name="alert-circle-outline" size={18} color={colors.danger} />
+            <Text variant="caption" tone="danger" style={styles.flex}>
+              {error}
+            </Text>
+          </View>
+        ) : null}
+
+        <ExercisePickerSheet
+          visible={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          addedExerciseIds={(activeDay?.exercises ?? []).map((e) => e.exerciseId)}
+          title={`Add to ${WEEKDAY_LABEL[active]}`}
+          onAdd={(exercise) =>
+            setDays((prev) =>
+              prev.map((day) =>
+                day.weekday === active
+                  ? withExercises(day, [...day.exercises, draftFromExercise(exercise)])
+                  : day
+              )
+            )
+          }
+        />
+
+        {assignment ? (
+          <AssignSheet
+            visible={assignOpen}
+            onClose={() => setAssignOpen(false)}
+            clients={assignment.clients}
+            selectedIds={assignment.selectedIds}
+            onToggle={assignment.onToggle}
+            onConfirm={() => setAssignOpen(false)}
+            confirmLabel="Done"
+          />
+        ) : null}
+      </Screen>
+
+      <ActionBar note={submitting ? null : hint}>
         <Button
-          label="Save"
-          size="sm"
+          label={submitLabel}
+          size="lg"
           disabled={!canSave}
           loading={submitting}
-          onPress={() => onSubmit({ title: title.trim(), notes: notes.trim() || undefined, days: toRoutineDays(days) })}
+          onPress={submit}
+          style={styles.flex}
         />
-      }>
-      {notice}
-
-      <Card>
-        <Text variant="micro" tone="tertiary">
-          ROUTINE NAME
-        </Text>
-        <TextInput
-          value={title}
-          onChangeText={setTitle}
-          placeholder="Beginner Skinny"
-          placeholderTextColor={colors.textTertiary}
-          style={styles.titleInput}
-          accessibilityLabel="Routine name"
-          returnKeyType="done"
-        />
-
-        <Text variant="micro" tone="tertiary" style={styles.fieldLabel}>
-          NOTE FOR THE CLIENT (OPTIONAL)
-        </Text>
-        <TextInput
-          value={notes}
-          onChangeText={setNotes}
-          placeholder="Four training days a week. Keep the rest days genuinely restful."
-          placeholderTextColor={colors.textTertiary}
-          style={styles.notesInput}
-          accessibilityLabel="Note for the client"
-          multiline
-        />
-      </Card>
-
-      <SectionHeader
-        title="The week"
-        caption="Tap a day to add it — untapped days are rest days"
-      />
-      <WeekdayStrip
-        trainingDays={days.map((day) => day.weekday)}
-        active={active}
-        onPress={pressWeekday}
-        allowRestPress
-      />
-
-      {activeDay ? (
-        <RoutineDayEditor
-          key={activeDay.key}
-          day={activeDay}
-          onChange={patchDay}
-          onRemove={removeActiveDay}
-          onAddExercise={() => setPickerOpen(true)}
-        />
-      ) : (
-        <Card>
-          <EmptyState
-            icon="moon-outline"
-            title={`${WEEKDAY_LABEL[active]} is a rest day`}
-            message="Tap it above to turn it into a training day."
-            actionLabel="Make it a training day"
-            onAction={() => pressWeekday(active)}
-            compact
-          />
-        </Card>
-      )}
-
-      {assignment ? (
-        <>
-          <SectionHeader title="Assign" caption="Optional — you can do this later" />
-          <PressableScale
-            onPress={() => setAssignOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel="Choose clients"
-            style={[styles.assignRow]}>
-            <Ionicons name="people-outline" size={17} color={colors.primary} />
-            <Text variant="body" numberOfLines={1} style={styles.assignText}>
-              {assignedNames.length === 0
-                ? 'Choose clients'
-                : assignedNames.length === 1
-                  ? assignedNames[0]
-                  : `${assignedNames.length} clients selected`}
-            </Text>
-            <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
-          </PressableScale>
-        </>
-      ) : null}
-
-      {error ? (
-        <Card style={styles.errorCard}>
-          <Text variant="caption" tone="danger">
-            {error}
-          </Text>
-        </Card>
-      ) : null}
-
-      <Button
-        label={submitLabel}
-        icon="checkmark"
-        fullWidth
-        size="lg"
-        disabled={!canSave}
-        loading={submitting}
-        onPress={() =>
-          onSubmit({ title: title.trim(), notes: notes.trim() || undefined, days: toRoutineDays(days) })
-        }
-      />
-      {hint && !submitting ? (
-        <Text variant="micro" tone="tertiary" align="center">
-          {hint}
-        </Text>
-      ) : null}
-
-      <ExercisePickerSheet
-        visible={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        addedExerciseIds={(activeDay?.exercises ?? []).map((e) => e.exerciseId)}
-        title={`Add to ${WEEKDAY_LABEL[active]}`}
-        onAdd={(exercise) =>
-          setDays((prev) =>
-            prev.map((day) =>
-              day.weekday === active
-                ? withExercises(day, [...day.exercises, draftFromExercise(exercise)])
-                : day
-            )
-          )
-        }
-      />
-
-      {assignment ? (
-        <AssignSheet
-          visible={assignOpen}
-          onClose={() => setAssignOpen(false)}
-          clients={assignment.clients}
-          selectedIds={assignment.selectedIds}
-          onToggle={assignment.onToggle}
-          onConfirm={() => setAssignOpen(false)}
-          confirmLabel="Done"
-        />
-      ) : null}
-    </Screen>
+      </ActionBar>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  roomForBar: {
+    paddingBottom: ACTION_BAR_SPACE,
+  },
+  hello: {
+    gap: spacing.xs,
+  },
   titleInput: {
-    marginTop: spacing.xs,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: '700',
+    fontFamily: fonts.extrabold,
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.9,
     color: colors.text,
     paddingVertical: spacing.xs,
-    borderBottomWidth: StyleSheet.hairlineWidth * 2,
-    borderBottomColor: colors.border,
-  },
-  fieldLabel: {
-    marginTop: spacing.lg,
   },
   notesInput: {
+    fontFamily: fonts.regular,
+    fontSize: 15,
+    lineHeight: 21,
+    color: colors.textSecondary,
+    paddingVertical: spacing.xs,
+  },
+  section: {
+    gap: spacing.md,
     marginTop: spacing.sm,
-    minHeight: 56,
-    backgroundColor: colors.surfaceSunken,
-    borderRadius: radius.sm,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.text,
-    textAlignVertical: 'top',
   },
   assignRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     paddingHorizontal: spacing.lg,
-    height: 52,
+    height: 60,
   },
-  assignText: {
-    flex: 1,
+  assignIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  errorCard: {
+  faces: {
+    flexDirection: 'row',
+  },
+  face: {
+    borderRadius: radius.pill,
+    borderWidth: 2,
+    borderColor: colors.surface,
+  },
+  faceOverlap: {
+    marginLeft: -spacing.sm,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
     backgroundColor: colors.dangerSoft,
   },
 });

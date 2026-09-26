@@ -24,13 +24,14 @@ import {
   Divider,
   EmptyState,
   Screen,
+  ScreenTitle,
   SectionHeader,
   SkeletonCard,
-  StatTile,
+  StatRow,
   Text,
 } from '@/components/ui';
 import { routes } from '@/navigation/routes';
-import { colors, spacing, statusColor } from '@/theme';
+import { colors, radius, spacing, statusColor } from '@/theme';
 import type { AssignedRoutine, ClientProfile, Weekday } from '@/types/models';
 import { byWeekday } from '@/utils/date';
 import { plural, restLabel } from '@/utils/format';
@@ -97,44 +98,47 @@ export default function RoutineDetailScreen() {
   };
 
   return (
-    <Screen
-      title={data.title}
-      subtitle={`${plural(totals.days, 'training day')} · ${plural(totals.exercises, 'exercise')} · ${plural(totals.sets, 'set')}`}
-      showBack
-      tabBarPadding={false}
-      headerRight={
-        <Button
-          label="Edit"
-          size="sm"
-          variant="secondary"
-          onPress={() => router.push(routes.trainer.routineEdit(data.id))}
+    <Screen showBack tabBarPadding={false}>
+      <ScreenTitle
+        eyebrow={`${plural(totals.exercises, 'exercise')} · ${plural(totals.sets, 'set')}`}
+        title={data.title}
+        action={{
+          icon: 'create-outline',
+          label: 'Edit routine',
+          onPress: () => router.push(routes.trainer.routineEdit(data.id)),
+        }}
+      />
+
+      <Card style={styles.big}>
+        <StatRow
+          items={[
+            { label: 'Days / week', value: `${totals.days}` },
+            { label: 'Working sets', value: `${totals.sets}` },
+            { label: 'Avg rest', value: restLabel(avgRest) },
+          ]}
         />
-      }>
-      <View style={styles.tiles}>
-        <StatTile label="Days / week" value={`${totals.days}`} icon="calendar-outline" tone="primary" />
-        <StatTile label="Avg rest" value={restLabel(avgRest)} icon="time-outline" />
-        <StatTile label="Working sets" value={`${totals.sets}`} icon="barbell-outline" />
-      </View>
+      </Card>
 
       {data.notes ? (
-        <Card style={styles.noteCard}>
-          <View style={styles.noteRow}>
-            <Ionicons name="chatbubble-ellipses-outline" size={15} color={colors.primary} />
-            <Text variant="caption" tone="secondary" style={styles.noteText}>
-              {data.notes}
-            </Text>
-          </View>
-        </Card>
+        <View style={styles.noteRow}>
+          <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.primaryText} />
+          <Text variant="caption" style={styles.noteText}>
+            {data.notes}
+          </Text>
+        </View>
       ) : null}
 
-      <SectionHeader title="The week" caption="Tap a day to see what it prescribes" />
-      <WeekdayStrip
-        trainingDays={sorted.map((day) => day.weekday)}
-        active={activeWeekday}
-        onPress={setActive}
-      />
+      <View style={styles.section}>
+        <SectionHeader title="The week" caption="Tap a day to see what it prescribes" />
+        <WeekdayStrip
+          trainingDays={sorted.map((day) => day.weekday)}
+          active={activeWeekday}
+          onPress={setActive}
+        />
+      </View>
       <RoutineDayView day={activeDay} weekday={activeWeekday} />
 
+      <View style={styles.section}>
       <SectionHeader
         title="Assigned to"
         caption={
@@ -146,7 +150,7 @@ export default function RoutineDetailScreen() {
         onAction={openAssign}
       />
 
-      <Card>
+      <Card style={styles.listCard}>
         {rows.length === 0 ? (
           <EmptyState
             icon="person-add-outline"
@@ -169,6 +173,7 @@ export default function RoutineDetailScreen() {
           ))
         )}
       </Card>
+      </View>
 
       <View style={styles.footerActions}>
         <Button
@@ -250,11 +255,11 @@ function AssignedClientRow({
       <Avatar
         name={name}
         uri={client?.avatarUrl}
-        size={36}
+        size={40}
         status={client?.compliance.status}
       />
       <View style={styles.clientText}>
-        <Text variant="body" numberOfLines={1}>
+        <Text variant="bodyStrong" numberOfLines={1}>
           {name}
         </Text>
         {assignment.customised ? (
@@ -276,16 +281,24 @@ function AssignedClientRow({
 }
 
 const styles = StyleSheet.create({
-  tiles: {
-    flexDirection: 'row',
-    gap: spacing.md,
+  big: {
+    padding: spacing.xl,
   },
-  noteCard: {
-    backgroundColor: colors.primarySoft,
+  section: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+  listCard: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm,
   },
   noteRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primarySoft,
   },
   noteText: {
     flex: 1,
@@ -294,7 +307,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
   },
   clientText: {
     flex: 1,
@@ -302,6 +315,7 @@ const styles = StyleSheet.create({
   footerActions: {
     flexDirection: 'row',
     gap: spacing.md,
+    marginTop: spacing.lg,
   },
   footerButton: {
     flex: 1,

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 import { Button, Card, Chip, EmptyState, Text } from '@/components/ui';
 import { colors, fonts, radius, spacing } from '@/theme';
@@ -66,13 +66,17 @@ export function RoutineDayEditor({
             </Text>
           </View>
           {onRemove ? (
-            <Button
-              label="Make rest day"
-              icon="moon-outline"
-              variant="secondary"
-              size="sm"
+            <Pressable
               onPress={onRemove}
-            />
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={`Make ${WEEKDAY_LABEL[day.weekday]} a rest day`}
+              style={styles.restLink}>
+              <Ionicons name="moon-outline" size={15} color={colors.textSecondary} />
+              <Text variant="label" tone="secondary">
+                Rest day
+              </Text>
+            </Pressable>
           ) : null}
         </View>
 
@@ -82,7 +86,7 @@ export function RoutineDayEditor({
         <TextInput
           value={day.name ?? ''}
           onChangeText={(name) => onChange({ ...day, name })}
-          placeholder={`e.g. Push — defaults to "${day.focus}"`}
+          placeholder="e.g. Push, Upper A"
           placeholderTextColor={colors.textTertiary}
           style={styles.nameInput}
           accessibilityLabel={`Name for ${WEEKDAY_LABEL[day.weekday]}`}
@@ -99,7 +103,7 @@ export function RoutineDayEditor({
           {FOCUS_OPTIONS.map((option) => (
             <Chip
               key={option}
-              label={option}
+              label={option.charAt(0).toUpperCase() + option.slice(1)}
               selected={day.focus === option}
               onPress={() => onChange({ ...day, focus: option, focusPinned: true })}
             />
@@ -158,6 +162,15 @@ export function RoutineDayEditor({
 }
 
 const styles = StyleSheet.create({
+  restLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceMuted,
+  },
   card: {
     padding: spacing.xl,
   },

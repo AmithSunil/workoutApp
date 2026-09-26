@@ -268,9 +268,9 @@ export function LineChart({
 
           {activePoint && active ? (
             <View
-              pointerEvents="none"
               style={[
                 styles.callout,
+                { pointerEvents: 'none' },
                 {
                   left: Math.min(Math.max(active.x - 46, 0), Math.max(width - 92, 0)),
                   top: Math.max(active.y - 52, 0),
@@ -302,10 +302,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth * 2,
     borderColor: colors.border,
     alignItems: 'center',
-    shadowColor: colors.text,
-    shadowOpacity: 0.09,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
+    boxShadow: '0 6px 18px rgba(17, 19, 24, 0.09)',
   },
 });

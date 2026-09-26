@@ -200,7 +200,17 @@ export const supabaseRoutes: Array<{
   {
     method: 'GET',
     pattern: '/clients',
-    handler: async () => (await clients()).map(toClientProfile),
+    // The coach's roster. Filtered here, not left to RLS: the dev policies are
+    // still open, so an unfiltered read also returns individuals (trainer_id
+    // null) -- which is exactly what a removed client becomes.
+    handler: async () => {
+      const me = str(await rpc('app_user_id'));
+      return (
+        await rows<ClientProfileRow>(
+          supabase.from('client_profiles').select(CLIENT).eq('trainer_id', me).order('id'),
+        )
+      ).map(toClientProfile);
+    },
   },
   {
     method: 'GET',
@@ -288,6 +298,15 @@ export const supabaseRoutes: Array<{
     pattern: '/clients/:id/invite',
     handler: async ({ params }) => {
       await rpc('revoke_invite', { p_client_id: params.id });
+      return { id: params.id };
+    },
+  },
+  {
+    // Detach, not delete (migration 20260926000002).
+    method: 'DELETE',
+    pattern: '/clients/:id',
+    handler: async ({ params }) => {
+      await rpc('remove_client', { p_client_id: params.id });
       return { id: params.id };
     },
   },
@@ -757,12 +776,15 @@ export const supabaseRoutes: Array<{
   {
     method: 'GET',
     pattern: '/trainer/alerts',
+    // Scoped to the caller's roster like GET /clients: RLS is still open, and a
+    // removed client's flags must leave with them.
     handler: async () =>
       (
         await rows<AlertRow>(
           supabase
             .from('red_flag_alerts')
-            .select('*')
+            .select('*,client_profiles!inner(trainer_id)')
+            .eq('client_profiles.trainer_id', str(await rpc('app_user_id')))
             .eq('resolved', false)
             // `severity` is an enum declared critical → warning → info, so
             // ordering on the column already ranks by urgency.
@@ -791,7 +813,11 @@ export const supabaseRoutes: Array<{
     method: 'GET',
     pattern: '/trainer/checkins',
     handler: async ({ query }) => {
-      let builder = supabase.from('check_ins').select('*');
+      // Roster-scoped, as /trainer/alerts.
+      let builder = supabase
+        .from('check_ins')
+        .select('*,client_profiles!inner(trainer_id)')
+        .eq('client_profiles.trainer_id', str(await rpc('app_user_id')));
       if (query.status) builder = builder.eq('status', str(query.status));
       if (query.clientId) builder = builder.eq('client_id', str(query.clientId));
       return (await rows<CheckInRow>(builder.order('id'))).map(toCheckIn);
@@ -833,10 +859,16 @@ export const supabaseRoutes: Array<{
           supabase.from('client_profiles').select(CLIENT).eq('id', params.id).single(),
           `Client ${params.id} not found`,
         ),
-        rows<{ date: string; consumed_calories: number; consumed_protein: number }>(
+        rows<{
+          date: string;
+          consumed_calories: number;
+          consumed_protein: number;
+          target_calories: number;
+          target_protein: number;
+        }>(
           supabase
             .from('nutrition_days')
-            .select('date,consumed_calories,consumed_protein')
+            .select('date,consumed_calories,consumed_protein,target_calories,target_protein')
             .eq('client_id', params.id)
             .gt('consumed_calories', 0) // opening a day creates an empty row
             .gte('date', from),
@@ -864,8 +896,14 @@ export const supabaseRoutes: Array<{
           loggedDays: inWeek.length,
           avgCalories: Math.round(mean(inWeek.map((d) => d.consumed_calories))),
           avgProtein: Math.round(mean(inWeek.map((d) => d.consumed_protein))),
-          targetCalories: client.target_calories,
-          targetProtein: client.target_protein,
+          // Each day snapshots the target it was held to; judge the week against those,
+          // not today's. An unlogged week has no snapshot, so it shows the current one.
+          targetCalories: inWeek.length
+            ? Math.round(mean(inWeek.map((d) => d.target_calories)))
+            : client.target_calories,
+          targetProtein: inWeek.length
+            ? Math.round(mean(inWeek.map((d) => d.target_protein)))
+            : client.target_protein,
           sessionsCompleted: sessions.length,
           sessionsPlanned: 5,
         };
@@ -896,7 +934,8 @@ export const supabaseRoutes: Array<{
           supabase
             .from('nutrition_days')
             .select('date,consumed_calories')
-            .eq('client_id', params.id),
+            .eq('client_id', params.id)
+            .gt('consumed_calories', 0), // opening a day creates an empty row
         ),
         (async () => {
           const { count, error } = await supabase

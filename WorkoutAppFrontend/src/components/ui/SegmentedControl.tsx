@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Text } from './Text';
-import { colors, elevation, motion, radius, spacing } from '@/theme';
+import { colors, motion, radius, spacing } from '@/theme';
 
 const EASE_IN_OUT = Easing.bezier(0.77, 0, 0.175, 1);
 const PAD = 3;
@@ -89,10 +89,7 @@ const styles = StyleSheet.create({
     left: PAD,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
-    ...elevation.card,
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
+    boxShadow: '0 2px 10px rgba(17, 19, 24, 0.08)',
   },
   segment: {
     flex: 1,

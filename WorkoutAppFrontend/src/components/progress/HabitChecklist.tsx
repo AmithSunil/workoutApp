@@ -62,6 +62,7 @@ export function HabitChecklist({
           <Pressable
             key={habit.id}
             onPress={() => !readOnly && onToggle(habit)}
+            disabled={readOnly}
             accessibilityRole="checkbox"
             accessibilityState={{ checked: done }}
             style={({ pressed }) => [
@@ -69,9 +70,12 @@ export function HabitChecklist({
               headless && i === 0 && styles.rowFirst,
               pressed && !readOnly && styles.pressed,
             ]}>
-            <View style={[styles.check, done && styles.checkDone]}>
-              {done ? <Ionicons name="checkmark" size={14} color={colors.textOnPrimary} /> : null}
-            </View>
+            {/* Read-only viewers (the coach) see progress, not a control. */}
+            {readOnly ? null : (
+              <View style={[styles.check, done && styles.checkDone]}>
+                {done ? <Ionicons name="checkmark" size={14} color={colors.textOnPrimary} /> : null}
+              </View>
+            )}
 
             <View style={styles.icon}>
               <Ionicons

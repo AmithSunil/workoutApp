@@ -230,8 +230,13 @@ const weeklyCompliance = (clientId: string, weeks: number) => {
       loggedDays: logged,
       avgCalories,
       avgProtein,
-      targetCalories: client.targets.calories,
-      targetProtein: client.targets.protein,
+      // Same rule as the Supabase route: the week's own day snapshots, else today's target.
+      targetCalories: logged
+        ? Math.round(days.reduce((s, d) => s + d.targets.calories, 0) / logged)
+        : client.targets.calories,
+      targetProtein: logged
+        ? Math.round(days.reduce((s, d) => s + d.targets.protein, 0) / logged)
+        : client.targets.protein,
       sessionsCompleted: sessions.length,
       sessionsPlanned: 5,
     };
@@ -300,7 +305,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
         targets: { ...STARTER_MACROS },
         joinedAt: TODAY,
         invited: true,
-        compliance: { status: 'yellow', score: 0, lastLoggedAt: null, streakDays: 0 },
+        compliance: { status: 'red', score: 0, lastLoggedAt: null, streakDays: 0 },
       };
       db.clients.push(client);
       db.trainer.clientIds.push(client.id);
@@ -348,7 +353,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
         targetWeightKg: null,
         targets: { ...STARTER_MACROS },
         joinedAt: TODAY,
-        compliance: { status: 'yellow', score: 0, lastLoggedAt: null, streakDays: 0 },
+        compliance: { status: 'red', score: 0, lastLoggedAt: null, streakDays: 0 },
       };
       db.clients.push(client);
       return { id: client.id };
@@ -364,6 +369,19 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       db.trainer.clientIds = db.trainer.clientIds.filter((id) => id !== client.id);
       db.threads = db.threads.filter((t) => t.clientId !== client.id);
       db.bodyMetrics = db.bodyMetrics.filter((m) => m.clientId !== client.id);
+      return { id: client.id };
+    },
+  },
+  {
+    // Mirrors remove_client (20260926000002): off the roster, data kept. The
+    // mock has one trainer and no individuals, so the row simply leaves db.clients.
+    method: 'DELETE',
+    pattern: '/clients/:id',
+    handler: ({ params }) => {
+      const client = findClient(params.id);
+      if (!client || client.invited) throw new MockHttpError(404, `No client ${params.id} on your roster`);
+      db.clients = db.clients.filter((c) => c.id !== client.id);
+      db.trainer.clientIds = db.trainer.clientIds.filter((id) => id !== client.id);
       return { id: client.id };
     },
   },
@@ -868,7 +886,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     pattern: '/trainer/alerts',
     handler: () =>
       db.alerts
-        .filter((a) => !a.resolved)
+        .filter((a) => !a.resolved && findClient(a.clientId))
         .sort((a, b) => {
           const rank = { critical: 0, warning: 1, info: 2 } as const;
           if (rank[a.severity] !== rank[b.severity]) return rank[a.severity] - rank[b.severity];
@@ -892,7 +910,10 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       const status = query.status ? String(query.status) : undefined;
       const clientId = query.clientId ? String(query.clientId) : undefined;
       return db.checkIns.filter(
-        (c) => (!status || c.status === status) && (!clientId || c.clientId === clientId)
+        (c) =>
+          findClient(c.clientId) &&
+          (!status || c.status === status) &&
+          (!clientId || c.clientId === clientId)
       );
     },
   },
@@ -920,7 +941,10 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
         .filter((m) => m.clientId === client.id)
         .sort((a, b) => (a.date < b.date ? -1 : 1));
       const logs = db.workoutLogs.filter((l) => l.clientId === client.id).sort(byDateDesc);
-      const nutrition = db.nutritionDays.filter((n) => n.clientId === client.id).sort(byDateDesc);
+      // Opening a day creates an empty one; only days with food count as logged.
+      const nutrition = db.nutritionDays
+        .filter((n) => n.clientId === client.id && n.entries.length > 0)
+        .sort(byDateDesc);
       const latest = metrics[metrics.length - 1];
       const monthAgo = metrics.find((m) => diffInDays(TODAY, m.date) <= 30);
       return {
@@ -1065,6 +1089,7 @@ export interface WeeklyComplianceRow {
   loggedDays: number;
   avgCalories: number;
   avgProtein: number;
+  /** Mean of the logged days' snapshotted targets; the current target when none logged. */
   targetCalories: number;
   targetProtein: number;
   sessionsCompleted: number;

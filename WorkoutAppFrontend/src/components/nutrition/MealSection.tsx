@@ -17,7 +17,8 @@ export const MEAL_META: Record<MealSlot, { label: string; icon: keyof typeof Ion
 export interface MealSectionProps {
   slot: MealSlot;
   entries: FoodEntry[];
-  onAdd: (slot: MealSlot) => void;
+  /** Omit for a read-only view (the coach's). */
+  onAdd?: (slot: MealSlot) => void;
   onRemove?: (entry: FoodEntry) => void;
   readOnly?: boolean;
 }
@@ -37,7 +38,7 @@ export function MealSection({ slot, entries, onAdd, onRemove, readOnly }: MealSe
               : `${kcal(total)} kcal · ${entries.length} item${entries.length > 1 ? 's' : ''}`}
           </Text>
         </View>
-        {!readOnly ? (
+        {onAdd && !readOnly ? (
           <PressableScale
             onPress={() => onAdd(slot)}
             hitSlop={8}

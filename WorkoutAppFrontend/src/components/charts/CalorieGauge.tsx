@@ -88,7 +88,7 @@ export function CalorieGauge({
       </Svg>
 
       {bare ? null : (
-      <View style={styles.center} pointerEvents="none">
+      <View style={[styles.center, { pointerEvents: 'none' }]}>
         <Text variant="display" style={styles.value}>
           {kcal(Math.abs(remaining))}
         </Text>

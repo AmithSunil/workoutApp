@@ -3,7 +3,7 @@ import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import { StyleSheet, View } from 'react-native';
 
 import { PressableScale, Text } from '@/components/ui';
-import { colors, elevation, radius, spacing } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 
 export interface TabMeta {
   name: string;
@@ -90,9 +90,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radius.xl,
     paddingTop: spacing.sm + 2,
     paddingHorizontal: spacing.sm,
-    ...elevation.card,
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.05,
+    boxShadow: '0 -4px 16px rgba(17, 19, 24, 0.05)',
   },
   tab: {
     flex: 1,

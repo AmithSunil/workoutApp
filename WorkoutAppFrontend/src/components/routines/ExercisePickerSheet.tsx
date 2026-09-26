@@ -87,11 +87,13 @@ export function ExercisePickerSheet({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.filtersScroll}
         contentContainerStyle={styles.filters}>
         {FILTERS.map((value) => (
           <Chip
             key={value}
-            label={value === 'all' ? 'All' : value}
+            label={value === 'all' ? 'All' : value.charAt(0).toUpperCase() + value.slice(1)}
+            accent={colors.surfaceInk}
             selected={filter === value}
             count={counts.get(value) ?? 0}
             onPress={() => setFilter(value)}
@@ -129,18 +131,18 @@ export function ExercisePickerSheet({
                 accessibilityLabel={`Add ${item.name}`}
                 style={[styles.row]}>
                 <View style={styles.rowText}>
-                  <Text variant="body" numberOfLines={1}>
+                  <Text variant="bodyStrong" numberOfLines={1}>
                     {item.name}
                   </Text>
-                  <Text variant="micro" tone="tertiary" numberOfLines={1}>
+                  <Text variant="caption" tone="tertiary" numberOfLines={1} style={styles.meta}>
                     {item.muscleGroup} · {item.equipment}
                   </Text>
                 </View>
                 <View style={[styles.addButton, added && styles.addButtonAdded]}>
                   <Ionicons
                     name={added ? 'checkmark' : 'add'}
-                    size={16}
-                    color={added ? colors.success : colors.textOnPrimary}
+                    size={18}
+                    color={added ? colors.textOnPrimary : colors.primaryText}
                   />
                 </View>
               </PressableScale>
@@ -149,7 +151,17 @@ export function ExercisePickerSheet({
         />
       )}
 
-      <Button label="Done" fullWidth onPress={onClose} style={styles.done} />
+      <Button
+        label={
+          addedExerciseIds.length > 0
+            ? `Done · ${addedExerciseIds.length} on this day`
+            : 'Done'
+        }
+        size="lg"
+        fullWidth
+        onPress={onClose}
+        style={styles.done}
+      />
     </Sheet>
   );
 }
@@ -161,20 +173,27 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    height: 44,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
+    paddingHorizontal: spacing.lg,
+    height: 50,
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     color: colors.text,
     paddingVertical: 0,
+  },
+  filtersScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+    marginHorizontal: -spacing.xl,
   },
   filters: {
     gap: spacing.sm,
     paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+  },
+  meta: {
+    textTransform: 'capitalize',
   },
   loading: {
     gap: spacing.sm,
@@ -189,21 +208,22 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
-    padding: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   rowText: {
     flex: 1,
   },
   addButton: {
-    width: 30,
-    height: 30,
+    width: 34,
+    height: 34,
     borderRadius: radius.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primarySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButtonAdded: {
-    backgroundColor: colors.successSoft,
+    backgroundColor: colors.success,
   },
   done: {
     marginTop: spacing.sm,

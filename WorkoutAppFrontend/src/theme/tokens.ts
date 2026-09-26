@@ -319,19 +319,11 @@ export const elevation = {
   none: {},
   /** Resting cards */
   card: {
-    shadowColor: '#111318',
-    shadowOpacity: 0.04,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 1,
+    boxShadow: '0 4px 16px rgba(17, 19, 24, 0.04)',
   },
   /** Floating action button, sheets */
   floating: {
-    shadowColor: '#111318',
-    shadowOpacity: 0.14,
-    shadowRadius: 32,
-    shadowOffset: { width: 0, height: 14 },
-    elevation: 10,
+    boxShadow: '0 14px 32px rgba(17, 19, 24, 0.14)',
   },
 } as const;
 

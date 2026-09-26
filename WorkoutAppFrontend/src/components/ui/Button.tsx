@@ -97,13 +97,11 @@ export function Button({
         <>
           {/* Own radius instead of overflow:hidden — clipping would eat the iOS shadow. */}
           <LinearGradient
-            pointerEvents="none"
             colors={gradient[variant]!}
-            style={[StyleSheet.absoluteFill, { borderRadius: corners[size] - 1 }]}
+            style={[StyleSheet.absoluteFill, { borderRadius: corners[size] - 1, pointerEvents: 'none' }]}
           />
           <View
-            pointerEvents="none"
-            style={[styles.highlight, { borderRadius: corners[size] }]}
+            style={[styles.highlight, { borderRadius: corners[size], pointerEvents: 'none' }]}
           />
         </>
       ) : null}
@@ -145,11 +143,7 @@ const styles = StyleSheet.create({
   },
   /** Tight, tinted contact shadow — sits on the surface, doesn't float. */
   lift: {
-    shadowColor: colors.primaryPressed,
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
+    boxShadow: '0 6px 12px rgba(194, 58, 11, 0.3)', // primaryPressed @ 30%
   },
   highlight: {
     ...StyleSheet.absoluteFill,

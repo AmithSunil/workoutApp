@@ -294,7 +294,7 @@ export default function TriageDashboard() {
               key={checkIn.id}
               checkIn={checkIn}
               client={clientById[checkIn.clientId]}
-              busy={reviewState.isLoading}
+              busy={reviewState.isLoading && reviewState.originalArgs === checkIn.id}
               onOpenClient={() => openClient(checkIn.clientId)}
               onReview={() => void reviewCheckIn(checkIn.id)}
             />

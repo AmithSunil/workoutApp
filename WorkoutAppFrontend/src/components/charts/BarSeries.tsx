@@ -40,11 +40,10 @@ export function BarSeries({
     <View style={styles.wrapper}>
       {target !== undefined ? (
         <View
-          pointerEvents="none"
-          style={[styles.targetLine, { bottom: 22 + (target / max) * height }]}
+          style={[styles.targetLine, { pointerEvents: 'none', top: height - (target / max) * height }]}
         />
       ) : null}
-      <View style={[styles.row, { height: height + 40 }]}>
+      <View style={styles.row}>
         {data.map((d) => {
           const active = d.key === activeKey;
           const barHeight = Math.max(4, (d.value / max) * height);
@@ -53,8 +52,10 @@ export function BarSeries({
             <Wrapper
               key={d.key}
               onPress={onPressBar ? () => onPressBar(d) : undefined}
+              accessibilityRole={onPressBar ? 'button' : undefined}
+              accessibilityState={onPressBar ? { selected: active } : undefined}
               style={styles.column}>
-              <View style={styles.barArea}>
+              <View style={[styles.barArea, { height }]}>
                 <View
                   style={[
                     styles.bar,
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
     gap: spacing.sm,
   },
   column: {
@@ -97,7 +98,6 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   barArea: {
-    flex: 1,
     justifyContent: 'flex-end',
     width: '100%',
     alignItems: 'center',
