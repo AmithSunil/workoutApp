@@ -5,7 +5,9 @@ import { Card, PressableScale, Text } from '@/components/ui';
 import { colors, radius, spacing } from '@/theme';
 import type { FoodEntry, MealSlot } from '@/types/models';
 import { clockTime } from '@/utils/date';
-import { grams, kcal } from '@/utils/format';
+import { kcal } from '@/utils/format';
+
+import { MacroLine } from './MacroLine';
 
 export const MEAL_META: Record<MealSlot, { label: string; icon: keyof typeof Ionicons.glyphMap; emoji: string }> = {
   breakfast: { label: 'Breakfast', icon: 'sunny-outline', emoji: '🌅' },
@@ -61,9 +63,9 @@ export function MealSection({ slot, entries, onAdd, onRemove, readOnly }: MealSe
                 <Ionicons name="sparkles" size={11} color={colors.primary} />
               ) : null}
             </View>
-            <Text variant="micro" tone="tertiary" numberOfLines={1}>
-              {entry.servings === 1 ? '1 serving' : `${entry.servings} servings`} · P{' '}
-              {grams(entry.protein)} · C {grams(entry.carbs)} · F {grams(entry.fat)} ·{' '}
+            <MacroLine protein={entry.protein} carbs={entry.carbs} fat={entry.fat} />
+            <Text variant="micro" tone="tertiary">
+              {entry.servings === 1 ? '' : `${entry.servings} servings · `}
               {clockTime(entry.loggedAt)}
             </Text>
           </View>

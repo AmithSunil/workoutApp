@@ -8,6 +8,7 @@ import { useGetNutritionRangeQuery } from '@/api/endpoints/nutritionApi';
 import { useGetClientQuery } from '@/api/endpoints/trainerApi';
 import { useGetWorkoutLogsQuery } from '@/api/endpoints/workoutsApi';
 import { ThreadView } from '@/components/messaging/ThreadView';
+import { MacroLine } from '@/components/nutrition/MacroLine';
 import { Avatar, EmptyState, PressableScale, Screen, SegmentedControl, Sheet, Skeleton, Text } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
@@ -165,9 +166,9 @@ export default function TrainerThreadScreen() {
                       {monthDay(day.date)}
                     </Text>
                     <Text variant="micro" tone="tertiary">
-                      {kcal(day.consumed.calories)} kcal · {Math.round(day.consumed.protein)}P ·{' '}
-                      {Math.round(day.consumed.carbs)}C · {Math.round(day.consumed.fat)}F
+                      {kcal(day.consumed.calories)} kcal
                     </Text>
+                    <MacroLine {...day.consumed} color={colors.textTertiary} />
                   </View>
                   <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
                 </PressableScale>

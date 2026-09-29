@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { useGetNutritionDayQuery } from '@/api/endpoints/nutritionApi';
 import { useGetWorkoutLogQuery } from '@/api/endpoints/workoutsApi';
 import { Skeleton, Text } from '@/components/ui';
+import { MacroLine } from '@/components/nutrition/MacroLine';
 import { colors, radius, spacing } from '@/theme';
 import type { MessageAttachment } from '@/types/models';
 import { friendlyDate } from '@/utils/date';
@@ -120,10 +121,7 @@ function NutritionAttachment({
             {share}% of target
           </Text>
         </View>
-        <Text variant="micro" color={onDark ? colors.textInverse : colors.textSecondary}>
-          {Math.round(day.consumed.protein)}P · {Math.round(day.consumed.carbs)}C ·{' '}
-          {Math.round(day.consumed.fat)}F
-        </Text>
+        <MacroLine {...day.consumed} color={onDark ? colors.textInverse : colors.textSecondary} />
       </View>
     </Shell>
   );

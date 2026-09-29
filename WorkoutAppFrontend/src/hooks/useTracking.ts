@@ -13,8 +13,6 @@ export function useTracking() {
 
   return {
     mode,
-    /** Null until the coach has chosen — the dashboard prompts on this. */
-    chosen: trainer ? trainer.tracks !== null : true,
     workout: shows(mode, 'workout'),
     nutrition: shows(mode, 'nutrition'),
   };

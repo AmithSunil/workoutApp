@@ -1,0 +1,10 @@
+<!-- Paste into Supabase Dashboard → Authentication → Emails → Templates,
+     for BOTH "Confirm signup" (new addresses) and "Magic link" (returning).
+     Subject for both: Your Apex Coaching code: {{ .Token }}
+     No {{ .ConfirmationURL }} on purpose — the app verifies the code, it ignores links. -->
+<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:420px;margin:0 auto;padding:24px;color:#1f2937">
+  <h2 style="margin:0 0 12px">Your Apex Coaching sign-in code</h2>
+  <p style="margin:0 0 20px">Enter this code in the app to continue:</p>
+  <p style="font-size:32px;font-weight:700;letter-spacing:8px;margin:0 0 20px">{{ .Token }}</p>
+  <p style="margin:0;color:#6b7280;font-size:13px">It expires shortly. If you didn't ask for it, ignore this email.</p>
+</div>

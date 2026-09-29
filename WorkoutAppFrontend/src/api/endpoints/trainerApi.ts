@@ -18,11 +18,12 @@ import type {
 
 export const trainerApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getRoles: build.query<{ trainer: TrainerProfile; clients: ClientProfile[] }, void>({
+    getRoles: build.query<{ trainer: TrainerProfile | null; clients: ClientProfile[] }, void>({
       query: () => ({ url: '/session/roles' }),
     }),
 
-    getTrainer: build.query<TrainerProfile, void>({
+    /** The caller's own coach profile, or their coach's; null for an individual. */
+    getTrainer: build.query<TrainerProfile | null, void>({
       query: () => ({ url: '/trainer' }),
       providesTags: ['Trainer'],
     }),
@@ -62,6 +63,11 @@ export const trainerApi = baseApi.injectEndpoints({
      */
     createProfile: build.mutation<{ id: string }, ProfileInput>({
       query: (body) => ({ url: '/session/profile', method: 'POST', body }),
+    }),
+
+    /** Deletes the caller's own account. No tags: the sign-out after it resets the cache. */
+    deleteAccount: build.mutation<null, void>({
+      query: () => ({ url: '/session', method: 'DELETE' }),
     }),
 
     inviteClient: build.mutation<ClientProfile, ClientInvite>({
@@ -145,6 +151,7 @@ export const {
   useGetClientQuery,
   useUpdateClientMutation,
   useCreateProfileMutation,
+  useDeleteAccountMutation,
   useInviteClientMutation,
   useRevokeInviteMutation,
   useRemoveClientMutation,

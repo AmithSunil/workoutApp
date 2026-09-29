@@ -1,4 +1,5 @@
 import { baseApi } from '../baseApi';
+import type { ParseMealInput } from '../handlers';
 
 import type {
   AiFoodSuggestion,
@@ -30,8 +31,9 @@ export const nutritionApi = baseApi.injectEndpoints({
       providesTags: ['Food'],
     }),
 
-    getAiSuggestions: build.query<AiFoodSuggestion[], void>({
-      query: () => ({ url: '/ai/suggestions' }),
+    /** Nothing is stored — the result goes to the confirmation card. */
+    parseMeal: build.mutation<AiFoodSuggestion, ParseMealInput>({
+      query: (body) => ({ url: '/ai/parse', method: 'POST', body }),
     }),
 
     addFoodEntry: build.mutation<NutritionDay, Omit<FoodEntry, 'id' | 'loggedAt'>>({
@@ -77,7 +79,7 @@ export const {
   useGetNutritionRangeQuery,
   useSearchFoodsQuery,
   useGetFrequentFoodsQuery,
-  useGetAiSuggestionsQuery,
+  useParseMealMutation,
   useAddFoodEntryMutation,
   useAddFoodEntriesMutation,
   useRemoveFoodEntryMutation,

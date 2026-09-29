@@ -248,6 +248,7 @@ begin
   -- The seat cap, which bites whatever the app is showing.
   execute 'reset role';
   update public.subscriptions set plan_code = 'coach_free' where user_id = 't-001';
+  update public.plans set max_clients = 1 where code = 'coach_free';  -- free cap (30) is above the fixture roster
   execute 'set local role authenticated';
   perform set_config('request.jwt.claims', json_build_object('sub', maya, 'role','authenticated')::text, true);
   begin

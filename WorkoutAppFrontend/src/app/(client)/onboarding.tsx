@@ -12,6 +12,7 @@ import { spacing } from '@/theme';
 import type { ClientProfile } from '@/types/models';
 import { TODAY } from '@/utils/date';
 import { deriveGoal } from '@/utils/goal';
+import { isPhone, normalizePhone } from '@/utils/format';
 
 type NumberKey = 'heightCm' | 'startWeightKg' | 'targetWeightKg';
 
@@ -29,7 +30,8 @@ const positive = (text: string): number | null => {
 /**
  * First sign-in for a client the coach added without their body numbers.
  *
- * One scroll, not a wizard: only the numbers the coach left blank, plus free
+ * One scroll, not a wizard: their name if the coach invited by email alone,
+ * only the numbers the coach left blank, plus free
  * text for health and diet. Goals, macros and habits stay the coach's — the
  * notes go to them as the first chat message, and completing this raises an
  * alert so they set real targets.
@@ -62,9 +64,12 @@ function IntakeForm({ client }: { client: ClientProfile }) {
     targetWeightKg: '',
   });
   const [notes, setNotes] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const askPhone = !client.phone;
 
   const value = (key: NumberKey) => client[key] ?? positive(draft[key]);
-  const ready = fields.every((f) => positive(draft[f.key]) !== null);
+  const ready = fields.every((f) => positive(draft[f.key]) !== null) && (!client.unnamed || !!name.trim()) && (!askPhone || isPhone(phone));
 
   const submit = () => {
     const weight = value('startWeightKg');
@@ -73,6 +78,8 @@ function IntakeForm({ client }: { client: ClientProfile }) {
     void complete({
       clientId: client.id,
       input: {
+        name: client.unnamed ? name.trim() : undefined,
+        phone: askPhone ? normalizePhone(phone) : undefined,
         heightCm: value('heightCm') ?? undefined,
         startWeightKg: weight,
         targetWeightKg: target,
@@ -90,9 +97,40 @@ function IntakeForm({ client }: { client: ClientProfile }) {
 
   return (
     <Screen
-      title={`Welcome, ${client.name.split(' ')[0]}`}
-      subtitle="A few numbers and you're in"
+      title={client.unnamed ? 'Welcome' : `Welcome, ${client.name.split(' ')[0]}`}
+      subtitle="A few details and you're in"
       tabBarPadding={false}>
+      {client.unnamed || askPhone ? (
+        <Card>
+          <View style={styles.form}>
+            {client.unnamed ? (
+              <Input
+                label="YOUR NAME"
+                icon="person-outline"
+                value={name}
+                onChangeText={setName}
+                placeholder="What should your coach call you?"
+                autoCapitalize="words"
+                autoComplete="name"
+              />
+            ) : null}
+            {askPhone ? (
+              <Input
+                label="PHONE NUMBER"
+                icon="call-outline"
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="+91 98765 43210"
+                keyboardType="phone-pad"
+                autoComplete="tel"
+                textContentType="telephoneNumber"
+                error={phone.trim() && !isPhone(phone) ? 'Enter a valid phone number' : null}
+              />
+            ) : null}
+          </View>
+        </Card>
+      ) : null}
+
       {fields.length > 0 ? (
         <Card>
           <View style={styles.form}>

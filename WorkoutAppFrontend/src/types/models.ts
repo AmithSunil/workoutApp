@@ -48,6 +48,10 @@ export interface ClientProfile extends User {
   joinedAt: ISODate;
   /** On the roster, but nobody has signed in as this client yet. */
   invited?: true;
+  /** Invited by email alone and has not named themselves yet; `name` holds the email until onboarding. */
+  unnamed?: true;
+  /** Asked once at onboarding; absent until then (migration 20260929000003). */
+  phone?: string;
   /** Rolled up by the backend; drives the roster traffic lights. */
   compliance: {
     status: ComplianceStatus;
@@ -112,6 +116,8 @@ export interface AiFoodSuggestion {
     name: string;
     servings: number;
     servingLabel: string;
+    /** The model's weight estimate (g, or ml for drinks) the macros are for — the slider scales from it. */
+    grams: number;
     calories: number;
     protein: number;
     carbs: number;

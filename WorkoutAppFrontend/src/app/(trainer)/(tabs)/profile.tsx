@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import { useGetTrainerQuery, useUpdateTrainerMutation } from '@/api/endpoints/trainerApi';
+import { DeleteAccountButton } from '@/components/auth/DeleteAccountButton';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { PlanSummary } from '@/components/billing/PlanSummary';
 import { Avatar, Card, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
@@ -77,6 +78,7 @@ export default function TrainerProfileScreen() {
       </View>
 
       <SignOutButton style={styles.signOut} />
+      <DeleteAccountButton role="trainer" />
     </Screen>
   );
 }

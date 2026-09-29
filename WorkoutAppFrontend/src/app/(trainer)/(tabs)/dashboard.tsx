@@ -12,12 +12,10 @@ import {
   useGetTrainerSummaryQuery,
   useResolveAlertMutation,
   useReviewCheckInMutation,
-  useUpdateTrainerMutation,
 } from '@/api/endpoints/trainerApi';
 import { Paywall } from '@/components/billing/Paywall';
 import { AlertCard } from '@/components/trainer/AlertCard';
 import { CheckInCard } from '@/components/trainer/CheckInCard';
-import { TrackingPicker } from '@/components/trainer/TrackingPicker';
 import {
   Avatar,
   Card,
@@ -68,7 +66,6 @@ export default function TriageDashboard() {
   const threads = useGetThreadsQuery();
   const [resolveAlert] = useResolveAlertMutation();
   const [reviewCheckIn, reviewState] = useReviewCheckInMutation();
-  const [updateTrainer, trackingState] = useUpdateTrainerMutation();
   const tracking = useTracking();
   const [showAllAlerts, setShowAllAlerts] = useState(false);
   const [showAllCheckIns, setShowAllCheckIns] = useState(false);
@@ -141,21 +138,6 @@ export default function TriageDashboard() {
           {trainer ? firstName(trainer.name) : 'Coach'}
         </Text>
       </View>
-
-      {/* First run: the tracking choice a sign-up flow would have asked for. */}
-      {tracking.chosen ? null : (
-        <Card style={styles.big}>
-          <Text variant="h2">What do you coach?</Text>
-          <Text variant="caption" tone="secondary" style={styles.setupCopy}>
-            This decides what Apex shows you. You can change it any time from your profile.
-          </Text>
-          <TrackingPicker
-            value={null}
-            busy={trackingState.isLoading}
-            onChange={(tracks) => void updateTrainer({ tracks })}
-          />
-        </Card>
-      )}
 
       {/* The day in one number — the only dark surface on the screen */}
       <Card style={styles.hero}>
@@ -381,13 +363,6 @@ const styles = StyleSheet.create({
   section: {
     gap: spacing.md,
     marginTop: spacing.sm,
-  },
-  big: {
-    padding: spacing.xl,
-  },
-  setupCopy: {
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
   },
   hero: {
     backgroundColor: colors.surfaceInk,

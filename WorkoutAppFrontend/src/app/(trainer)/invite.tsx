@@ -26,7 +26,8 @@ const parse = (text: string): number | null | undefined => {
 };
 
 /**
- * Adding a client. The invite is the client row: once saved they are on the
+ * Adding a client, by email alone — they name themselves on first sign-in.
+ * The invite is the client row: once saved they are on the
  * roster, the coach can set up goals, habits and a routine, and the client
  * signs in later with a code sent to this address.
  *
@@ -38,7 +39,6 @@ export default function InviteClientScreen() {
   const trainer = useGetTrainerQuery();
   const [invite, state] = useInviteClientMutation();
 
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [withNumbers, setWithNumbers] = useState(false);
   const [numbers, setNumbers] = useState<Record<NumberKey, string>>({
@@ -54,14 +54,13 @@ export default function InviteClientScreen() {
   };
   const badNumber = Object.values(parsed).some((v) => v === null);
   const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim());
-  const canSubmit = name.trim().length > 0 && emailOk && !badNumber && !state.isLoading;
+  const canSubmit = emailOk && !badNumber && !state.isLoading;
   const skipsSetup = parsed.heightCm != null && parsed.startWeightKg != null;
 
   const submit = () => {
     if (!canSubmit) return;
     const { heightCm, startWeightKg, targetWeightKg } = parsed;
     void invite({
-      name: name.trim(),
       email: email.trim(),
       profile: withNumbers
         ? {
@@ -86,15 +85,6 @@ export default function InviteClientScreen() {
     <Screen title="Add a client" subtitle="They sign in with a code — no password" showBack tabBarPadding={false}>
       <Card>
         <View style={styles.form}>
-          <Input
-            label="NAME"
-            icon="person-outline"
-            value={name}
-            onChangeText={setName}
-            placeholder="Jane Doe"
-            autoCapitalize="words"
-            returnKeyType="next"
-          />
           <Input
             label="EMAIL"
             icon="mail-outline"

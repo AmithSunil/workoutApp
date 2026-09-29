@@ -30,6 +30,14 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Take a photo of your meal so the AI can estimate its macros.",
+          "photosPermission": "Choose a photo of your meal so the AI can estimate its macros.",
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {

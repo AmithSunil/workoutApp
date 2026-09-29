@@ -9,6 +9,7 @@
 import { db, findClient, nextId } from './mockDb';
 
 import type {
+  AiFoodSuggestion,
   BodyMetric,
   CheckIn,
   ClientProfile,
@@ -32,6 +33,7 @@ import type {
   WorkoutLog,
 } from '@/types/models';
 import { TODAY, addDays, byWeekday, diffInDays, startOfWeek } from '@/utils/date';
+import { isPhone, normalizePhone } from '@/utils/format';
 
 export class MockHttpError extends Error {
   constructor(
@@ -282,9 +284,8 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     method: 'POST',
     pattern: '/clients/invite',
     handler: ({ body }) => {
-      const { name, email, profile } = body as ClientInvite;
+      const { email, profile } = body as ClientInvite;
       const address = email.trim().toLowerCase();
-      if (!name.trim()) throw new MockHttpError(400, 'A client needs a name');
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) {
         throw new MockHttpError(400, 'That email address doesn’t look right');
       }
@@ -294,7 +295,8 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       const client: ClientProfile = {
         id: nextId('c'),
         role: 'client',
-        name: name.trim(),
+        name: address,
+        unnamed: true,
         email: address,
         avatarUrl: '',
         trainerId: db.trainer.id,
@@ -323,6 +325,14 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       }
       return client;
     },
+  },
+  {
+    // Mirrors delete_account (migration 20260929000001). ponytail: the mock has
+    // no notion of who is asking, so this is a no-op; the sign-out that follows
+    // is what the app sees.
+    method: 'DELETE',
+    pattern: '/session',
+    handler: () => null,
   },
   {
     // Mirrors create_profile (migration 20260918000002). The real transport
@@ -392,9 +402,15 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     handler: ({ params, body }) => {
       const client = requireClient(params.id);
       const input = body as IntakeInput;
-      if (client.heightCm !== null && client.startWeightKg !== null) {
+      if (client.heightCm !== null && client.startWeightKg !== null && !client.unnamed && client.phone) {
         throw new MockHttpError(409, 'Setup is already done');
       }
+      const name = input.name?.trim() ?? '';
+      if (client.unnamed && !name) throw new MockHttpError(400, 'Tell your coach your name');
+      const phone = normalizePhone(input.phone ?? '');
+      if (!client.phone && !isPhone(phone)) throw new MockHttpError(400, 'Enter a valid phone number');
+      const onlyPhone = client.heightCm !== null && client.startWeightKg !== null && !client.unnamed;
+      client.phone ??= phone;
       const height = client.heightCm ?? input.heightCm ?? 0;
       const weight = client.startWeightKg ?? input.startWeightKg ?? 0;
       const target = client.targetWeightKg ?? input.targetWeightKg ?? 0;
@@ -408,7 +424,11 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       }
       Object.assign(client, { heightCm: height, startWeightKg: weight, targetWeightKg: target });
       delete client.invited;
-      db.alerts.push({
+      if (client.unnamed) {
+        client.name = name;
+        delete client.unnamed;
+      }
+      if (!onlyPhone) db.alerts.push({
         id: nextId('al'),
         clientId: client.id,
         kind: 'intake-complete',
@@ -501,7 +521,25 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     },
   },
   { method: 'GET', pattern: '/foods/frequent', handler: () => db.foods.filter((f) => f.frequent) },
-  { method: 'GET', pattern: '/ai/suggestions', handler: () => db.aiSuggestions },
+  {
+    // The real parser is the `food-ai` edge function. The mock picks the fixture
+    // whose transcript best overlaps the text; a photo alone gets the first one.
+    method: 'POST',
+    pattern: '/ai/parse',
+    handler: ({ body }) => {
+      const { text = '', image } = body as ParseMealInput;
+      if (!text.trim() && !image) throw new MockHttpError(400, 'Describe the meal or add a photo');
+      const words = text.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
+      const score = (s: AiFoodSuggestion) => words.filter((w) => s.transcript.toLowerCase().includes(w)).length;
+      const best = db.aiSuggestions.reduce((a, b) => (score(b) > score(a) ? b : a));
+      return {
+        ...best,
+        transcript: text.trim() || 'From your photo',
+        // ponytail: fixtures carry no weights; 100 g stands in so the sliders work offline.
+        items: best.items.map((i) => ({ ...i, grams: i.grams ?? 100 })),
+      };
+    },
+  },
 
   /* -------------------------------------------------------------- training */
   { method: 'GET', pattern: '/exercises', handler: () => db.exercises },
@@ -1020,7 +1058,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
 
 /** Mirrors the rows seeded by migration 20260920000001. Placeholder pricing. */
 const MOCK_PLANS: Plan[] = [
-  { code: 'coach_free', role: 'trainer', name: 'Free', pricePaise: 0, maxClients: 2, position: 0 },
+  { code: 'coach_free', role: 'trainer', name: 'Free', pricePaise: 0, maxClients: 30, position: 0 },
   { code: 'coach_starter', role: 'trainer', name: 'Starter', pricePaise: 99900, maxClients: 15, position: 1 },
   { code: 'coach_pro', role: 'trainer', name: 'Pro', pricePaise: 249900, maxClients: 50, position: 2 },
   { code: 'coach_elite', role: 'trainer', name: 'Elite', pricePaise: 499900, maxClients: null, position: 3 },
@@ -1047,9 +1085,14 @@ export interface RoutineInput {
 /** Mirrors the column defaults in migration 20260915000003. */
 const STARTER_MACROS: MacroTargets = { calories: 2000, protein: 150, carbs: 200, fat: 65 };
 
-/** `POST /clients/invite`. Height + start weight together let the client skip intake. */
+/** `POST /ai/parse`. A description, a photo (base64), or both. */
+export interface ParseMealInput {
+  text?: string;
+  image?: { base64: string; mimeType: string } | null;
+}
+
+/** `POST /clients/invite`. Email only — the client names themselves at intake. */
 export interface ClientInvite {
-  name: string;
   email: string;
   profile?: Partial<Pick<ClientProfile, 'heightCm' | 'startWeightKg' | 'targetWeightKg' | 'goal'>>;
 }
@@ -1062,6 +1105,10 @@ export interface ProfileInput {
 
 /** `POST /clients/:id/intake`. Fields the coach already set are ignored. */
 export interface IntakeInput {
+  /** Required while the client is `unnamed`, ignored after. */
+  name?: string;
+  /** Required while the client has no phone, ignored after. */
+  phone?: string;
   heightCm?: number;
   startWeightKg?: number;
   targetWeightKg?: number;

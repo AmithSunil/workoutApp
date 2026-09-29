@@ -1,8 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 
-import { useGetAiSuggestionsQuery, useSearchFoodsQuery } from '@/api/endpoints/nutritionApi';
+import { useParseMealMutation, useSearchFoodsQuery } from '@/api/endpoints/nutritionApi';
+import { errorMessage } from '@/api/types';
 import {
   Button,
   Chip,
@@ -17,16 +27,23 @@ import { colors, radius, spacing } from '@/theme';
 import type { AiFoodSuggestion, FoodItem, MealSlot } from '@/types/models';
 import { grams, kcal } from '@/utils/format';
 
+import { AiConfirmationCard, type AiItem } from './AiConfirmationCard';
 import { MEAL_META } from './MealSection';
+import { pickMealPhoto, type MealPhoto } from './mealPhoto';
+
+/** What the sheet opens on: a tab, or a photo already taken — which starts analysing at once. */
+export type PickerStart = 'search' | 'describe' | MealPhoto;
 
 export interface FoodPickerSheetProps {
   visible: boolean;
+  start: PickerStart;
   slot: MealSlot;
   /** The meal row at the top of the sheet — lets the user fix a guessed slot. */
   onSlotChange: (slot: MealSlot) => void;
   onClose: () => void;
   onPickFood: (food: FoodItem, servings: number) => void;
-  onPickAi: (suggestion: AiFoodSuggestion) => void;
+  /** Resolves true once saved; the sheet closes itself then. */
+  onLogAi: (items: AiItem[]) => Promise<boolean>;
 }
 
 type Mode = 'search' | 'ai';
@@ -34,43 +51,83 @@ type Mode = 'search' | 'ai';
 const SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 /** How long a row shows its ✓ after being added. */
 const ADDED_MS = 1400;
+const EXAMPLES = ['2 idli with sambar', 'chicken biryani and raita', 'protein shake'];
 
 /**
- * Two ways into the same log: exact search for people who know what they ate,
- * and a free-text AI parser for everyone else. The AI path always routes
- * through the confirmation card rather than writing directly.
+ * Every way into the log, with as few taps as possible:
  *
- * The meal is chosen up front (pre-set from the time of day) and stays
- * editable. Tapping a food row adds it straight away; the row flashes a ✓ and
- * the footer counts what has gone in, so several foods can be logged in one
- * visit and it's always obvious they landed.
+ * - Search: tapping a food row adds it straight away; the row flashes a ✓ and
+ *   the footer counts what has gone in, so several foods land in one visit.
+ * - AI: a photo starts analysing the moment it is taken — no extra button —
+ *   and the review (sliders + one "Log to Lunch" button) happens right here in
+ *   the sheet. A description works the same way, and a detail typed on the
+ *   review ("cooked in ghee") re-runs it with the same photo.
+ *
+ * The meal is pre-set from the time of day and stays editable at the top.
  */
 export function FoodPickerSheet({
   visible,
+  start,
   slot,
   onSlotChange,
   onClose,
   onPickFood,
-  onPickAi,
+  onLogAi,
 }: FoodPickerSheetProps) {
   const [mode, setMode] = useState<Mode>('search');
   const [query, setQuery] = useState('');
-  const [transcript, setTranscript] = useState('');
   const [servings, setServings] = useState<Record<string, number>>({});
   const [addedCount, setAddedCount] = useState(0);
   const [justAdded, setJustAdded] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Each visit starts clean.
-  useEffect(() => {
-    if (visible) {
-      setAddedCount(0);
-      setJustAdded(null);
+  const [transcript, setTranscript] = useState('');
+  const [photo, setPhoto] = useState<MealPhoto | null>(null);
+  const [suggestion, setSuggestion] = useState<AiFoodSuggestion | null>(null);
+  const [analysing, setAnalysing] = useState(false);
+  const [logging, setLogging] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [parseMeal] = useParseMealMutation();
+  // Bumped on every reset and every run, so a reply that lands after the user
+  // closed the sheet or asked again is dropped instead of shown.
+  const run = useRef(0);
+
+  const analyse = async (withPhoto: MealPhoto | null, text: string) => {
+    const mine = ++run.current;
+    setAiError(null);
+    setAnalysing(true);
+    try {
+      const result = await parseMeal({
+        text: text.trim(),
+        image: withPhoto && { base64: withPhoto.base64, mimeType: withPhoto.mimeType },
+      }).unwrap();
+      if (mine === run.current) setSuggestion(result);
+    } catch (e) {
+      if (mine === run.current) setAiError(errorMessage(e, 'Could not analyse that meal — try again.'));
+    } finally {
+      if (mine === run.current) setAnalysing(false);
     }
+  };
+
+  // Each visit starts clean, on the tab (or photo) it was opened for.
+  useEffect(() => {
+    if (!visible) return;
+    run.current++;
+    setAddedCount(0);
+    setJustAdded(null);
+    setTranscript('');
+    setSuggestion(null);
+    setAnalysing(false);
+    setAiError(null);
+    setMode(start === 'search' ? 'search' : 'ai');
+    const startPhoto = typeof start === 'object' ? start : null;
+    setPhoto(startPhoto);
+    if (startPhoto) void analyse(startPhoto, '');
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [visible]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only on open
+  }, [visible, start]);
 
   const add = (item: FoodItem) => {
     onPickFood(item, servings[item.id] ?? 1);
@@ -82,23 +139,32 @@ export function FoodPickerSheet({
   };
 
   const { data: foods = [], isLoading } = useSearchFoodsQuery(query, { skip: !visible });
-  const { data: aiSuggestions = [] } = useGetAiSuggestionsQuery(undefined, { skip: !visible });
 
-  /** Picks the fixture whose transcript best overlaps what the user typed. */
-  const matchedSuggestion = useMemo<AiFoodSuggestion | null>(() => {
-    if (!transcript.trim() || aiSuggestions.length === 0) return null;
-    const words = transcript.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
-    let best = aiSuggestions[0];
-    let bestScore = -1;
-    for (const s of aiSuggestions) {
-      const score = words.filter((w) => s.transcript.toLowerCase().includes(w)).length;
-      if (score > bestScore) {
-        bestScore = score;
-        best = s;
-      }
-    }
-    return { ...best, transcript: transcript.trim() };
-  }, [transcript, aiSuggestions]);
+  const choosePhoto = async (camera: boolean) => {
+    setAiError(null);
+    const picked = await pickMealPhoto(camera);
+    if (typeof picked === 'string') return setAiError(picked);
+    if (!picked) return;
+    setPhoto(picked);
+    void analyse(picked, transcript);
+  };
+
+  const log = async (items: AiItem[]) => {
+    setLogging(true);
+    const ok = await onLogAi(items);
+    setLogging(false);
+    if (ok) onClose();
+    else setAiError('Could not save that — try again.');
+  };
+
+  const startOver = () => {
+    run.current++;
+    setSuggestion(null);
+    setPhoto(null);
+    setTranscript('');
+    setAnalysing(false);
+    setAiError(null);
+  };
 
   const bump = (id: string, delta: number) =>
     setServings((prev) => ({
@@ -106,8 +172,17 @@ export function FoodPickerSheet({
       [id]: Math.max(0.5, Number(((prev[id] ?? 1) + delta).toFixed(1))),
     }));
 
+  const errorRow = aiError ? (
+    <View style={styles.error}>
+      <Ionicons name="alert-circle" size={16} color={colors.danger} />
+      <Text variant="caption" tone="danger" style={styles.foodText}>
+        {aiError}
+      </Text>
+    </View>
+  ) : null;
+
   return (
-    <Sheet visible={visible} onClose={onClose} title="Log food" height="86%">
+    <Sheet visible={visible} onClose={onClose} title="Log food" height="90%">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -124,14 +199,17 @@ export function FoodPickerSheet({
         ))}
       </ScrollView>
 
-      <SegmentedControl<Mode>
-        value={mode}
-        onChange={setMode}
-        segments={[
-          { value: 'search', label: 'Search foods' },
-          { value: 'ai', label: '✨ Describe it' },
-        ]}
-      />
+      {/* The tabs go once there is an AI result — the review owns the sheet until it's logged or dropped. */}
+      {suggestion ? null : (
+        <SegmentedControl<Mode>
+          value={mode}
+          onChange={setMode}
+          segments={[
+            { value: 'ai', label: '✨ Snap or describe' },
+            { value: 'search', label: 'Search foods' },
+          ]}
+        />
+      )}
 
       {mode === 'search' ? (
         <View style={styles.pane}>
@@ -170,7 +248,7 @@ export function FoodPickerSheet({
                 <EmptyState
                   icon="search-outline"
                   title="No matches"
-                  message="Try a shorter word, or describe the meal with AI instead."
+                  message="Try a shorter word, or snap / describe it instead."
                   compact
                 />
               }
@@ -194,7 +272,7 @@ export function FoodPickerSheet({
                       <Text variant="micro" tone="tertiary" numberOfLines={1}>
                         {item.brand ? `${item.brand} · ` : ''}
                         {item.servingLabel} · {kcal(item.calories * count)} kcal ·{' '}
-                        {grams(item.protein * count)}P
+                        {grams(item.protein * count)} protein
                       </Text>
                     </View>
                     <View style={styles.stepper}>
@@ -235,11 +313,99 @@ export function FoodPickerSheet({
             </View>
           ) : null}
         </View>
+      ) : suggestion ? (
+        <View style={styles.aiReview}>
+          <View style={styles.refine}>
+            {photo ? <Image source={{ uri: photo.uri }} style={styles.thumb} /> : null}
+            <TextInput
+              value={transcript}
+              onChangeText={setTranscript}
+              placeholder={photo ? 'Add a detail, e.g. cooked in ghee' : 'Describe the meal'}
+              placeholderTextColor={colors.textTertiary}
+              style={styles.refineInput}
+              returnKeyType="send"
+              onSubmitEditing={() => transcript.trim() && void analyse(photo, transcript)}
+            />
+            {transcript.trim() && transcript.trim() !== suggestion.transcript ? (
+              <Pressable
+                onPress={() => void analyse(photo, transcript)}
+                style={styles.refineBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Re-analyse with this detail">
+                <Ionicons name="refresh" size={16} color={colors.primaryText} />
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={startOver}
+                style={styles.refineBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Start over">
+                <Ionicons name="close" size={16} color={colors.primaryText} />
+              </Pressable>
+            )}
+          </View>
+          {errorRow}
+          <AiConfirmationCard
+            key={suggestion.id}
+            suggestion={suggestion}
+            slotLabel={MEAL_META[slot].label}
+            busy={logging}
+            onConfirm={(items) => void log(items)}
+          />
+        </View>
+      ) : analysing ? (
+        <View style={styles.analysing}>
+          {photo ? (
+            <View>
+              <Image source={{ uri: photo.uri }} style={styles.photo} accessibilityLabel="Your meal photo" />
+              <View style={styles.photoOverlay}>
+                <ActivityIndicator color={colors.textInverse} />
+                <Text variant="label" color={colors.textInverse}>
+                  Reading your meal…
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.analysingRow}>
+              <ActivityIndicator color={colors.primary} />
+              <Text variant="label" tone="secondary">
+                Reading your meal…
+              </Text>
+            </View>
+          )}
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} height={72} radius={radius.md} />
+          ))}
+        </View>
       ) : (
-        <View style={styles.aiPane}>
-          <Text variant="caption" tone="secondary">
-            Type what you ate in plain English — the parser will break it into items and macros for
-            you to confirm.
+        <ScrollView
+          style={styles.pane}
+          contentContainerStyle={styles.aiPane}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.photoRow}>
+            <PressableScale
+              onPress={() => void choosePhoto(true)}
+              accessibilityRole="button"
+              style={styles.photoTile}>
+              <Ionicons name="camera" size={26} color={colors.primaryText} />
+              <Text variant="label" tone="primary">
+                Take a photo
+              </Text>
+            </PressableScale>
+            <PressableScale
+              onPress={() => void choosePhoto(false)}
+              accessibilityRole="button"
+              style={[styles.photoTile, styles.photoTileAlt]}>
+              <Ionicons name="images" size={26} color={colors.textSecondary} />
+              <Text variant="label" tone="secondary">
+                Upload one
+              </Text>
+            </PressableScale>
+          </View>
+
+          <Text variant="caption" tone="tertiary">
+            Or type what you ate — add a detail like “cooked in ghee” before taking the photo and it’s used too.
           </Text>
           <TextInput
             value={transcript}
@@ -247,31 +413,32 @@ export function FoodPickerSheet({
             placeholder="e.g. two eggs on toast with half an avocado"
             placeholderTextColor={colors.textTertiary}
             style={styles.aiInput}
+            autoFocus={start === 'describe'}
+            maxLength={1000}
             multiline
           />
-          <View style={styles.examples}>
-            {['protein shake and almonds', 'chicken burrito bowl with extra rice'].map((example) => (
-              <Pressable key={example} onPress={() => setTranscript(example)} style={styles.example}>
-                <Ionicons name="sparkles-outline" size={12} color={colors.primary} />
-                <Text variant="micro" tone="primary" numberOfLines={1}>
-                  {example}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+          {transcript ? null : (
+            <View style={styles.examples}>
+              {EXAMPLES.map((example) => (
+                <Pressable key={example} onPress={() => setTranscript(example)} style={styles.example}>
+                  <Ionicons name="sparkles-outline" size={12} color={colors.primary} />
+                  <Text variant="micro" tone="primary">
+                    {example}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          )}
+          {errorRow}
           <Button
-            label="Parse with AI"
+            label="Analyse"
             icon="sparkles"
+            size="lg"
             fullWidth
-            disabled={!matchedSuggestion}
-            onPress={() => {
-              if (matchedSuggestion) {
-                onPickAi(matchedSuggestion);
-                setTranscript('');
-              }
-            }}
+            disabled={!transcript.trim()}
+            onPress={() => void analyse(null, transcript)}
           />
-        </View>
+        </ScrollView>
       )}
     </Sheet>
   );
@@ -382,9 +549,30 @@ const styles = StyleSheet.create({
   aiPane: {
     gap: spacing.md,
     paddingTop: spacing.lg,
+    paddingBottom: spacing.xxl,
+  },
+  aiReview: {
+    flex: 1,
+    gap: spacing.md,
+    paddingTop: spacing.md,
+  },
+  photoRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  photoTile: {
+    flex: 1,
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.xl,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primarySoft,
+  },
+  photoTileAlt: {
+    backgroundColor: colors.surface,
   },
   aiInput: {
-    minHeight: 96,
+    minHeight: 88,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     padding: spacing.md,
@@ -396,15 +584,77 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   examples: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
   },
   example: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.xs,
     backgroundColor: colors.primarySoft,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+  },
+  analysing: {
+    gap: spacing.md,
+    paddingTop: spacing.lg,
+  },
+  photo: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surfaceMuted,
+  },
+  photoOverlay: {
+    ...StyleSheet.absoluteFill,
+    borderRadius: radius.lg,
+    backgroundColor: colors.overlay,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  analysingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  refine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingLeft: spacing.sm,
+    paddingRight: spacing.xs,
+    minHeight: 48,
+    borderWidth: StyleSheet.hairlineWidth * 2,
+    borderColor: colors.border,
+  },
+  thumb: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.xs,
+    backgroundColor: colors.surfaceMuted,
+  },
+  refineInput: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
+    paddingVertical: spacing.sm,
+  },
+  refineBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primarySoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  error: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
 });

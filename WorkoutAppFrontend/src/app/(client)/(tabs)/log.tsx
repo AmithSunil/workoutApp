@@ -1,5 +1,6 @@
 import { Redirect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import {
@@ -11,23 +12,32 @@ import {
   useRemoveFoodEntryMutation,
 } from '@/api/endpoints/nutritionApi';
 import { DateStrip } from '@/components/common/DateStrip';
-import { AiConfirmationCard } from '@/components/nutrition/AiConfirmationCard';
-import { FoodPickerSheet } from '@/components/nutrition/FoodPickerSheet';
+import type { AiItem } from '@/components/nutrition/AiConfirmationCard';
+import { FoodPickerSheet, type PickerStart } from '@/components/nutrition/FoodPickerSheet';
 import { MEAL_META, MealSection } from '@/components/nutrition/MealSection';
 import { NutritionSummary } from '@/components/nutrition/NutritionSummary';
+import { pickMealPhoto } from '@/components/nutrition/mealPhoto';
 import { QuickAddCarousel } from '@/components/nutrition/QuickAddCarousel';
-import { Button, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
+import { PressableScale, Screen, SectionHeader, SkeletonCard, Text } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { activeDateChanged } from '@/store/slices/sessionSlice';
 import { pendingMealSlotChanged } from '@/store/slices/uiSlice';
-import { spacing } from '@/theme';
-import type { AiFoodSuggestion, FoodEntry, FoodItem, MealSlot } from '@/types/models';
+import { colors, radius, spacing } from '@/theme';
+import type { FoodEntry, FoodItem, MealSlot } from '@/types/models';
 import { TODAY, friendlyDate, longDate } from '@/utils/date';
 
 const SLOTS: MealSlot[] = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+/** The four ways in, one tap each. Snap is first and filled: it's the fastest. */
+const LOG_ACTIONS = [
+  { label: 'Snap', icon: 'camera', start: 'camera', hint: 'Take a photo of your meal' },
+  { label: 'Upload', icon: 'images', start: 'library', hint: 'Upload a photo of your meal' },
+  { label: 'Describe', icon: 'chatbubble-ellipses', start: 'describe', hint: 'Describe your meal' },
+  { label: 'Search', icon: 'search', start: 'search', hint: 'Search foods' },
+] as const;
 
 /** Nutrition logging: gauge, quick-add, AI parse, and the meal ledger. */
 /** Only reachable while the client's coach tracks nutrition — a deep link lands on home. */
@@ -42,7 +52,8 @@ function LogScreen() {
   const pendingSlot = useAppSelector((s) => s.ui.pendingMealSlot);
 
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [aiSuggestion, setAiSuggestion] = useState<AiFoodSuggestion | null>(null);
+  const [pickerStart, setPickerStart] = useState<PickerStart>('search');
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
   const day = useGetNutritionDayQuery(
     { clientId: clientId ?? '', date: activeDate },
@@ -52,7 +63,7 @@ function LogScreen() {
   const { data: frequent = [] } = useGetFrequentFoodsQuery();
 
   const [addEntry] = useAddFoodEntryMutation();
-  const [addEntries, addEntriesState] = useAddFoodEntriesMutation();
+  const [addEntries] = useAddFoodEntriesMutation();
   const [removeEntry] = useRemoveFoodEntryMutation();
 
   const markedDates = useMemo(
@@ -72,12 +83,21 @@ function LogScreen() {
   }, [day.data]);
 
   const openPicker = useCallback(
-    (slot: MealSlot) => {
+    (slot: MealSlot, start: PickerStart = 'search') => {
       dispatch(pendingMealSlotChanged(slot));
+      setPickerStart(start);
       setPickerOpen(true);
     },
     [dispatch]
   );
+
+  /** Camera / library straight from the screen — the sheet opens already analysing. */
+  const snap = async (camera: boolean) => {
+    setPhotoError(null);
+    const picked = await pickMealPhoto(camera);
+    if (typeof picked === 'string') setPhotoError(picked);
+    else if (picked) openPicker(slotForNow(), picked);
+  };
 
   const quickAdd = useCallback(
     (food: FoodItem, servings = 1, slot: MealSlot = pendingSlot, source: FoodEntry['source'] = 'quick-add') => {
@@ -99,26 +119,29 @@ function LogScreen() {
     [addEntry, activeDate, clientId, pendingSlot]
   );
 
-  const confirmAi = useCallback(() => {
-    if (!clientId || !aiSuggestion) return;
-    void addEntries({
+  const confirmAi = useCallback((items: AiItem[]): Promise<boolean> => {
+    if (!clientId || items.length === 0) return Promise.resolve(false);
+    return addEntries({
       clientId,
       date: activeDate,
-      entries: aiSuggestion.items.map((item) => ({
+      entries: items.map((item) => ({
         clientId,
         date: activeDate,
         slot: pendingSlot,
-        foodId: `ai-${item.name.toLowerCase().replace(/\s+/g, '-')}`,
-        name: item.name,
-        servings: item.servings,
+        // Not a catalogue food: '' reaches Postgres as a null food_id.
+        foodId: '',
+        // ponytail: the weight rides in the name; add a grams column if anything needs to query it.
+        name: `${item.name} · ${item.grams} g`,
+        servings: 1,
         calories: item.calories,
         protein: item.protein,
         carbs: item.carbs,
         fat: item.fat,
         source: 'ai' as const,
       })),
-    }).then(() => setAiSuggestion(null));
-  }, [addEntries, activeDate, aiSuggestion, clientId, pendingSlot]);
+      // False keeps the review open, so the re-weighed items aren't lost.
+    }).then((r) => !r.error);
+  }, [addEntries, activeDate, clientId, pendingSlot]);
 
   /** Infers the meal slot from the time of day for one-tap quick adds. */
   const slotForNow = (): MealSlot => {
@@ -159,27 +182,37 @@ function LogScreen() {
           />
         )}
 
-        <Button
-          label="Log food"
-          icon="add"
-          size="lg"
-          fullWidth
-          onPress={() => openPicker(slotForNow())}
-        />
-
-        {aiSuggestion ? (
-          <AiConfirmationCard
-            suggestion={aiSuggestion}
-            busy={addEntriesState.isLoading}
-            onConfirm={confirmAi}
-            onDismiss={() => setAiSuggestion(null)}
-            onRemoveItem={(index) =>
-              setAiSuggestion((prev) =>
-                prev ? { ...prev, items: prev.items.filter((_, i) => i !== index) } : prev
-              )
-            }
-          />
-        ) : null}
+        <View style={styles.section}>
+          <SectionHeader title="Log a meal" caption={`Adds to ${MEAL_META[slotForNow()].label}`} />
+          <View style={styles.actions}>
+            {LOG_ACTIONS.map((a, i) => (
+              <PressableScale
+                key={a.label}
+                onPress={() =>
+                  a.start === 'camera' || a.start === 'library'
+                    ? void snap(a.start === 'camera')
+                    : openPicker(slotForNow(), a.start)
+                }
+                accessibilityRole="button"
+                accessibilityLabel={a.hint}
+                style={[styles.action, i === 0 && styles.actionPrimary]}>
+                <Ionicons
+                  name={a.icon}
+                  size={24}
+                  color={i === 0 ? colors.textOnPrimary : colors.primaryText}
+                />
+                <Text variant="label" color={i === 0 ? colors.textOnPrimary : colors.text}>
+                  {a.label}
+                </Text>
+              </PressableScale>
+            ))}
+          </View>
+          {photoError ? (
+            <Text variant="caption" tone="danger">
+              {photoError}
+            </Text>
+          ) : null}
+        </View>
 
         <View style={styles.section}>
           <SectionHeader
@@ -216,10 +249,8 @@ function LogScreen() {
         onSlotChange={(slot) => dispatch(pendingMealSlotChanged(slot))}
         onClose={() => setPickerOpen(false)}
         onPickFood={(food, servings) => quickAdd(food, servings, pendingSlot, 'search')}
-        onPickAi={(suggestion) => {
-          setAiSuggestion(suggestion);
-          setPickerOpen(false);
-        }}
+        start={pickerStart}
+        onLogAi={confirmAi}
       />
     </>
   );
@@ -233,5 +264,20 @@ const styles = StyleSheet.create({
   section: {
     gap: spacing.md,
     marginTop: spacing.sm,
+  },
+  actions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  action: {
+    flex: 1,
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingVertical: spacing.lg,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+  },
+  actionPrimary: {
+    backgroundColor: colors.primary,
   },
 });

@@ -31,8 +31,8 @@ export const deriveGoal = (currentKg: number, targetKg: number): Goal =>
       : 'bulk';
 
 /**
- * A client the coach added before knowing their body numbers. The client fills
- * them in once, on first sign-in (`(client)/onboarding`).
+ * A client the coach added before knowing their name, phone or body numbers. The
+ * client fills them in once, on first sign-in (`(client)/onboarding`).
  */
-export const needsIntake = (client: Pick<ClientProfile, 'heightCm' | 'startWeightKg'>): boolean =>
-  client.heightCm === null || client.startWeightKg === null;
+export const needsIntake = (client: Pick<ClientProfile, 'heightCm' | 'startWeightKg' | 'unnamed' | 'phone'>): boolean =>
+  !!client.unnamed || !client.phone || client.heightCm === null || client.startWeightKg === null;

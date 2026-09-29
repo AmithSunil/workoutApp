@@ -1,6 +1,8 @@
 /**
  * Razorpay, the parts that need a secret: starting a subscription, switching
- * to the free tier, and cancelling. Called with the user's JWT; nothing here
+ * to the free tier, cancelling -- and deleting the account, which lives here
+ * because it must stop the mandate first and needs the service role to remove
+ * the auth user. Called with the user's JWT; nothing here
  * trusts the body for identity.
  *
  * Checkout itself is Razorpay's own hosted page — the `short_url` a created
@@ -62,15 +64,17 @@ async function razorpay(path: string, init?: RequestInit) {
 // ends up. Asking for the status first turns that 400 into a branch.
 const BILLING = new Set(['authenticated', 'active', 'pending', 'halted', 'paused']);
 
-/** Cancels at cycle end if it is live. Returns whether anything was cancelled. */
-async function cancelAtRazorpay(id: string): Promise<boolean> {
+/**
+ * Cancels if it is live -- at cycle end by default, since they paid for this
+ * period and the row's current_period_end is what lets them in until it passes.
+ * Returns whether anything was cancelled.
+ */
+async function cancelAtRazorpay(id: string, atCycleEnd = true): Promise<boolean> {
   const sub = await razorpay(`/subscriptions/${id}`);
   if (!BILLING.has(sub?.status)) return false;
-  // They paid for this period and keep it: the row's current_period_end is
-  // what lets them in until it passes.
   await razorpay(`/subscriptions/${id}/cancel`, {
     method: 'POST',
-    body: JSON.stringify({ cancel_at_cycle_end: 1 }),
+    body: JSON.stringify({ cancel_at_cycle_end: atCycleEnd ? 1 : 0 }),
   });
   return true;
 }
@@ -109,6 +113,33 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   try {
+    if (body.action === 'delete_account') {
+      // Money first: a mandate that outlives its account keeps charging a card
+      // nobody can sign in to stop. Immediately, not at cycle end -- there is
+      // no account left to use the rest of the period. 404 = another Razorpay
+      // account's id (test vs live), nothing to stop.
+      if (current?.razorpay_subscription_id) {
+        try {
+          await cancelAtRazorpay(current.razorpay_subscription_id, false);
+        } catch (e) {
+          if (!(e instanceof RzpError && e.status === 404)) throw e;
+        }
+      }
+      const { data: me } = await admin.from('users').select('auth_user_id').eq('id', userId).single();
+      // Data before login: the other order leaves a client row with a null
+      // auth_user_id, which reads as a pending invite on the coach's roster.
+      const { error } = await admin.rpc('delete_account', { p_user_id: userId });
+      if (error) {
+        console.error('delete_account failed', userId, error.message);
+        return json({ message: 'Could not delete your account. Try again.' }, 500);
+      }
+      // ponytail: if this fails the data is already gone and the leftover auth
+      // user just signs in as a brand-new account; sweep orphans if logs show it.
+      const { error: authError } = await admin.auth.admin.deleteUser(me!.auth_user_id);
+      if (authError) console.error('delete_account: auth user not removed', userId, authError.message);
+      return json({ ok: true });
+    }
+
     if (body.action === 'cancel') {
       if (!current?.razorpay_subscription_id) return json({ message: 'Nothing to cancel' }, 404);
       if (await cancelAtRazorpay(current.razorpay_subscription_id)) {

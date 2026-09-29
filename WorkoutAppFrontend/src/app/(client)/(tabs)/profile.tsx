@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
+import { DeleteAccountButton } from '@/components/auth/DeleteAccountButton';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { PlanSummary } from '@/components/billing/PlanSummary';
 import {
@@ -88,6 +89,7 @@ export default function ClientProfileScreen() {
       </View>
 
       <SignOutButton style={styles.signOut} />
+      <DeleteAccountButton role="client" />
     </Screen>
   );
 }

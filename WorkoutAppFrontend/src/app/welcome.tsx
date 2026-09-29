@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useCreateProfileMutation } from '@/api/endpoints/trainerApi';
+import { useCreateProfileMutation, useUpdateTrainerMutation } from '@/api/endpoints/trainerApi';
 import {
   refreshIdentity,
   sendSignInCode,
@@ -14,11 +14,13 @@ import {
   verifySignInCode,
 } from '@/auth';
 import { DevQuickSignIn } from '@/components/auth/DevQuickSignIn';
+import { TrackingPicker } from '@/components/trainer/TrackingPicker';
 import { Button, Input, Text } from '@/components/ui';
 import { homeFor } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { signOutReasonDismissed } from '@/store/slices/sessionSlice';
 import { colors, palette, radius, spacing } from '@/theme';
+import type { TrackingMode } from '@/types/models';
 
 /** Supabase refuses a second code for the same address inside a minute. */
 const RESEND_SECONDS = 60;
@@ -40,6 +42,7 @@ const RESEND_SECONDS = 60;
  *   no code sent  → address
  *   code sent     → the six digits
  *   needsProfile  → name + which kind (the only screen that asks)
+ *   …a coach      → what they coach, which creates the profile
  *
  * It writes no session state. A verified code fires the auth listener, and
  * `createProfile` changes only what the backend would answer — `refreshIdentity()`
@@ -66,7 +69,12 @@ export default function WelcomeScreen() {
   const [verified, setVerified] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
-  const [createProfile, { isLoading: creating }] = useCreateProfileMutation();
+  // "I'm a coach" only opens the tracking question; picking an answer signs up.
+  const [coaching, setCoaching] = useState(false);
+
+  const [createProfile, { isLoading: profiling }] = useCreateProfileMutation();
+  const [updateTrainer, { isLoading: tracking }] = useUpdateTrainerMutation();
+  const creating = profiling || tracking;
 
   useEffect(() => {
     if (signedOutReason) setBusy(false);
@@ -117,11 +125,16 @@ export default function WelcomeScreen() {
     }
   };
 
-  const choose = async (kind: 'individual' | 'coach') => {
+  const choose = async (kind: 'individual' | 'coach', tracks?: TrackingMode) => {
     if (!name.trim() || creating) return;
     clearMessage();
     try {
       await createProfile({ kind, name: name.trim() }).unwrap();
+      // Before refreshIdentity: the redirect it triggers lands on a dashboard
+      // that reads `tracks`. PATCH /trainer resolves the row server-side. A
+      // failure here must not strand a profile that now exists — null tracks
+      // shows everything and the profile tab can set it.
+      if (tracks) await updateTrainer({ tracks }).unwrap().catch(() => undefined);
       await refreshIdentity();
       // No navigation here: the resolved identity flips `status`, and the
       // redirect below sends them to their own home.
@@ -136,7 +149,9 @@ export default function WelcomeScreen() {
   const working = busy || creating;
 
   const tagline = asking
-    ? 'One more thing: how will you be using Apex?'
+    ? coaching
+      ? 'What do you coach? This decides what Apex shows you. You can change it any time from your profile.'
+      : 'One more thing: how will you be using Apex?'
     : sentTo
       ? `We sent a 6-digit code to ${sentTo}.`
       : 'Coach a roster, or train yourself. Same app, either way.';
@@ -203,29 +218,47 @@ export default function WelcomeScreen() {
 
               {banner}
 
-              <Button
-                label="I'm a coach"
-                size="lg"
-                fullWidth
-                disabled={!name.trim() || creating}
-                loading={creating}
-                onPress={() => void choose('coach')}
-              />
-              <Button
-                label="I'm training on my own"
-                variant="secondary"
-                size="lg"
-                fullWidth
-                disabled={!name.trim() || creating}
-                onPress={() => void choose('individual')}
-              />
+              {coaching ? (
+                <>
+                  <TrackingPicker
+                    value={null}
+                    busy={creating}
+                    onChange={(tracks) => void choose('coach', tracks)}
+                  />
+                  <Button
+                    label="Back"
+                    variant="ghost"
+                    fullWidth
+                    disabled={creating}
+                    onPress={() => setCoaching(false)}
+                  />
+                </>
+              ) : (
+                <>
+                  <Button
+                    label="I'm a coach"
+                    size="lg"
+                    fullWidth
+                    disabled={!name.trim() || creating}
+                    onPress={() => setCoaching(true)}
+                  />
+                  <Button
+                    label="I'm training on my own"
+                    variant="secondary"
+                    size="lg"
+                    fullWidth
+                    disabled={!name.trim() || creating}
+                    onPress={() => void choose('individual')}
+                  />
 
-              {/* Reaching this phase with a coach means the address they used is
-                  not the one on the roster — the invite would have claimed it. */}
-              <Text variant="caption" tone="secondary" align="center">
-                Have a coach? They need to add this exact address to their roster — ask them, then
-                sign in again. You can train on your own in the meantime.
-              </Text>
+                  {/* Reaching this phase with a coach means the address they used is
+                      not the one on the roster — the invite would have claimed it. */}
+                  <Text variant="caption" tone="secondary" align="center">
+                    Have a coach? They need to add this exact address to their roster — ask them, then
+                    sign in again. You can train on your own in the meantime.
+                  </Text>
+                </>
+              )}
 
               <Button
                 label="Sign out"

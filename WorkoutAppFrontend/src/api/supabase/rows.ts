@@ -17,7 +17,6 @@
  *    null through, so a nullable measurement never becomes `NaN`.
  */
 import type {
-  AiFoodSuggestion,
   AssignedRoutine,
   BodyMetric,
   CheckIn,
@@ -82,6 +81,7 @@ export interface ClientProfileRow {
   height_cm: Nullable<number>;
   start_weight_kg: Nullable<number>;
   target_weight_kg: Nullable<number>;
+  phone: Nullable<string>;
   target_calories: number;
   target_protein: number;
   target_carbs: number;
@@ -112,13 +112,6 @@ export interface FoodRow {
   fat: number;
   emoji: string;
   frequent: boolean;
-}
-
-export interface AiSuggestionRow {
-  id: string;
-  transcript: string;
-  confidence: number;
-  items: AiFoodSuggestion['items'];
 }
 
 export interface FoodEntryRow {
@@ -326,7 +319,8 @@ export const toTrainerProfile = (r: TrainerProfileRow): TrainerProfile => ({
 export const toClientProfile = (r: ClientProfileRow): ClientProfile => ({
   id: r.id,
   role: 'client',
-  name: r.users.name,
+  // '' until the client names themselves at onboarding (migration 20260929000002).
+  name: r.users.name || r.users.email,
   email: r.users.email,
   avatarUrl: r.users.avatar_url,
   trainerId: r.trainer_id,
@@ -343,6 +337,8 @@ export const toClientProfile = (r: ClientProfileRow): ClientProfile => ({
   joinedAt: r.joined_at,
   // Absent rather than false, like every other optional field here.
   ...(r.users.auth_user_id ? {} : { invited: true as const }),
+  ...(r.users.name ? {} : { unnamed: true as const }),
+  ...(r.phone ? { phone: r.phone } : {}),
   compliance: {
     // The stored status, not one re-derived from the score. The backend owns
     // this rollup (plan 7.1); deriving it here would put two answers in the app.
@@ -371,13 +367,6 @@ export const toFoodItem = (r: FoodRow): FoodItem => ({
   fat: r.fat,
   emoji: r.emoji,
   frequent: r.frequent,
-});
-
-export const toAiSuggestion = (r: AiSuggestionRow): AiFoodSuggestion => ({
-  id: r.id,
-  transcript: r.transcript,
-  confidence: num(r.confidence),
-  items: r.items,
 });
 
 export const toFoodEntry = (r: FoodEntryRow): FoodEntry => ({

@@ -24,7 +24,6 @@ import { TODAY, addDays, diffInDays, startOfWeek } from '@/utils/date';
 
 import { ApiHttpError, fromPostgrest } from './httpError';
 import {
-  toAiSuggestion,
   toAlert,
   toAssignedRoutine,
   toBodyMetric,
@@ -44,7 +43,6 @@ import {
   toTrainerSummary,
   toWorkoutLog,
   fromAttachment,
-  type AiSuggestionRow,
   type AlertRow,
   type AssignmentRow,
   type BodyMetricRow,
@@ -111,7 +109,10 @@ const rpc = async (fn: string, args: Record<string, unknown> = {}): Promise<unkn
  * thrown away and replaced with a gateway error the user could do nothing
  * about. Read it back off the response it is still holding.
  */
-const fnError = async (error: unknown): Promise<ApiHttpError> => {
+const fnError = async (
+  error: unknown,
+  fallback = 'Could not reach the payment gateway',
+): Promise<ApiHttpError> => {
   const res = (error as { context?: Response }).context;
   try {
     const body = await res?.clone().json();
@@ -119,7 +120,7 @@ const fnError = async (error: unknown): Promise<ApiHttpError> => {
   } catch {
     /* not JSON, or no response at all -- fall through */
   }
-  return new ApiHttpError(502, 'Could not reach the payment gateway');
+  return new ApiHttpError(502, fallback);
 };
 
 const str = (v: unknown): string => String(v ?? '');
@@ -151,11 +152,22 @@ const macroColumns = (t: MacroTargets) => ({
   target_fat: t.fat,
 });
 
-const trainerProfile = () =>
-  row<TrainerProfileRow>(
-    supabase.from('v_trainer_profiles').select('*').limit(1).single(),
-    'No trainer profile is visible to this account',
-  );
+/**
+ * The caller's coach profile: their own if they coach, their coach's if they
+ * are coached, null for an individual. Scoped here rather than left to RLS --
+ * the dev policies are open, so an unfiltered `limit(1)` handed every account
+ * whichever coach came first, and 406'd everyone once no coach was left.
+ */
+const myTrainerProfile = async (): Promise<TrainerProfileRow | null> => {
+  const me = str(await rpc('app_user_id'));
+  const { data, error } = await supabase
+    .from('v_trainer_profiles')
+    .select('*')
+    .or(`id.eq.${me},client_ids.cs.{${me}}`)
+    .maybeSingle();
+  if (error) throw fromPostgrest(error);
+  return data as TrainerProfileRow | null;
+};
 
 
 /* ---------------------------------------------------------------- routes */
@@ -170,14 +182,26 @@ export const supabaseRoutes: Array<{
     method: 'GET',
     pattern: '/session/roles',
     handler: async () => {
-      const [trainerRow, clientRows] = await Promise.all([trainerProfile(), clients()]);
-      return { trainer: toTrainerProfile(trainerRow), clients: clientRows.map(toClientProfile) };
+      // Dev fixture list for DevQuickSignIn, read signed-out -- deliberately
+      // unscoped, and there may be no coach left in the project at all.
+      const [{ data: trainerRow, error }, clientRows] = await Promise.all([
+        supabase.from('v_trainer_profiles').select('*').limit(1).maybeSingle(),
+        clients(),
+      ]);
+      if (error) throw fromPostgrest(error);
+      return {
+        trainer: trainerRow ? toTrainerProfile(trainerRow as TrainerProfileRow) : null,
+        clients: clientRows.map(toClientProfile),
+      };
     },
   },
   {
     method: 'GET',
     pattern: '/trainer',
-    handler: async () => toTrainerProfile(await trainerProfile()),
+    handler: async () => {
+      const t = await myTrainerProfile();
+      return t ? toTrainerProfile(t) : null;
+    },
   },
   {
     // The coach's own profile is a single row, so this stays plain PostgREST.
@@ -187,7 +211,8 @@ export const supabaseRoutes: Array<{
     pattern: '/trainer',
     handler: async ({ body }) => {
       const patch = body as Partial<Pick<TrainerProfile, 'tracks' | 'headline'>>;
-      const current = await trainerProfile();
+      const current = await myTrainerProfile();
+      if (!current) throw new ApiHttpError(404, 'This account has no coach profile');
       await row(
         supabase.from('trainer_profiles').update(patch).eq('id', current.id).select('id').single(),
         `Trainer ${current.id} not found`,
@@ -272,8 +297,8 @@ export const supabaseRoutes: Array<{
     method: 'POST',
     pattern: '/clients/invite',
     handler: async ({ body }) => {
-      const { name, email, profile } = body as ClientInvite;
-      const id = str(await rpc('invite_client', { p_name: name, p_email: email, p_profile: profile ?? null }));
+      const { email, profile } = body as ClientInvite;
+      const id = str(await rpc('invite_client', { p_name: null, p_email: email, p_profile: profile ?? null }));
       return toClientProfile(
         await row<ClientProfileRow>(
           supabase.from('client_profiles').select(CLIENT).eq('id', id).single(),
@@ -291,6 +316,20 @@ export const supabaseRoutes: Array<{
     handler: async ({ body }) => {
       const { kind, name } = body as ProfileInput;
       return { id: str(await rpc('create_profile', { p_kind: kind, p_name: name })) };
+    },
+  },
+  {
+    // Deleting the account (migration 20260929000001). Lives in the razorpay
+    // edge function: it has to stop the mandate first and needs the service
+    // role to remove the auth user. The caller is read off the token.
+    method: 'DELETE',
+    pattern: '/session',
+    handler: async () => {
+      const { error } = await supabase.functions.invoke('razorpay', {
+        body: { action: 'delete_account' },
+      });
+      if (error) throw await fnError(error);
+      return null;
     },
   },
   {
@@ -318,6 +357,8 @@ export const supabaseRoutes: Array<{
     handler: async ({ body }) => {
       const input = body as IntakeInput;
       await rpc('complete_intake', {
+        p_name: input.name ?? null,
+        p_phone: input.phone ?? null,
         p_height: input.heightCm ?? null,
         p_weight: input.startWeightKg ?? null,
         p_target: input.targetWeightKg ?? null,
@@ -365,8 +406,15 @@ export const supabaseRoutes: Array<{
   {
     method: 'POST',
     pattern: '/nutrition/entries/batch',
+    // An empty foodId is the app's "no catalogue food" (see toFoodEntry); the
+    // column is a foreign key, so it has to reach Postgres as null.
     handler: ({ body }) =>
-      rpc('add_food_entries', { p_entries: (body as { entries: unknown[] }).entries }),
+      rpc('add_food_entries', {
+        p_entries: (body as { entries: Array<{ foodId?: string }> }).entries.map((e) => ({
+          ...e,
+          foodId: e.foodId || null,
+        })),
+      }),
   },
   {
     method: 'DELETE',
@@ -393,14 +441,15 @@ export const supabaseRoutes: Array<{
       ).map(toFoodItem),
   },
   {
-    method: 'GET',
-    pattern: '/ai/suggestions',
-    handler: async () =>
-      (
-        await rows<AiSuggestionRow>(
-          supabase.from('ai_food_suggestions').select('*').order('id'),
-        )
-      ).map(toAiSuggestion),
+    method: 'POST',
+    pattern: '/ai/parse',
+    handler: async ({ body }) => {
+      const { data, error } = await supabase.functions.invoke('food-ai', {
+        body: body as Record<string, unknown>,
+      });
+      if (error) throw await fnError(error, 'Could not reach the meal analyser');
+      return data;
+    },
   },
 
   /* ------------------------------------------------------------- training */
