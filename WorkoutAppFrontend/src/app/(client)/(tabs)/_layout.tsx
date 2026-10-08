@@ -8,6 +8,7 @@ import { useClientThread, useSession } from '@/hooks/useSession';
 import { useTracking } from '@/hooks/useTracking';
 import { routes } from '@/navigation/routes';
 import { colors } from '@/theme';
+import { hasCoach } from '@/utils/coach';
 import { shows, type TrackingDomain } from '@/utils/tracking';
 
 export const unstable_settings = {
@@ -39,8 +40,9 @@ const TABS: Array<TabMeta & { domain?: TrackingDomain }> = [
  * the route to the coach is one tap away from every tab, exactly as specified.
  */
 export default function ClientTabsLayout() {
-  const { clientId } = useSession();
-  const thread = useClientThread(clientId);
+  const { client } = useSession();
+  const coached = hasCoach(client);
+  const thread = useClientThread(client);
   const { mode } = useTracking();
 
   // A client only tracks what their coach chose; the hidden tab's screen also redirects.
@@ -56,7 +58,7 @@ export default function ClientTabsLayout() {
           <Tabs.Screen key={tab.name} name={tab.name} options={{ title: tab.label }} />
         ))}
       </Tabs>
-      <ChatFab href={routes.client.chat()} unread={thread?.unreadForClient ?? 0} />
+      {coached ? <ChatFab href={routes.client.chat()} unread={thread?.unreadForClient ?? 0} /> : null}
     </View>
   );
 }

@@ -3,7 +3,7 @@
     "id": "t-001",
     "role": "trainer",
     "name": "Maya Fernandes",
-    "email": "maya@apexcoaching.fit",
+    "email": "maya@corda.fit",
     "avatarUrl": "https://i.pravatar.cc/240?img=47",
     "headline": "Strength & body-composition coach",
     "clientIds": [
@@ -218,6 +218,43 @@
         "lastLoggedAt": "2026-08-29T19:44:00.000Z",
         "streakDays": 18
       }
+    },
+    {
+      "id": "c-020",
+      "role": "client",
+      "name": "Sam Okafor",
+      "email": "sam.solo@example.com",
+      "avatarUrl": "https://i.pravatar.cc/240?img=12",
+      "trainerId": null,
+      "goal": "cut",
+      "heightCm": 178,
+      "startWeightKg": 86.4,
+      "targetWeightKg": 80,
+      "targets": {
+        "calories": 2200,
+        "protein": 170,
+        "carbs": 210,
+        "fat": 70
+      },
+      "joinedAt": "2026-08-10",
+      "compliance": {
+        "status": "yellow",
+        "score": 64,
+        "lastLoggedAt": "2026-08-28T07:30:00.000Z",
+        "streakDays": 3
+      }
+    }
+  ],
+  "otherCoaches": [
+    {
+      "id": "t-020",
+      "role": "trainer",
+      "name": "Ravi Menon",
+      "email": "ravi.coach@example.com",
+      "avatarUrl": "",
+      "headline": "",
+      "clientIds": [],
+      "tracks": null
     }
   ]
 }

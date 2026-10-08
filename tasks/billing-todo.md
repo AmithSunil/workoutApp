@@ -35,7 +35,7 @@ A coached client never pays and is never asked — they are the seat their coach
 
 ## What is built
 
-**Backend** — `supabase/migrations/20260920000001_billing.sql`
+**Backend** — `supabase/migrations/20260920121309_billing.sql`
 - `plans` and `subscriptions` (one row per user, `user_id` is the PK).
 - `plan_active()`, `seat_limit()`, `start_subscription()`.
 - `owns_client()` re-created with `plan_active()` inside its trainer branch. **That one line is the
@@ -124,7 +124,7 @@ Sneha set the secrets and registered the webhook. Checked from here:
   a temporary read-only `rzp-check` edge function that did a `GET /v1/plans?count=1` with the env
   vars as stored in the project: `keyIdPresent` true, `keySecretPresent` true, prefix `rzp_test…`,
   `razorpayStatus` 200. It wrote nothing and created nothing. Now redeployed as an inert 410 stub
-  — **delete `rzp-check` in the dashboard** when convenient (MCP has no delete for functions).
+  — deleted from the dashboard 2026-10-08.
 
 The whole chain is wired. The only thing not exercised is a real mandate, which needs a human at a
 checkout page.
@@ -193,7 +193,7 @@ writes to `subscriptions` are refused here by the auto-mode classifier, so resto
 ## Still to do
 
 1. Decide on the checkout test above.
-2. **Delete the `rzp-check` function** in the dashboard (inert 410 stub, but litter).
+2. ~~Delete the `rzp-check` function~~ — done 2026-10-08.
 3. **Going live**: four new plan objects under the live key, the same UPDATE on
    `plans.razorpay_plan_id`, live secrets, and a second webhook on the live account.
 
@@ -227,11 +227,11 @@ writes to `subscriptions` are refused here by the auto-mode classifier, so resto
 since the S4 edits. Getting there meant fixing two things that predate this work:
 
 - **The seed never advanced `id_sequences`** (the standing trap in project memory `backend_schema`).
-  `20260831000006` has the right block but runs at migration time, before the rows exist, so it
+  `20260831102233` has the right block but runs at migration time, before the rows exist, so it
   advances the counters past nothing. `next_id('c')` therefore minted `c-001` on the first RPC write
   after any fresh seed. `seed.sql` and `seed/chunks/seed_07.sql` now end with a counter bump, and
   `seed.mjs` emits it, so a regenerated seed keeps it. It is derived from the schema rather than a
-  prefix->table list -- that hardcoded list in `20260831000006` is exactly what went stale when `c`
+  prefix->table list -- that hardcoded list in `20260831102233` is exactly what went stale when `c`
   and `t` were added later.
 - **`invite_client` reported every unique violation as a duplicate email**, which is what hid the
   above: a primary-key collision came back as "That email already has an account" for an address
@@ -255,7 +255,7 @@ so tapping Elite and closing the browser left a **free, never-expiring row with 
 
 Found live: `t-001` was sitting on `coach_starter`/`cancelled`, down from the grandfathered
 `coach_pro`/50 seats, with `current_period_end` still null. Restored by migration
-`20260920000003`, guarded on `current_period_end is null` so it cannot touch a row that has ever
+`20260920132812`, guarded on `current_period_end is null` so it cannot touch a row that has ever
 been charged.
 
 **The function no longer writes `plan_code`, `status` or `current_period_end` for a paid tier at
@@ -277,7 +277,7 @@ next charge lands when the old period ends instead of on top of it.
 `subscriptions` was left on the dev-posture `using (true)` select policy. Worse, the transport's
 `GET /subscription` has no `user_id` filter *by design* — it leans on RLS — so `.maybeSingle()`
 would have errored for everyone the moment a second person subscribed. The pending set's
-`subscriptions_self_read` is pulled forward into `20260920000003`. `plans` stays public; it is a
+`subscriptions_self_read` is pulled forward into `20260920132812`. `plans` stays public; it is a
 price list.
 
 ## 4. A client could buy `coach_free`
@@ -346,6 +346,6 @@ subscription id.
 
 ## Still open
 
-Unchanged from above: the checkout mandate test, deleting `rzp-check`, and going live. `plan_code`
+Unchanged from above: the checkout mandate test and going live (`rzp-check` deleted 2026-10-08). `plan_code`
 now moving only on `subscription.charged` means the mandate test is also the proof that the webhook
 sets the plan — worth doing in that order.

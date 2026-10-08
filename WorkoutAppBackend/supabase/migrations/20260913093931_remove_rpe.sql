@@ -9,7 +9,7 @@
 -- DESTRUCTIVE: stored RPE values and every 'high-rpe' alert are deleted.
 --
 -- The functions below are re-created without their RPE fields. The two that
--- 20260831000009 switched to SECURITY INVOKER are re-declared as such, because
+-- 20260831103059 switched to SECURITY INVOKER are re-declared as such, because
 -- CREATE OR REPLACE takes the security attribute from the new definition and
 -- would otherwise quietly hand back the elevation that migration removed.
 
@@ -228,8 +228,8 @@ begin
 end;
 $$;
 
--- CREATE OR REPLACE keeps the existing ACL, but 20260831000009 and
--- 20260831000010 left write_routine_days with a deliberately narrow one.
+-- CREATE OR REPLACE keeps the existing ACL, but 20260831103059 and
+-- 20260831103115 left write_routine_days with a deliberately narrow one.
 -- Re-asserting it here keeps that intent legible next to the replacement.
 revoke execute on function public.write_routine_days(text, jsonb, boolean) from public;
 grant  execute on function public.write_routine_days(text, jsonb, boolean) to anon, authenticated;

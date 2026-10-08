@@ -6,7 +6,7 @@
 -- goals) hangs off client_profiles by foreign key, so it has to exist first;
 -- the existing editors then work on a pending client unchanged.
 --
--- The client's own account is linked later, by the trigger in 20260915000004.
+-- The client's own account is linked later, by the trigger in 20260915101722.
 -- See tasks/plan.md.
 
 -- ---------------------------------------------------------------------------

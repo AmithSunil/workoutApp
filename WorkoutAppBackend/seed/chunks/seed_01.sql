@@ -3,7 +3,7 @@
 -- Run parts in order; each is idempotent (upsert), safe to re-run.
 
 insert into users (id,role,name,email,avatar_url) values
-('t-001','trainer','Maya Fernandes','maya@apexcoaching.fit','https://i.pravatar.cc/240?img=47'),
+('t-001','trainer','Maya Fernandes','maya@corda.fit','https://i.pravatar.cc/240?img=47'),
 ('c-001','client','Aditya Rao','aditya@example.com','https://i.pravatar.cc/240?img=12'),
 ('c-002','client','Leah Mercer','leah@example.com','https://i.pravatar.cc/240?img=5'),
 ('c-003','client','Daniel Okafor','daniel@example.com','https://i.pravatar.cc/240?img=33'),

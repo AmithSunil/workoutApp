@@ -100,7 +100,7 @@ export default function TriageDashboard() {
   };
 
   const messageClient = (clientId: string) => {
-    const thread = (threads.data ?? []).find((t) => t.clientId === clientId);
+    const thread = (threads.data ?? []).find((t) => t.clientId === clientId && t.trainerId === trainer?.id);
     if (thread) router.push(routes.trainer.thread(thread.id));
   };
 

@@ -1,0 +1,33 @@
+<!-- Supabase Dashboard → Authentication → Emails → Templates → "Magic link" (returning users).
+     Subject: Your Corda sign-in code: {{ .Token }}
+     No {{ .ConfirmationURL }} on purpose — the app verifies the code and ignores links.
+     Inline styles + tables only: Gmail and Outlook drop <style> blocks and flexbox.
+     Colours mirror WorkoutAppFrontend/src/theme/tokens.ts (blaze500, grey50/500/900). -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Your Corda sign-in code</title>
+</head>
+<body style="margin:0;padding:0;background:#F4F5F7;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your code is {{ .Token }}. It expires in 1 hour.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F5F7;">
+  <tr><td align="center" style="padding:40px 16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;font-family:Inter,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+      <tr><td style="padding:0 8px 20px;font-size:24px;font-weight:800;letter-spacing:-0.5px;color:#DD4410;">Corda</td></tr>
+      <tr><td style="background:#FFFFFF;border-radius:24px;padding:36px 32px;">
+        <h1 style="margin:0 0 12px;font-size:24px;line-height:1.25;font-weight:800;color:#111318;">Your sign-in code</h1>
+        <p style="margin:0 0 28px;font-size:16px;line-height:1.5;color:#3E444F;">Enter this code in the Corda app to sign in.</p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr><td align="center" style="background:#FFF1EB;border-radius:18px;padding:22px 12px;font-size:36px;line-height:1;font-weight:800;letter-spacing:10px;color:#111318;font-variant-numeric:tabular-nums;">{{ .Token }}</td></tr>
+        </table>
+        <p style="margin:28px 0 0;font-size:14px;line-height:1.5;color:#5C6370;">The code expires in 1 hour and works once. Didn't ask for it? Ignore this email. No one can get into your account without the code.</p>
+      </td></tr>
+      <tr><td style="padding:20px 8px 0;font-size:12px;line-height:1.5;color:#7D8491;">Sent to {{ .Email }} because someone asked to sign in to Corda with this address.</td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>

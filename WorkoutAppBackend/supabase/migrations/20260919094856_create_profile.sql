@@ -9,12 +9,12 @@
 -- own profile, once.
 --
 -- The invite path wins over this one. An address a coach has already added is
--- owned by link_auth_user (20260915000004); creating a second row for it would
+-- owned by link_auth_user (20260915101722); creating a second row for it would
 -- orphan the roster entry, so an email that already exists is a 409 here.
 
--- Trainer ids are minted now. 20260831000006 seeds seventeen prefixes and 't'
+-- Trainer ids are minted now. 20260831102233 seeds seventeen prefixes and 't'
 -- is not one of them (the seed wrote t-001 by hand); 'c' was added the same way
--- by 20260915000003.
+-- by 20260915101705.
 insert into public.id_sequences (prefix, width, last_value)
 select 't', 3, coalesce(max((regexp_match(id, '^t-(\d+)$'))[1]::bigint), 0) from public.users
 on conflict (prefix) do update set last_value = greatest(public.id_sequences.last_value, excluded.last_value);
@@ -57,7 +57,7 @@ begin
     v_id := public.next_id('c');
     insert into public.users (id, role, name, email, auth_user_id)
     values (v_id, 'client', v_name, v_email, v_uid);
-    -- Everything else takes the defaults 20260915000003 set: goal recomp,
+    -- Everything else takes the defaults 20260915101705 set: goal recomp,
     -- starter macros, joined_at today, and null body numbers so the app routes
     -- them through intake exactly like an invited client.
     insert into public.client_profiles (id, trainer_id) values (v_id, null);

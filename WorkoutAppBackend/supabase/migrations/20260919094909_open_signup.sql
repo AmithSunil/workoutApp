@@ -1,6 +1,6 @@
 -- Signup is open, so the gate has nothing left to refuse.
 --
--- hook_require_invite (20260915000004) turned down any signup whose address was
+-- hook_require_invite (20260915101722) turned down any signup whose address was
 -- not already a pending client. With /welcome offering "I'm a coach" and "I'm
 -- training on my own", that is exactly backwards: the people it refuses are now
 -- the intended new users. It is deleted rather than loosened -- a hook that

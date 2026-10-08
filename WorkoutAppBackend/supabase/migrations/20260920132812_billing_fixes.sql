@@ -1,4 +1,4 @@
--- Billing fixes. Two things, both found by reading 20260920000001 back against
+-- Billing fixes. Two things, both found by reading 20260920121309 back against
 -- what the edge functions actually do.
 --
 -- 1. `subscriptions` was left on the dev-posture `using (true)` select policy

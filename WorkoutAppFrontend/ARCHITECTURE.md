@@ -25,10 +25,11 @@ Nothing in `components/` imports from `app/`, and nothing outside `src/api` impo
 
 ```
 src/app/_layout.tsx              Redux Provider, session hydration, root Stack
-src/app/index.tsx                Role gate (auth handshake in production)
+src/app/index.tsx                Role gate: signedIn → that role's home, anything else → /welcome
+src/app/welcome.tsx              The only way in (see "Signing in" below)
 src/app/(client)/_layout.tsx     Guard: bounces non-clients
-  (tabs)/_layout.tsx             explore · log · workouts · progress + persistent chat FAB
-  chat.tsx, session/[id].tsx, routine/[id].tsx
+  (tabs)/_layout.tsx             explore · log · workouts · progress · profile (+ chat FAB with a coach)
+  onboarding.tsx, chat.tsx, train/[id].tsx, routine/[id].tsx
 src/app/(trainer)/_layout.tsx    Guard: bounces non-trainers
   (tabs)/_layout.tsx             dashboard (triage) · roster · routines · messages
   client/[id].tsx, thread/[id].tsx
@@ -40,6 +41,34 @@ src/app/workout-log/[id].tsx     Shared by both roles
 Each group layout reads `session.role` from Redux and `<Redirect>`s before any
 screen in its subtree renders, so a client can never reach a trainer route by
 deep link and vice versa.
+
+## Signing in, and the three kinds of account
+
+There is no password and no separate sign-up. `/welcome` takes an email, sends a
+6-digit code, and once the code verifies the auth bootstrap (`src/auth/*`, the
+only writer of the session slice) asks the backend who this is
+(`app_user_id()` / `app_role()`). Three outcomes:
+
+| The address is… | What happens |
+| --- | --- |
+| an existing coach or client | `status: 'signedIn'`, routed to that role's home. |
+| on a coach's roster but never signed in (an invite) | The `on_auth_user_created` trigger linked it during account creation, so this is the row above. The client never sees a role question. |
+| unknown | `resolveIdentity()` answers null → `status: 'needsProfile'`. The Supabase session is **kept**; `/welcome` asks for a name and *I'm a coach* (then what they coach) or *I'm training on my own*, calls `POST /session/profile` (`create_profile`), and re-resolves. |
+
+`needsProfile` is a routable state, not an error: `app/index.tsx` and both
+shell guards send it to `/welcome`. Only half an identity coming back (one RPC
+answers, the other does not) is a fault — `unlinked`, which signs out.
+
+**A client with no coach** (`ClientProfile.trainerId === null`) is the third
+kind: someone who signed up on their own, or was removed from a roster
+(`remove_client`). `hasCoach()` in `src/utils/coach.ts` is the one rule — never
+read `trainerId` in a screen. Without a coach there is no chat (FAB hidden,
+`/chat` behind `Stack.Protected`), no coach wording, no intake notes; the
+profile tab gains *Your targets* and *Daily habits*, which mount the coach's
+own `GoalsEditor` / `HabitEditor` on their row; and `useSubscription` asks them
+for a plan of their own. A coach who invites their address adopts them
+(`adopt_client`): they keep everything they logged, and the thread with the new
+coach is matched on `trainerId` because an old coach's thread may still exist.
 
 ## Data layer
 

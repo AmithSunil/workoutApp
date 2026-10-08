@@ -1,6 +1,13 @@
 import type { Plan, Subscription } from '@/types/models';
 
 /**
+ * Plans and pricing are off until after the MVP: no paywalls, no Subscription
+ * row, every coach on the free tier (capped by `plans.max_clients` server-side).
+ * ponytail: one switch; flipping it back restores billing as built, nothing deleted.
+ */
+export const PLANS_LIVE = false;
+
+/**
  * The one entitlement rule, mirroring `plan_active()` in Postgres.
  *
  * Keeping it a pure function of the subscription — rather than a flag the

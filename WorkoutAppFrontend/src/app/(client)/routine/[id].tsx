@@ -17,6 +17,7 @@ import {
 import { useSession } from '@/hooks/useSession';
 import { colors, spacing } from '@/theme';
 import type { Weekday } from '@/types/models';
+import { hasCoach } from '@/utils/coach';
 import { byWeekday } from '@/utils/date';
 import { plural, restLabel } from '@/utils/format';
 
@@ -30,7 +31,8 @@ import { plural, restLabel } from '@/utils/format';
  */
 export default function ClientRoutineScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { clientId } = useSession();
+  const { clientId, client } = useSession();
+  const coached = hasCoach(client);
   const [active, setActive] = useState<Weekday | null>(null);
 
   const assignment = useGetAssignmentQuery(id ?? '', { skip: !id });
@@ -52,7 +54,11 @@ export default function ClientRoutineScreen() {
           <EmptyState
             icon="lock-closed-outline"
             title="Not available"
-            message="This routine isn't assigned to you any more. Check your programme, or message your coach."
+            message={
+              coached
+                ? "This routine isn't assigned to you any more. Check your programme, or message your coach."
+                : "This routine isn't assigned to you any more."
+            }
           />
         </Card>
       </Screen>
@@ -72,7 +78,7 @@ export default function ClientRoutineScreen() {
   return (
     <Screen
       title={data.title}
-      subtitle={`${plural(totals.days, 'training day')} a week · from your coach`}
+      subtitle={`${plural(totals.days, 'training day')} a week${coached ? ' · from your coach' : ''}`}
       showBack
       tabBarPadding={false}>
       <View style={styles.tiles}>

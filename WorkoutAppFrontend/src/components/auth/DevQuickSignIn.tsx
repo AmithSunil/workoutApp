@@ -47,9 +47,7 @@ export function DevQuickSignIn({ disabled, onError }: DevQuickSignInProps) {
   }
 
   const people = [
-    ...(data.trainer
-      ? [{ id: data.trainer.id, name: data.trainer.name, email: data.trainer.email, tag: 'TRAINER' }]
-      : []),
+    ...data.trainers.map((t) => ({ id: t.id, name: t.name, email: t.email, tag: 'TRAINER' })),
     // Invited clients have no password account; they sign in with a code.
     ...data.clients.filter((c) => !c.invited).map((c) => ({ id: c.id, name: c.name, email: c.email, tag: 'CLIENT' })),
   ];

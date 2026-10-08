@@ -2,17 +2,81 @@
 
 Supabase backend for WorkoutApp, implementing `../BACKEND_DATA_SCHEMA.md`.
 
-Project ref: `vxytcykmeskjdyxtrjco`. Credentials live in
-`../WorkoutAppFrontend/.env.local` (publishable key — see below).
+Staging project ref: `vxytcykmeskjdyxtrjco`. Which backend the app talks to is
+set in `../WorkoutAppFrontend/.env.local` — see `.env.example` there.
 
 ## Layout
 
 ```
-supabase/migrations/   applied, in order
+supabase/migrations/   the schema, in order; versions match the staging ledger
 supabase/future/       drafted, NOT applied
 seed/seed.mjs          flattens ../WorkoutAppFrontend/src/mock-api/*.json into the schema
 seed/seed.sql          the same data pre-rendered as upserts, for the SQL editor
 ```
+
+## Environments and releases
+
+| | Where | Data | Razorpay |
+|---|---|---|---|
+| **Local** | `npx supabase start` (Docker) | seed fixtures + dev logins | test keys in `supabase/functions/.env` |
+| **Staging** | `vxytcykmeskjdyxtrjco` | seed fixtures + dev logins | test keys |
+| **Production** | not created yet — at launch | real users only | live keys |
+
+**The migration folder is the only way the schema changes.** Every file's version
+matches the staging ledger (`supabase_migrations.schema_migrations`). SQL pasted
+into the dashboard, or applied through an MCP tool, gets a different version and
+drifts — that is how 11 files ended up differing from what ran, found and
+reconciled 2026-10-08 (`20261008140000_sync_live_drift`).
+
+### Day to day (local)
+
+```sh
+cd WorkoutAppBackend
+npx supabase start        # first run pulls images; prints URLs and keys
+npx supabase db reset     # rebuild from migrations + seed, any time
+npx supabase stop
+```
+
+Studio at http://127.0.0.1:54323, sign-in codes land in http://127.0.0.1:54324.
+Dev logins: any fixture user's email (e.g. `maya@corda.fit`) with the password
+in `seed/auth_dev_users.sql`. Point the app here with the local block in
+`../WorkoutAppFrontend/.env.example`. Edge functions need
+`supabase/functions/.env` (copy `.env.example`).
+
+### Changing the schema
+
+1. `npx supabase migration new <what_it_does>` and write the SQL.
+2. `npx supabase db reset`, then try it in the app against local.
+3. Release it (below).
+
+### Releasing to staging (later: production)
+
+```sh
+npx supabase link --project-ref vxytcykmeskjdyxtrjco   # once; asks for the DB password
+npx supabase db push --dry-run                        # lists exactly what will run
+npx supabase db push
+npx supabase functions deploy                         # verify_jwt comes from config.toml
+npx supabase secrets set --env-file supabase/functions/.env   # only when a secret changed
+```
+
+Pending on staging right now: `20261008140000_sync_live_drift` (a no-op there).
+
+### Launch day: creating production
+
+1. New project **Corda**, region `ap-south-1` (Mumbai). Free projects pause after
+   a week idle, which is why it is not created ahead of time.
+2. `npx supabase link --project-ref <prod-ref>`, then `db push` and `functions deploy`.
+   **No seed and no `auth_dev_users.sql`** — production starts empty.
+   Optionally `seed/preset_routines.sql` for the routine library.
+3. `npx supabase secrets set` with the live Razorpay keys and `AI_API_KEY`.
+4. Razorpay live mode: create the four plans, `update plans set razorpay_plan_id = ...`
+   (as on staging, see `../tasks/billing-todo.md`), and register a webhook at
+   `https://<prod-ref>.supabase.co/functions/v1/razorpay-webhook`; its secret
+   becomes `RAZORPAY_WEBHOOK_SECRET`.
+5. Dashboard → Authentication: SMTP, both email templates and subjects (the same
+   as `supabase/config.toml`), email OTP length 6, Site URL `https://corda.fit`.
+6. The web host's environment: `EXPO_PUBLIC_SUPABASE_URL` / `_KEY` of production.
+7. Point `link` back at staging for day-to-day releases.
 
 ## Schema shape
 
@@ -79,7 +143,7 @@ outstanding.
   `owns_routine()` and `can_read_routine()` as the policy predicates. These are
   SECURITY DEFINER on purpose: a policy on `users` that read `users` to work out
   who you are would recurse.
-- All nine fixture users have email/password accounts
+- All eleven fixture users have email/password accounts
   (`seed/auth_dev_users.sql`, password `apex-dev-2026`). Signing in and calling
   `POST /rest/v1/rpc/app_user_id` returns `t-001`, `c-001` and so on; the anon
   key returns null.
@@ -156,11 +220,36 @@ swap changes nothing above `src/api/*`.
 | `delete_food_entry(p_id)` | `DELETE /nutrition/entries/:id` |
 | `toggle_habit(p_id, p_date)` | `POST /habits/:id/toggle` |
 | `mark_thread_read(p_thread_id, p_as)` | `POST /threads/:id/read` |
+| `create_profile(p_kind, p_name)` | `POST /session/profile` -- an unknown signed-in address becomes a coach or an individual |
+| `invite_client(p_name, p_email, p_profile)` | `POST /clients/invite` -- a new client row, or adopts a coachless one via `adopt_client` |
+| `revoke_invite(p_id)` | `DELETE /clients/:id/invite` |
+| `complete_intake(...)` | `POST /clients/:id/intake` |
+| `remove_client(p_client_id)` | `DELETE /clients/:id` -- detaches, never deletes |
 
 The RPCs run **SECURITY INVOKER**, so they obey whatever RLS is in force rather
-than bypassing it. Only `next_id` is SECURITY DEFINER, because `id_sequences`
-has RLS on with no policies and is unreachable any other way. Advisors are clean
-apart from that one intentional warning and Supabase's own `rls_auto_enable`.
+than bypassing it. `create or replace` takes the attribute from the new
+definition, so every migration that re-creates one re-declares `security invoker`.
+
+### Every SECURITY DEFINER function, and why
+
+These are the deliberate exceptions -- the full list (checked against the remote
+on 2026-10-07). Each one that is callable by `authenticated` does its own
+identity check and never takes the caller's id as a parameter; the advisor
+flags each as "signed-in users can execute", which is expected. Anything not in
+this list showing up as DEFINER is a bug.
+
+| Function | Why it cannot be INVOKER |
+|---|---|
+| `next_id` | `id_sequences` has RLS on and no policies. |
+| `app_user_id`, `app_role`, `is_trainer_of`, `owns_client`, `is_my_trainer`, `in_thread`, `owns_routine`, `can_read_routine` | Policy predicates: a policy on `users` that read `users` would recurse. |
+| `plan_active`, `seat_limit` | Billing reads; `subscriptions` writes are revoked from `authenticated`. |
+| `complete_intake` | RLS cannot restrict columns, and a client must never write their own macros -- it fills only null intake columns on the caller's row. |
+| `create_profile` | The caller has no `users` row yet, so no policy can admit the insert. Reads `auth.uid()` and the address itself; refuses an existing profile or an invited address (PT409). |
+| `remove_client` | A coach cannot write a row they no longer own afterwards. Its trainer-owns-client check is the only gate. |
+| `adopt_client` | A coach can neither see nor update a coachless client before adopting them. Repeats `invite_client`'s coach / plan / seat checks because it is callable directly. |
+| `link_auth_user`, `bump_thread_unread`, `refresh_thread_preview`, `refresh_nutrition_day_totals` | Trigger functions; execute revoked from the API roles. |
+
+`rls_auto_enable` is Supabase's own.
 
 Errors follow PostgREST's mapping: a bare `raise exception` becomes 400, and the
 `PT404` errcode becomes 404, reproducing the mock's status codes.

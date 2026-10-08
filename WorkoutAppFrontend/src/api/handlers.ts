@@ -193,8 +193,11 @@ const deriveStatus = (client: ClientProfile): ComplianceStatus => {
   return 'red';
 };
 
+/** The coach's roster. Individuals live in db.clients too, with no trainer. */
+const roster = () => db.clients.filter((c) => c.trainerId === db.trainer.id);
+
 /** Invited clients have never logged anything; they don't count yet. */
-const activeClients = () => db.clients.filter((c) => !c.invited);
+const activeClients = () => roster().filter((c) => !c.invited);
 
 const trainerSummary = (): TrainerSummary => ({
   activeClients: activeClients().length,
@@ -252,7 +255,7 @@ const byDateDesc = <T extends { date: ISODate }>(a: T, b: T) =>
 
 export const routes: Array<{ method: MockRequest['method']; pattern: string; handler: Handler }> = [
   /* ------------------------------------------------------------- identity */
-  { method: 'GET', pattern: '/session/roles', handler: () => ({ trainer: db.trainer, clients: db.clients }) },
+  { method: 'GET', pattern: '/session/roles', handler: () => ({ trainers: [db.trainer], clients: db.clients }) },
   { method: 'GET', pattern: '/trainer', handler: () => db.trainer },
   {
     method: 'PATCH',
@@ -262,7 +265,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       return db.trainer;
     },
   },
-  { method: 'GET', pattern: '/clients', handler: () => db.clients.map((c) => ({ ...c, compliance: { ...c.compliance, status: deriveStatus(c) } })) },
+  { method: 'GET', pattern: '/clients', handler: () => roster().map((c) => ({ ...c, compliance: { ...c.compliance, status: deriveStatus(c) } })) },
   { method: 'GET', pattern: '/clients/:id', handler: ({ params }) => requireClient(params.id) },
   {
     method: 'PATCH',
@@ -288,6 +291,25 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       const address = email.trim().toLowerCase();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) {
         throw new MockHttpError(400, 'That email address doesn’t look right');
+      }
+      // Mirrors adopt_client (20261007174108): someone training on their own
+      // joins the roster as they are; any other existing address is a 409.
+      const solo = db.clients.find((c) => c.email.toLowerCase() === address && c.trainerId === null);
+      if (solo) {
+        solo.trainerId = db.trainer.id;
+        db.trainer.clientIds.push(solo.id);
+        if (!db.threads.some((t) => t.clientId === solo.id && t.trainerId === db.trainer.id)) {
+          db.threads.push({
+            id: `th-${solo.id}-${db.trainer.id}`,
+            clientId: solo.id,
+            trainerId: db.trainer.id,
+            lastMessagePreview: '',
+            lastMessageAt: '',
+            unreadForTrainer: 0,
+            unreadForClient: 0,
+          });
+        }
+        return solo;
       }
       if ([db.trainer, ...db.clients].some((u) => u.email.toLowerCase() === address)) {
         throw new MockHttpError(409, 'That email already has an account');
@@ -327,7 +349,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     },
   },
   {
-    // Mirrors delete_account (migration 20260929000001). ponytail: the mock has
+    // Mirrors delete_account (migration 20260929080742). ponytail: the mock has
     // no notion of who is asking, so this is a no-op; the sign-out that follows
     // is what the app sees.
     method: 'DELETE',
@@ -335,7 +357,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     handler: () => null,
   },
   {
-    // Mirrors create_profile (migration 20260918000002). The real transport
+    // Mirrors create_profile (migration 20260919094856). The real transport
     // reads the caller's uid and email off the token; the mock has no auth at
     // all, so it just mints the row the same way and hands the id back.
     method: 'POST',
@@ -353,10 +375,7 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
         name: name.trim(),
         email: `${name.trim().toLowerCase().replace(/\s+/g, '.')}@example.com`,
         avatarUrl: '',
-        // ponytail: the mock's one trainer until ClientProfile.trainerId widens
-        // to `string | null` in S8 -- then this becomes null and the mock can
-        // actually exercise the coachless paths (S13's fixture depends on it).
-        trainerId: db.trainer.id,
+        trainerId: null,
         goal: 'recomp',
         heightCm: null,
         startWeightKg: null,
@@ -383,20 +402,22 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
     },
   },
   {
-    // Mirrors remove_client (20260926000002): off the roster, data kept. The
-    // mock has one trainer and no individuals, so the row simply leaves db.clients.
+    // Mirrors remove_client (20260926113815): off the roster, data kept --
+    // they carry on as an individual.
     method: 'DELETE',
     pattern: '/clients/:id',
     handler: ({ params }) => {
       const client = findClient(params.id);
-      if (!client || client.invited) throw new MockHttpError(404, `No client ${params.id} on your roster`);
-      db.clients = db.clients.filter((c) => c.id !== client.id);
+      if (!client || client.invited || client.trainerId !== db.trainer.id) {
+        throw new MockHttpError(404, `No client ${params.id} on your roster`);
+      }
+      client.trainerId = null;
       db.trainer.clientIds = db.trainer.clientIds.filter((id) => id !== client.id);
       return { id: client.id };
     },
   },
   {
-    // Mirrors complete_intake (migration 20260915000005).
+    // Mirrors complete_intake (migration 20260915101739).
     method: 'POST',
     pattern: '/clients/:id/intake',
     handler: ({ params, body }) => {
@@ -1027,10 +1048,10 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
       if (!plan) throw new MockHttpError(404, `Unknown plan ${planCode}`);
       // Same refusal as the edge function: a coach cannot move to a plan that
       // does not cover the roster they already have.
-      if (plan.role === 'trainer' && plan.maxClients !== null && db.clients.length > plan.maxClients) {
+      if (plan.role === 'trainer' && plan.maxClients !== null && roster().length > plan.maxClients) {
         throw new MockHttpError(
           409,
-          `That plan covers ${plan.maxClients} clients and you have ${db.clients.length}.`,
+          `That plan covers ${plan.maxClients} clients and you have ${roster().length}.`,
         );
       }
       const end = new Date();
@@ -1056,9 +1077,9 @@ export const routes: Array<{ method: MockRequest['method']; pattern: string; han
   },
 ];
 
-/** Mirrors the rows seeded by migration 20260920000001. Placeholder pricing. */
+/** Mirrors the rows seeded by migration 20260920121309. Placeholder pricing. */
 const MOCK_PLANS: Plan[] = [
-  { code: 'coach_free', role: 'trainer', name: 'Free', pricePaise: 0, maxClients: 30, position: 0 },
+  { code: 'coach_free', role: 'trainer', name: 'Free', pricePaise: 0, maxClients: 25, position: 0 },
   { code: 'coach_starter', role: 'trainer', name: 'Starter', pricePaise: 99900, maxClients: 15, position: 1 },
   { code: 'coach_pro', role: 'trainer', name: 'Pro', pricePaise: 249900, maxClients: 50, position: 2 },
   { code: 'coach_elite', role: 'trainer', name: 'Elite', pricePaise: 499900, maxClients: null, position: 3 },
@@ -1082,7 +1103,7 @@ export interface RoutineInput {
  * What a coach may change about a client: where they are headed and what they
  * eat to get there. Compliance, height and the joined date are not theirs.
  */
-/** Mirrors the column defaults in migration 20260915000003. */
+/** Mirrors the column defaults in migration 20260915101705. */
 const STARTER_MACROS: MacroTargets = { calories: 2000, protein: 150, carbs: 200, fat: 65 };
 
 /** `POST /ai/parse`. A description, a photo (base64), or both. */

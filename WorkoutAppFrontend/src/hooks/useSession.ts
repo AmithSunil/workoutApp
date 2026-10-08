@@ -1,6 +1,7 @@
 import { useGetThreadsQuery } from '@/api/endpoints/messagingApi';
 import { useGetClientQuery, useGetTrainerQuery } from '@/api/endpoints/trainerApi';
 import { useAppSelector } from '@/store/hooks';
+import type { ClientProfile } from '@/types/models';
 
 /**
  * Convenience view over the session slice plus the records it points at.
@@ -30,8 +31,13 @@ export function useSession() {
   };
 }
 
-/** The thread between the signed-in client and their coach, if there is one. */
-export function useClientThread(clientId?: string) {
-  const { data: threads = [] } = useGetThreadsQuery(undefined, { skip: !clientId });
-  return threads.find((t) => t.clientId === clientId) ?? null;
+/**
+ * The thread between a client and their current coach, if there is one. A
+ * client adopted by a new coach can still see an old coach's thread, so the
+ * coach has to match too. No coach, no thread.
+ */
+export function useClientThread(client?: Pick<ClientProfile, 'id' | 'trainerId'>) {
+  const coach = client?.trainerId;
+  const { data: threads = [] } = useGetThreadsQuery(undefined, { skip: !coach });
+  return threads.find((t) => t.clientId === client?.id && t.trainerId === coach) ?? null;
 }

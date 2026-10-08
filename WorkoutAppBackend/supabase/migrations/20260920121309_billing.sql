@@ -11,7 +11,7 @@
 -- job, no sweep, no pg_cron (which is not installed anyway).
 --
 -- Reverting: drop the two tables and the three functions, then restore
--- invite_client and create_profile from 20260915000003 / 20260918000002.
+-- invite_client and create_profile from 20260915101705 / 20260919094856.
 
 -- ---------------------------------------------------------------------------
 -- The price list
@@ -108,7 +108,7 @@ $$;
 -- The gate, in the one place every policy already goes through
 -- ---------------------------------------------------------------------------
 
--- Unchanged from 20260831000011 except the plan_active() clause, and
+-- Unchanged from 20260831103659 except the plan_active() clause, and
 -- re-declaring `security definer` because create-or-replace takes the attribute
 -- from the new definition (project memory backend_schema).
 --
@@ -146,7 +146,7 @@ select u.id,
 on conflict (user_id) do nothing;
 
 -- ---------------------------------------------------------------------------
--- Development posture, matching 20260831000003
+-- Development posture, matching 20260831093537
 -- ---------------------------------------------------------------------------
 
 alter table public.plans          enable row level security;
@@ -179,7 +179,7 @@ grant  execute on function public.seat_limit(text)                              
 -- The seat cap, enforced where it cannot be talked out of
 -- ---------------------------------------------------------------------------
 
--- Unchanged from 20260915000003 except for the cap block. This is the one gate
+-- Unchanged from 20260915101705 except for the cap block. This is the one gate
 -- that works TODAY: the roster *view* gate rides in with the pending RLS set
 -- (old T10), but a coach cannot mint seats past their plan from this moment on,
 -- whatever the app is showing them.
@@ -253,7 +253,7 @@ $$;
 -- A new account starts subscribed
 -- ---------------------------------------------------------------------------
 
--- Unchanged from 20260918000002 except the two start_subscription calls.
+-- Unchanged from 20260919094856 except the two start_subscription calls.
 create or replace function public.create_profile(p_kind text, p_name text)
 returns text language plpgsql volatile security definer set search_path = '' as $$
 declare

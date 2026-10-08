@@ -1,4 +1,4 @@
--- Guard check for 20260915000001_one_routine_per_client.sql: assigning swaps,
+-- Guard check for 20260915091229_one_routine_per_client.sql: assigning swaps,
 -- re-assigning is a no-op, and leaving a client out of the tick list does not
 -- strand them. Runs against the project and puts the client back where it
 -- found them. Silence is failure; two notices are a pass.

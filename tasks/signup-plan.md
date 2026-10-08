@@ -27,10 +27,10 @@ encode that premise, and each is a concrete breakage for a self-signed-up user.
 ### 1. There is no sign-up at all
 `src/app/sign-in.tsx` offers password sign-in and "Coach invited you? Sign in with a code". Neither
 creates an account on purpose — `invite_client` does, from the trainer side
-(`20260915000003_invite_clients.sql`). There is no screen that mints a new identity.
+(`20260915101705_invite_clients.sql`). There is no screen that mints a new identity.
 
 ### 2. `hook_require_invite` refuses every uninvited email
-The Before User Created hook (`20260915000004_claim_on_signup.sql`) returns `no_invite` unless the
+The Before User Created hook (`20260915101722_claim_on_signup.sql`) returns `no_invite` unless the
 address is already a `users` row with `role = 'client'` and `auth_user_id is null`. Self-signup is
 precisely the case it was written to block.
 
@@ -44,14 +44,14 @@ row, which is *the same state*. **This is the single most important change in th
 yet" has to stop being an error and become a route.
 
 ### 4. `client_profiles.trainer_id` is NOT NULL, `on delete restrict`
-`20260831000001_core_schema.sql:75`. An individual has nothing to put there.
+`20260831093444_core_schema.sql:75`. An individual has nothing to put there.
 
 ### 5. `routines.trainer_id` is NOT NULL too
-`20260831000001_core_schema.sql:133`. A client already writes their own routine today when their
+`20260831093444_core_schema.sql:133`. A client already writes their own routine today when their
 coach tracks nutrition only (`app/(client)/routine/new.tsx`), and it is stored **under the coach's
 id** — a ceiling already marked with a `ponytail:` comment there and recorded in project memory
 `tracking_mode`. An individual has no coach's id to borrow, so this column has to go nullable as
-well. `routines.author_id` (added in `20260915000003`) is what carries ownership instead, and
+well. `routines.author_id` (added in `20260915101705`) is what carries ownership instead, and
 `owns_routine()` in the pending RLS file already checks it.
 
 ### 6. `trainerProfile()` assumes a visible trainer row
@@ -152,7 +152,7 @@ kind precisely so it arrives there. It is also the honest answer for someone who
 failed halfway, or who killed the app between verifying and creating.
 
 The "I have a coach" branch creates nothing on purpose. The invite already **is** the client row (the
-whole design of `20260915000003`), so a row created here would collide with the one the coach creates
+whole design of `20260915101705`), so a row created here would collide with the one the coach creates
 later — and the adoption path in S11 handles the other ordering.
 
 **Not done: checking whether an address is on a roster before sending a code.** It would need an
@@ -271,32 +271,32 @@ or not. Nothing in this plan can be tested end to end on a real device until it 
 Full task bodies in `tasks/signup-todo.md`.
 
 ### Phase 1: Backend — a client can have no coach
-- [ ] S1: Nullable `trainer_id` on `client_profiles` and `routines`
-- [ ] S2: `create_profile` RPC
-- [ ] S3: Delete `hook_require_invite`, keep `link_auth_user`
-- [ ] S4: Three policy edits in the pending RLS file
+- [x] S1: Nullable `trainer_id` on `client_profiles` and `routines`
+- [x] S2: `create_profile` RPC
+- [x] S3: Delete `hook_require_invite`, keep `link_auth_user`
+- [x] S4: Three policy edits in the pending RLS file
 
 ### Checkpoint A: backend replays offline
 
 ### Phase 2: Frontend — the new identity state
-- [ ] S5: `needsProfile` — a null identity stops being fatal, and the kind rides in metadata
-- [ ] S6: `POST /session/profile` in both transports
-- [ ] S7: `/welcome` as the front door, and `/otp` carrying the choice through
+- [x] S5: `needsProfile` — a null identity stops being fatal, and the kind rides in metadata
+- [x] S6: `POST /session/profile` in both transports
+- [x] S7: `/welcome` as the front door, and `/otp` carrying the choice through
 
 ### Checkpoint B: /welcome is the front door, and a new address comes out of it with a profile
 
 ### Phase 3: Frontend — the coachless client
-- [ ] S8: `trainerId: string \| null`, and `GET /trainer` answers null
-- [ ] S9: `hasCoach()` and the surfaces it hides
-- [ ] S10: An individual sets their own goals, macros and habits
+- [x] S8: `trainerId: string \| null`, and `GET /trainer` answers null
+- [x] S9: `hasCoach()` and the surfaces it hides
+- [x] S10: An individual sets their own goals, macros and habits
 
 ### Checkpoint C: an individual can train for a week without a coach
 
 ### Phase 4: Coming together
-- [ ] S11: `invite_client` adopts a coachless account
-- [ ] S12: Sign-in and OTP copy, and the way in for a new user
-- [ ] S13: Seed and mock fixtures — one individual, one self-signed coach
-- [ ] S14: Docs — `ARCHITECTURE.md`, `BACKEND_DATA_SCHEMA.md`, backend `README.md`, old-todo T5 struck
+- [x] S11: `invite_client` adopts a coachless account
+- [x] S12: Sign-in and OTP copy, and the way in for a new user
+- [x] S13: Seed and mock fixtures — one individual, one self-signed coach
+- [x] S14: Docs — `ARCHITECTURE.md`, `BACKEND_DATA_SCHEMA.md`, backend `README.md`, old-todo T5 struck
 
 ### Checkpoint D: complete
 

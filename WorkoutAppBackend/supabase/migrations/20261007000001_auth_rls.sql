@@ -1,4 +1,6 @@
--- NOT APPLIED. The real per-role policy set, written and tested.
+-- APPLIED 2026-10-07 (pasted into the SQL editor; ledger row `auth_rls`, version
+-- 20261007000001). Was supabase/future/20260901000001_auth_rls.sql.pending.
+-- The real per-role policy set, written and tested.
 --
 -- Tested on 2026-08-31 by applying this file inside a transaction, signing in as
 -- the trainer and two clients via request.jwt.claims, counting what each could
@@ -7,12 +9,12 @@
 --
 -- Prerequisites, all already met:
 --   1. users.auth_user_id exists and the helper predicates are applied
---      (migration 20260831000011).
+--      (migration 20260831103659).
 --   2. Every person who needs to sign in has an auth.users row linked to their
 --      users row (seed/auth_dev_users.sql for the fixtures).
 --
 --   3. The app signs in with real tokens (src/app/sign-in.tsx, done).
---   4. The onboarding migrations 20260915000002..05 are applied -- the insert
+--   4. The onboarding migrations 20260915101634..05 are applied -- the insert
 --      policies and routines.author_id below depend on them.
 --
 -- Held back only for the onboarding checkpoint review (tasks/todo.md, T10).
@@ -89,7 +91,7 @@ create policy trainer_profiles_self on trainer_profiles for all to authenticated
 -- A client reads their own profile but does not edit it: macro targets, goals
 -- and compliance are the coach's to set.
 --
--- This is also the roster gate, and it needed no edit for it: 20260920000001
+-- This is also the roster gate, and it needed no edit for it: 20260920121309
 -- put plan_active() inside owns_client() itself, so a lapsed coach's roster,
 -- dashboard counts, client detail and every table below keyed on a client_id
 -- all return nothing together. A client's own access is the other branch of
@@ -100,7 +102,7 @@ create policy client_profiles_trainer_writes on client_profiles for all to authe
   using (public.is_trainer_of(id) and public.plan_active())
   with check (public.is_trainer_of(id) and public.plan_active());
 
--- Onboarding (20260915000003). is_trainer_of() looks the row up in its own
+-- Onboarding (20260915101705). is_trainer_of() looks the row up in its own
 -- table, and an INSERT check runs before the new row is visible, so the
 -- `for all` policies above can never admit an insert. These key on the column.
 create policy users_trainer_insert_client on users for insert to authenticated
@@ -115,7 +117,7 @@ create policy client_profiles_trainer_insert on client_profiles for insert to au
 -- who has no client_profiles row yet), and is_trainer_of() would then answer
 -- true for them.
 --
--- Self-signup (20260918000002) does not pass through the policy above at all:
+-- Self-signup (20260919094856) does not pass through the policy above at all:
 -- create_profile is SECURITY DEFINER, because the caller has no users row yet
 -- and so has no app_role() for any policy to test. The trainer_id half is what
 -- stops a *coach* inserting a client onto someone else's roster.
@@ -194,7 +196,7 @@ create policy routines_read on routines for select to authenticated
 -- The coach's own templates, or a routine its author wrote for themselves:
 -- under their coach's id when they have one (a coach who does not track
 -- workouts), and with no coach at all when they are training on their own
--- (20260918000001 made routines.trainer_id nullable). Either way the author
+-- (20260919094839 made routines.trainer_id nullable). Either way the author
 -- must be the caller, so this never widens to someone else's routine.
 create policy routines_owner on routines for all to authenticated
   using (trainer_id = public.app_user_id()
@@ -234,7 +236,7 @@ create policy messages_update on messages for update to authenticated
   using (public.in_thread(thread_id)) with check (public.in_thread(thread_id));
 
 -- ---------------------------------------------------------------------------
--- Billing (20260920000001): read your own, and nothing else
+-- Billing (20260920121309): read your own, and nothing else
 -- ---------------------------------------------------------------------------
 
 -- The price list is public to anyone signed in -- the paywall has to render it.
@@ -243,8 +245,10 @@ create policy plans_read on plans for select to authenticated using (true);
 -- A subscription is readable by its owner and writable by nobody: every write
 -- comes from the razorpay edge functions under the service role, which
 -- bypasses RLS. That is deliberate -- a client that could update this table
--- could grant itself a plan. 20260920000001 also revokes the write *grants*,
+-- could grant itself a plan. 20260920121309 also revokes the write *grants*,
 -- so this is belt as well as braces.
+-- 20260920132812 already created this one on the remote; replace it.
+drop policy if exists subscriptions_self_read on subscriptions;
 create policy subscriptions_self_read on subscriptions for select to authenticated
   using (user_id = public.app_user_id());
 
@@ -285,7 +289,7 @@ create policy subscriptions_self_read on subscriptions for select to authenticat
 -- (c1_role_after_self_promote, c1_mints_trainer_profile, c1_fake_roster) and
 -- they run with the rest of this file at T10.
 --
--- 2026-09-20, billing (20260920000001). Re-run offline against the whole chain
+-- 2026-09-20, billing (20260920121309). Re-run offline against the whole chain
 -- + seed.sql + this file. plan_active() went inside owns_client(), so the gate
 -- is the predicate ~20 tables already route through, not a clause per policy.
 --

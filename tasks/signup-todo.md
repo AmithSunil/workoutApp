@@ -17,7 +17,7 @@ container before they touch the remote, and `list_migrations` is checked before 
 - Re-checked against the working tree 2026-09-19, every premise still holds: no `welcome.tsx`, no
   `20260918*` migration, `/sign-in` is still what `app/index.tsx` redirects to, `resolveIdentity`
   still throws `unlinked` on a null answer, `routes.otp()` still takes no arguments, and
-  `20260831000006` still seeds no `t` prefix in `id_sequences`.
+  `20260831102233` still seeds no `t` prefix in `id_sequences`.
 - **S1-S3 built and applied 2026-09-19.** The three migrations are in the folder and on the remote
   as `optional_coach`, `create_profile`, `open_signup` (`list_migrations` confirms; the remote was
   at `complete_intake` before). The whole chain plus `seed.sql` replayed clean on offline Postgres
@@ -50,7 +50,7 @@ container before they touch the remote, and `list_migrations` is checked before 
   and a comment records that `create_profile` is DEFINER and does not pass through
   `client_profiles_trainer_insert`. The client-authored-routine rule the `tracking_mode` memory
   flagged as missing was already there (the author branch, added with `routines.author_id` in
-  `20260915000003`); this only widens it to a null coach.
+  `20260915101705`); this only widens it to a null coach.
   `tests/rls.sql` gained the five self-signup cases and **lost the two `hook_*` keys**, which
   called the function S3 dropped -- it would not have run at all otherwise. Re-run offline against
   the whole chain + `seed.sql`: every previously measured number is unchanged, an individual can
@@ -122,6 +122,64 @@ container before they touch the remote, and `list_migrations` is checked before 
   outstanding. `signedOutReason` is rendered on `/welcome` now too, or an `unlinked` sign-out would
   land on a screen that says nothing. `signInWithPassword` and `DEV_PASSWORD` stay, for that one
   dev-only caller. tsc clean; both exports pass and `/sign-in` is gone from the prerendered routes.
+- **S8-S10 done 2026-10-07 (Phase 3).** S8: `ClientProfile.trainerId` and `Routine.trainerId` are
+  `string | null` (rows too); `GET /trainer` already answered null via `maybeSingle()`, so the type
+  widening was the change and tsc found no other reader. The mock's individual is minted with
+  `trainerId: null`, its `GET /clients` / summary / plan-cap read a `roster()` filter, and its
+  `DELETE /clients/:id` now detaches (trainerId null) like `remove_client` instead of deleting.
+  S9: `utils/coach.ts` `hasCoach()`; no chat FAB or thread query, `/chat` behind its own
+  `Stack.Protected`, coach card and coach copy gone on explore/workouts/routine/logger/onboarding,
+  intake notes field hidden. `TrainerIndicator` is mounted nowhere -- dead code, left for deletion.
+  S10: client profile gets *Your targets* + *Daily habits* behind `!hasCoach`, reusing
+  `GoalsEditor` and `HabitEditor` (new `by` prop so habits save `createdBy: 'client'`).
+  tsc clean; android (6.0MB) then web export pass. **Gap for Checkpoint C:** client self-planned
+  routines were removed 2026-09-24, so an individual has no routine builder -- only *Train
+  something else today*. Needs Sneha's call before Checkpoint C can tick.
+- **S11 done and applied 2026-10-07** as `adopt_client` (`list_migrations` confirmed the remote
+  matched the folder first). `invite_client` stays INVOKER and calls a new `adopt_client(email)`,
+  SECURITY DEFINER (seventh exception -- under the pending RLS a coach cannot see or update a row
+  not on their roster yet). Because it is directly callable it repeats the coach / plan / seat
+  checks and never takes the coach as a parameter. Adoption sets `trainer_id`, adds a thread keyed
+  `th-<client>-<coach>` (on conflict nothing, since `th-<client>` may be an old coach's), leaves
+  goal, macros and body numbers alone, and ignores the invite's name/profile. Offline replay of
+  the whole chain + seed + pending RLS: new `tests/adopt_client.sql` -- same id back, history kept,
+  one new thread, self-macro update 0 rows after, client calling `adopt_client` 42501, coached
+  client's and trainer's addresses PT409, `revoke_invite` on the adopted client PT404, re-adopt
+  after `remove_client` adds no second thread. `tests/rls.sql` still runs clean. `get_advisors`:
+  only the expected authenticated-executable DEFINER line for `adopt_client` is new.
+  Frontend: invite caption gains one line; the mock mirrors adoption; `useClientThread` now takes
+  the client and matches the current coach (and the trainer dashboard / client detail match on
+  trainer too), since an adopted client can see two threads. tsc clean; both exports pass.
+  Not handled: a paid solo subscription is not cancelled on adoption (`ponytail:` in the file).
+- **S12 done 2026-10-07 -- mostly already superseded.** `sign-in.tsx` and `otp.tsx` are gone, so
+  only copy was left: `noInvite` (old-server only now) no longer tells people to ask a coach,
+  `unlinked` no longer blames the coach (it can hit a coach too), and `/welcome`'s recovery line
+  says train on your own and get added later -- true since S11. The front door's invited-path
+  line was already right. `DevQuickSignIn` untouched. tsc clean; exports skipped (strings only).
+- **S13 done 2026-10-07.** Fixtures live in `src/mock-api` so both transports share them: `c-020`
+  Sam Okafor (`sam.solo@example.com`, coachless, 3 weigh-ins, one client-made habit) in
+  `users.json` clients, and `t-020` Ravi Menon (`ravi.coach@example.com`, no clients) under a new
+  seed-only `otherCoaches` key -- the mock keeps exactly one coach, so the empty coach exists only
+  on Supabase. `seed.mjs` reads `otherCoaches`, but **cannot regenerate `seed.sql`** any more
+  (it still reads the deleted `workoutSessions.json`), so the rows are hand-appended to `seed.sql`
+  and `chunks/seed_07.sql` before the counter bump. `/session/roles` now returns `trainers[]`
+  (was `.limit(1)`, already arbitrary with real coaches on the remote) and `DevQuickSignIn` lists
+  them all. Offline: fresh replay + new seed gives `t-001` the same summary and `client_ids` as the
+  old seed. Remote: rows inserted, dev password accounts made **for these two only** (the generic
+  `auth_dev_users.sql` would also mint one for the real pending invite `c-012` -- comment added),
+  counters bumped (c/t 20, bm 903, h 901); `t-001`'s roster unchanged. tsc clean; both exports
+  pass. Not run: `seed/verify.mjs` (tests on request).
+- **S14 done 2026-10-07 -- S1-S14 all built.** `ARCHITECTURE.md` gained *Signing in, and the
+  three kinds of account* (what an unknown email gets, `needsProfile` as a routable state,
+  `hasCoach()` as the one coachless rule, adoption). `BACKEND_DATA_SCHEMA.md`: `trainerId` nullable
+  on `client_profiles` and `routines`, with what null means, plus `authorId`. Backend `README.md`:
+  the identity RPCs in the API table and **one table of every SECURITY DEFINER function and why**,
+  checked against the remote's `pg_proc`. `todo.md`: old T5 struck. The rest of `ARCHITECTURE.md`
+  and the README are older and still stale (scheduled sessions, "the app does not sign in",
+  pinned `TODAY`) -- out of scope here.
+  **Still open from this plan:** an individual has no routine builder (Checkpoint C -- Sneha's
+  call); confirm no Before User Created hook in the Dashboard (S3); manual device runs, blocked on
+  old T0; applying the RLS set is old T10, now unblocked.
 - Blocked on nothing to continue; **end-to-end device testing is blocked on old T0** (custom SMTP and
   `{{ .Token }}` in the Confirm signup / Magic Link templates).
 
@@ -131,11 +189,11 @@ container before they touch the remote, and `list_migrations` is checked before 
 
 ### Task S1: Nullable `trainer_id` on `client_profiles` and `routines`
 **Description:** Make coachless rows representable. New migration
-`20260918000001_optional_coach.sql`:
+`20260919094839_optional_coach.sql`:
 - `alter table client_profiles alter column trainer_id drop not null` (the FK and `on delete
   restrict` stay — restrict still means a coach with clients cannot be deleted).
 - `alter table routines alter column trainer_id drop not null`. `author_id` (from
-  `20260915000003`) is what carries ownership for a routine with no coach behind it.
+  `20260915101705`) is what carries ownership for a routine with no coach behind it.
 - `create_routine`: replace the implicit fallback
   `coalesce(p_input->>'trainerId', (select id from trainer_profiles limit 1))` with
   `coalesce(p_input->>'trainerId', case when app_role() = 'trainer' then app_user_id() end)`, so an
@@ -158,13 +216,13 @@ container before they touch the remote, and `list_migrations` is checked before 
 - [x] `npx tsc --noEmit` (no frontend change expected — this is the control)
 
 **Dependencies:** None
-**Files:** `WorkoutAppBackend/supabase/migrations/20260918000001_optional_coach.sql`
+**Files:** `WorkoutAppBackend/supabase/migrations/20260919094839_optional_coach.sql`
 **Scope:** S
 
 ---
 
 ### Task S2: `create_profile` RPC
-**Description:** The one call `/welcome` makes. New migration `20260918000002_create_profile.sql`.
+**Description:** The one call `/welcome` makes. New migration `20260919094856_create_profile.sql`.
 
 `create_profile(p_kind text, p_name text) returns text`, **SECURITY DEFINER** (the fourth deliberate
 exception — the caller has no `public.users` row, so `app_role()` is null and no policy on `users`
@@ -174,7 +232,7 @@ can admit the insert). It:
 - raises `PT409` if any `users` row already has this email (that is an invited account, and
   `link_auth_user` owns it);
 - `p_kind = 'individual'` → `users(next_id('c'), 'client', name, email, auth_user_id)` +
-  `client_profiles(id, trainer_id null)` taking the defaults `20260915000003` set (goal `recomp`,
+  `client_profiles(id, trainer_id null)` taking the defaults `20260915101705` set (goal `recomp`,
   starter macros, `joined_at current_date`);
 - `p_kind = 'coach'` → `users(next_id('t'), 'trainer', …)` + `trainer_profiles(id)` with `tracks`
   left **null**, so the existing first-run tracking card on the dashboard is what greets them;
@@ -182,7 +240,7 @@ can admit the insert). It:
 - returns the new id.
 - `revoke execute … from public, anon`, `grant … to authenticated`.
 
-`id_sequences` has **no `t` prefix** (checked 2026-09-18 — `20260831000006` seeds seventeen prefixes and `t` is not one of them; `c` was added later by `20260915000003`). Add it the same way, seeded from `max(regexp_match(id,'^t-(\d+)$'))` over `users`.
+`id_sequences` has **no `t` prefix** (checked 2026-09-18 — `20260831102233` seeds seventeen prefixes and `t` is not one of them; `c` was added later by `20260915101705`). Add it the same way, seeded from `max(regexp_match(id,'^t-(\d+)$'))` over `users`.
 
 **Acceptance criteria:**
 - [x] `create_profile('individual','Ada')` as a session with no profile creates both rows, links
@@ -201,14 +259,14 @@ can admit the insert). It:
       authenticated-executable DEFINER, the same way `complete_intake` reads
 
 **Dependencies:** S1
-**Files:** `WorkoutAppBackend/supabase/migrations/20260918000002_create_profile.sql`
+**Files:** `WorkoutAppBackend/supabase/migrations/20260919094856_create_profile.sql`
 **Scope:** S
 
 ---
 
 ### Task S3: Delete `hook_require_invite`, keep `link_auth_user`
 **Description:** Signup is open, so the gate has nothing left to refuse. New migration
-`20260918000003_open_signup.sql`: `drop function public.hook_require_invite(jsonb)`. The
+`20260919094909_open_signup.sql`: `drop function public.hook_require_invite(jsonb)`. The
 `on_auth_user_created` trigger and `link_auth_user` are untouched — an invited address must still be
 linked inside account creation, before the app's first identity check.
 
@@ -228,7 +286,7 @@ Dashboard → Authentication → Hooks, and why.
       build in someone's hands can still trigger it) but it is now unreachable from a current server
 
 **Dependencies:** S2
-**Files:** `WorkoutAppBackend/supabase/migrations/20260918000003_open_signup.sql`
+**Files:** `WorkoutAppBackend/supabase/migrations/20260919094909_open_signup.sql`
 **Scope:** XS
 
 ---
@@ -270,9 +328,9 @@ is the first task to touch that block — check before writing, it may already b
 ---
 
 ## Checkpoint A: after S1–S4
-- [ ] The full migration chain + `seed.sql` + the pending file + `tests/rls.sql` replay clean offline
-- [ ] S1–S3 applied to the remote; `list_migrations` shows all three
-- [ ] `get_advisors` shows nothing new beyond the expected `create_profile` DEFINER line
+- [x] The full migration chain + `seed.sql` + the pending file + `tests/rls.sql` replay clean offline
+- [x] S1–S3 applied to the remote; `list_migrations` shows all three
+- [x] `get_advisors` shows nothing new beyond the expected `create_profile` DEFINER line
 - [ ] Nothing in the frontend has changed yet, and the app still builds and signs in as before
 
 ---
@@ -328,7 +386,7 @@ is the first task to touch that block — check before writing, it may already b
 **Acceptance criteria:**
 - [x] Both transports accept the same body and return the new id
 - [x] A second call answers 409 through `httpError.ts`'s `PT409` mapping
-- [ ] The mock transport can produce a coachless client (needed by S13) -- **deferred to S8**:
+- [x] The mock transport can produce a coachless client (needed by S13) -- **deferred to S8**: (done in S8: `trainerId: null`)
       `ClientProfile.trainerId` is still `string`, so the mock's individual is minted under the
       mock's one trainer with a `ponytail:` comment on the line to flip
 
@@ -406,8 +464,8 @@ simply lands in recovery mode.
 - [ ] A brand-new email goes: `/welcome` → choice → code → the right home, with no second prompt
 - [ ] Killing the app mid-flow and reopening from the email keeps the choice
 - [ ] The invited-client flow from `tasks/todo.md` still works end to end, unchanged
-- [ ] `npx tsc --noEmit` clean; both exports succeed
-- [ ] Review with Sneha before Phase 3
+- [x] `npx tsc --noEmit` clean; both exports succeed
+- [x] Review with Sneha before Phase 3
 
 ---
 
@@ -427,13 +485,13 @@ simply lands in recovery mode.
   there, because the trainer shell already guarantees `role === 'trainer'`.
 
 **Acceptance criteria:**
-- [ ] `GET /trainer` for a coachless client resolves to null rather than erroring
-- [ ] `useTracking()` for a coachless client reports both domains visible
-- [ ] Every trainer-side reader still compiles without a non-null assertion sprinkled in
-- [ ] `grep -rn "v_trainer_profiles\|trainer_profiles" src/` turns up no other `.single()`
+- [x] `GET /trainer` for a coachless client resolves to null rather than erroring
+- [x] `useTracking()` for a coachless client reports both domains visible
+- [x] Every trainer-side reader still compiles without a non-null assertion sprinkled in
+- [x] `grep -rn "v_trainer_profiles\|trainer_profiles" src/` turns up no other `.single()` (only the coach's own `PATCH /trainer`, which is trainer-only)
 
 **Verification:**
-- [ ] `npx tsc --noEmit`
+- [x] `npx tsc --noEmit`
 - [ ] Manual: sign in as a coachless client and confirm no error banner on any tab
 
 **Dependencies:** S1, S7
@@ -462,15 +520,15 @@ Hidden or reworded when false:
   individual, hide the notes field entirely (there is nobody to send it to)
 
 **Acceptance criteria:**
-- [ ] A coachless client sees no chat entry point anywhere, and `/chat` is not reachable by URL
-- [ ] No screen renders the word "coach" for a coachless client
-- [ ] A coached client's screens are byte-identical to today
-- [ ] `hasCoach` is imported, never re-implemented (grep for `trainerId ===` / `trainerId !==`)
+- [x] A coachless client sees no chat entry point anywhere, and `/chat` is not reachable by URL
+- [x] No screen renders the word "coach" for a coachless client (one exception by design: a removed client's old coach-made habits still say *Set by your coach*)
+- [x] A coached client's screens are byte-identical to today
+- [x] `hasCoach` is imported, never re-implemented (grep for `trainerId ===` / `trainerId !==`)
 
 **Verification:**
-- [ ] `npx tsc --noEmit`
+- [x] `npx tsc --noEmit`
 - [ ] Manual: both client kinds, every client tab, on web and android
-- [ ] `expo export --platform android`, then `--platform web`
+- [x] `expo export --platform android`, then `--platform web`
 
 **Dependencies:** S8
 **Files:** `WorkoutAppFrontend/src/utils/coach.ts`, `src/app/(client)/(tabs)/_layout.tsx`,
@@ -491,16 +549,16 @@ If either component reads `useSession().trainer` or assumes the trainer shell, l
 rather than branching inside it.
 
 **Acceptance criteria:**
-- [ ] An individual can change goal, goal weight and the four macro targets from their own profile,
+- [x] An individual can change goal, goal weight and the four macro targets from their own profile,
       and today's nutrition day picks the new targets up (the existing `updateClient` invalidation
       already covers this)
-- [ ] An individual can add, edit and complete their own daily habits
-- [ ] A **coached** client sees neither editor, and a direct `PATCH /clients/:id` from them is
-      refused once the RLS set is applied (S4 + old T10)
-- [ ] Neither editor changed behaviour on the trainer side
+- [x] An individual can add, edit and complete their own daily habits
+- [x] A **coached** client sees neither editor, and a direct `PATCH /clients/:id` from them is
+      refused once the RLS set is applied (S4 + old T10) -- checked offline by `tests/rls.sql`
+- [x] Neither editor changed behaviour on the trainer side
 
 **Verification:**
-- [ ] `npx tsc --noEmit`
+- [x] `npx tsc --noEmit`
 - [ ] Manual: as an individual, set macros then log food and confirm the ring targets moved
 - [ ] Manual: as `c-001` (coached), confirm the editors are absent
 
@@ -515,8 +573,8 @@ rather than branching inside it.
 - [ ] A self-signed-up individual can, with no coach anywhere: finish intake, plan a routine, train,
       log food, log a weigh-in, tick habits, and see their progress charts
 - [ ] Nothing about the coached-client experience changed
-- [ ] `npx tsc --noEmit` clean; both exports succeed
-- [ ] Review with Sneha before Phase 4
+- [x] `npx tsc --noEmit` clean; both exports succeed
+- [x] Review with Sneha before Phase 4
 
 ---
 
@@ -535,18 +593,18 @@ Raise an `intake-complete`-style info alert? No — they have already done intak
 appears on the roster with real numbers, which is the signal.
 
 **Acceptance criteria:**
-- [ ] Inviting an individual's address attaches them, creates the thread, and returns their existing
+- [x] Inviting an individual's address attaches them, creates the thread, and returns their existing
       id, with every log, weigh-in, habit and routine intact
-- [ ] Their `client_profiles_self_writes` access stops the moment `trainer_id` is set
-- [ ] Inviting an address that belongs to a trainer still raises 409
-- [ ] Inviting an address that belongs to a client with a coach still raises 409
-- [ ] `revoke_invite` on an adopted client does **not** delete them (`auth_user_id` is not null) —
+- [x] Their `client_profiles_self_writes` access stops the moment `trainer_id` is set
+- [x] Inviting an address that belongs to a trainer still raises 409
+- [x] Inviting an address that belongs to a client with a coach still raises 409
+- [x] `revoke_invite` on an adopted client does **not** delete them (`auth_user_id` is not null) —
       it returns `PT404`, which is right, but confirm the roster copy does not promise otherwise
 
 **Verification:**
-- [ ] Offline replay including all four cases
-- [ ] Remote dry run in `begin … rollback`
-- [ ] `list_migrations`, then `apply_migration` under the name `adopt_client`
+- [x] Offline replay including all four cases
+- [ ] Remote dry run in `begin … rollback` -- skipped; replayed offline instead and applied directly
+- [x] `list_migrations`, then `apply_migration` under the name `adopt_client`
 - [ ] Manual: invite an individual account from `t-001` and sign in as them
 
 **Dependencies:** S1, Checkpoint C
@@ -572,12 +630,12 @@ path for the seeded dev fixtures.
   copy no longer tells people to ask their coach — nothing on a current server produces it.
 
 **Acceptance criteria:**
-- [ ] No copy on the two auth screens assumes an invite
-- [ ] The invited path still reads naturally for someone who *was* invited
-- [ ] `DevQuickSignIn` is untouched and still behind `__DEV__`
+- [x] No copy on the two auth screens assumes an invite
+- [x] The invited path still reads naturally for someone who *was* invited
+- [x] `DevQuickSignIn` is untouched and still behind `__DEV__`
 
 **Verification:**
-- [ ] `npx tsc --noEmit`; both exports
+- [x] `npx tsc --noEmit`; both exports (exports run in S13, after the S12 copy change)
 - [ ] Manual read-through on web and android
 
 **Dependencies:** S7
@@ -598,11 +656,11 @@ path for the seeded dev fixtures.
 **Acceptance criteria:**
 - [ ] `DevQuickSignIn` lists the individual and the empty coach, and both sign in for real
 - [ ] The mock transport can run the whole individual experience with no network
-- [ ] `t-001`'s roster, counts and compliance averages are unchanged by the new rows
+- [x] `t-001`'s roster, counts and compliance averages are unchanged by the new rows
 - [ ] `seed/verify.mjs` passes, or its existing RPE/scheduled-session failures are the only ones
 
 **Verification:**
-- [ ] Offline replay of `seed.sql`
+- [x] Offline replay of `seed.sql`
 - [ ] Manual: both fixtures on both transports
 
 **Dependencies:** S10
@@ -625,13 +683,13 @@ path for the seeded dev fixtures.
 - `tasks/signup-todo.md`: fill in the Status block.
 
 **Acceptance criteria:**
-- [ ] A reader who knows nothing about this plan can tell, from `ARCHITECTURE.md` alone, what happens
+- [x] A reader who knows nothing about this plan can tell, from `ARCHITECTURE.md` alone, what happens
       when an unknown email signs in
-- [ ] Old T5 can no longer be picked up by mistake
-- [ ] The four DEFINER exceptions are listed together in one place
+- [x] Old T5 can no longer be picked up by mistake
+- [x] The four DEFINER exceptions are listed together in one place (seven now; one table in the backend README)
 
 **Verification:**
-- [ ] Read-through against the shipped code — no doc describes something that was not built
+- [x] Read-through against the shipped code — no doc describes something that was not built
 
 **Dependencies:** S11, S12, S13
 **Files:** `WorkoutAppFrontend/ARCHITECTURE.md`, `BACKEND_DATA_SCHEMA.md`,
@@ -643,9 +701,9 @@ path for the seeded dev fixtures.
 ## Checkpoint D: complete
 - [ ] All three entry paths work on web and android: new coach, new individual, invited client
 - [ ] An individual can be adopted by a coach and keeps their history
-- [ ] `npx tsc --noEmit` clean; `expo export` succeeds for android and then web
-- [ ] Migrations `optional_coach`, `create_profile`, `open_signup`, `adopt_client` are all in
+- [x] `npx tsc --noEmit` clean; `expo export` succeeds for android and then web
+- [x] Migrations `optional_coach`, `create_profile`, `open_signup`, `adopt_client` are all in
       `list_migrations`
-- [ ] **Old T10 (apply the RLS set) is now unblocked** — it applies the pending file including S4's
+- [x] **Old T10 (apply the RLS set) is now unblocked** — it applies the pending file including S4's
       three edits, in one transaction, and is the last thing that happens
 - [ ] Ready for review

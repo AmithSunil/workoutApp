@@ -3022,5 +3022,23 @@
     "clientId": "c-008",
     "date": "2026-08-29",
     "weightKg": 61.4
+  },
+  {
+    "id": "bm-00901",
+    "clientId": "c-020",
+    "date": "2026-08-10",
+    "weightKg": 86.4
+  },
+  {
+    "id": "bm-00902",
+    "clientId": "c-020",
+    "date": "2026-08-17",
+    "weightKg": 85.6
+  },
+  {
+    "id": "bm-00903",
+    "clientId": "c-020",
+    "date": "2026-08-24",
+    "weightKg": 85.1
   }
 ]

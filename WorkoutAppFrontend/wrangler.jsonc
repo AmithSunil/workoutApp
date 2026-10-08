@@ -1,0 +1,10 @@
+// Cloudflare Workers static hosting for the web build (`npx expo export -p web` -> dist/).
+// Every page is the same pre-rendered shell, so unknown paths fall back to index.html.
+{
+  "name": "corda",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

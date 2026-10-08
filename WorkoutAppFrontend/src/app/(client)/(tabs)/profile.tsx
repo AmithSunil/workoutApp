@@ -1,10 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+
+import { useGetBodyMetricsQuery, useGetHabitsQuery } from '@/api/endpoints/progressApi';
 
 import { DeleteAccountButton } from '@/components/auth/DeleteAccountButton';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 import { PlanSummary } from '@/components/billing/PlanSummary';
+import { HabitChecklist } from '@/components/progress/HabitChecklist';
+import { GoalsEditor } from '@/components/trainer/GoalsEditor';
+import { HabitEditor } from '@/components/trainer/HabitEditor';
 import {
   Avatar,
   Card,
@@ -15,9 +21,11 @@ import {
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
+import type { ClientProfile } from '@/types/models';
 import { routes } from '@/navigation/routes';
 import { colors, radius, spacing } from '@/theme';
-import { kg } from '@/utils/format';
+import { grams, kcal, kg } from '@/utils/format';
+import { hasCoach } from '@/utils/coach';
 import { GOAL_LABEL } from '@/utils/goal';
 
 /** The client's own account screen. */
@@ -64,7 +72,7 @@ export default function ClientProfileScreen() {
         />
       </Card>
 
-      {trainer ? (
+      {trainer && hasCoach(client) ? (
         <View style={styles.section}>
           <SectionHeader title="Your coach" />
           <Card onPress={() => router.push(routes.client.chat())} style={styles.row}>
@@ -84,6 +92,8 @@ export default function ClientProfileScreen() {
         </View>
       ) : null}
 
+      {hasCoach(client) ? null : <SelfCoaching client={client} />}
+
       <View style={styles.section}>
         <PlanSummary forRole="client" />
       </View>
@@ -91,6 +101,61 @@ export default function ClientProfileScreen() {
       <SignOutButton style={styles.signOut} />
       <DeleteAccountButton role="client" />
     </Screen>
+  );
+}
+
+/**
+ * With no coach, the client owns what a coach would set: goals, macros and
+ * habits. Same editors the coach uses, pointed at their own row.
+ */
+function SelfCoaching({ client }: { client: ClientProfile }) {
+  const [editing, setEditing] = useState<'goals' | 'habits' | null>(null);
+  const metrics = useGetBodyMetricsQuery({ clientId: client.id });
+  const habits = useGetHabitsQuery({ clientId: client.id });
+  const latest = metrics.data?.[metrics.data.length - 1]?.weightKg ?? null;
+  const close = () => setEditing(null);
+
+  return (
+    <>
+      <View style={styles.section}>
+        <SectionHeader title="Your targets" actionLabel="Edit" onAction={() => setEditing('goals')} />
+        <Card style={styles.big}>
+          <StatRow
+            items={[
+              { label: 'kcal', value: kcal(client.targets.calories) },
+              { label: 'Protein', value: grams(client.targets.protein) },
+              { label: 'Carbs', value: grams(client.targets.carbs) },
+              { label: 'Fat', value: grams(client.targets.fat) },
+            ]}
+          />
+        </Card>
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader title="Daily habits" actionLabel="Edit" onAction={() => setEditing('habits')} />
+        {habits.data && habits.data.length > 0 ? (
+          <HabitChecklist habits={habits.data} headless readOnly onToggle={() => undefined} />
+        ) : (
+          <Card>
+            <Text variant="caption" tone="secondary">
+              No habits yet. Add the daily goals you want to tick off.
+            </Text>
+          </Card>
+        )}
+      </View>
+
+      {/* Mounted only while open so it always re-seeds from the server copy. */}
+      {editing === 'goals' ? (
+        <GoalsEditor client={client} currentWeightKg={latest} onClose={close} />
+      ) : null}
+      <HabitEditor
+        visible={editing === 'habits'}
+        onClose={close}
+        clientId={client.id}
+        habits={habits.data ?? []}
+        by="client"
+      />
+    </>
   );
 }
 

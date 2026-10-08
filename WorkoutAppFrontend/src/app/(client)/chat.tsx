@@ -7,8 +7,8 @@ import { colors, radius, spacing } from '@/theme';
 
 /** The client's single conversation with their coach. */
 export default function ClientChatScreen() {
-  const { clientId, trainer } = useSession();
-  const thread = useClientThread(clientId);
+  const { clientId, client, trainer } = useSession();
+  const thread = useClientThread(client);
 
   if (!trainer || !clientId) {
     return (

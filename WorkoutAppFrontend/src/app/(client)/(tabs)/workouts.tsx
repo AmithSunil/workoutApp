@@ -32,6 +32,7 @@ import {
   weekdayInitial,
   weekdayOf,
 } from '@/utils/date';
+import { hasCoach } from '@/utils/coach';
 import { volume } from '@/utils/format';
 
 /** History shows this many sessions until the user asks for all of them. */
@@ -45,7 +46,8 @@ export default function WorkoutsRoute() {
 /** Training hub: what's on today, and an auditable record of what's been done. */
 function WorkoutsScreen() {
   const router = useRouter();
-  const { clientId } = useSession();
+  const { clientId, client } = useSession();
+  const coached = hasCoach(client);
   const [showAllHistory, setShowAllHistory] = useState(false);
 
   const logs = useGetWorkoutLogsQuery({ clientId: clientId ?? '', limit: 40 }, { skip: !clientId });
@@ -150,7 +152,9 @@ function WorkoutsScreen() {
               <Text variant="caption" tone="secondary">
                 {current
                   ? 'Nothing programmed. Move a little, sleep more.'
-                  : 'Your coach will send one soon.'}
+                  : coached
+                    ? 'Your coach will send one soon.'
+                    : 'Build today’s workout from the exercise library.'}
               </Text>
             </View>
           </Card>
@@ -192,7 +196,10 @@ function WorkoutsScreen() {
       {/* Programme */}
       {(routines.data ?? []).length > 0 ? (
         <View style={styles.section}>
-          <SectionHeader title="Your routine" caption="Written for you by your coach" />
+          <SectionHeader
+            title="Your routine"
+            caption={coached ? 'Written for you by your coach' : undefined}
+          />
           {(routines.data ?? []).map((assigned) => (
             <RoutineCard
               key={assigned.assignmentId}

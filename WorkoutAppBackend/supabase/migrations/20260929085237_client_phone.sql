@@ -8,7 +8,7 @@
 alter table public.client_profiles
   add column phone text check (phone ~ '^\+?[0-9]{7,15}$');
 
--- Unchanged from 20260929000002 except p_phone: required while the stored
+-- Unchanged from 20260929084446 except p_phone: required while the stored
 -- phone is null, ignored once it is set.
 drop function public.complete_intake(text, numeric, numeric, numeric, public.client_goal, text, date);
 

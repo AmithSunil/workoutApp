@@ -5,7 +5,7 @@
 -- place and sends the client through onboarding until they fill it in, the
 -- same way a null height or start weight does. No flag column.
 
--- Unchanged from 20260920000001 except that the name is no longer required.
+-- Unchanged from 20260920121309 except that the name is no longer required.
 create or replace function public.invite_client(p_name text, p_email text, p_profile jsonb default null)
 returns text language plpgsql volatile security invoker set search_path = '' as $$
 declare
@@ -76,7 +76,7 @@ $$;
 -- complete_intake gains the name
 -- ---------------------------------------------------------------------------
 
--- Unchanged from 20260915000005 except p_name: required while the stored name
+-- Unchanged from 20260915101739 except p_name: required while the stored name
 -- is '', ignored once it is set -- the same "whatever is already there wins"
 -- rule as the body numbers.
 drop function public.complete_intake(numeric, numeric, numeric, public.client_goal, text, date);

@@ -38,6 +38,7 @@ import {
   weekdayInitial,
   weekdayOf,
 } from '@/utils/date';
+import { hasCoach } from '@/utils/coach';
 import { firstName, kg, signed, volume } from '@/utils/format';
 
 const DISCOVER = [
@@ -194,7 +195,9 @@ export default function ExploreScreen() {
                     ? 'Nice work. Tap to review or edit it.'
                     : routine
                       ? 'Move a little, eat well, sleep more.'
-                      : 'Your coach will send one soon.'}
+                      : hasCoach(client)
+                        ? 'Your coach will send one soon.'
+                        : 'Train something of your own from the Workouts tab.'}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />

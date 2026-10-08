@@ -17,18 +17,21 @@ export interface HabitEditorProps {
   onClose: () => void;
   clientId: string;
   habits: Habit[];
+  /** Who is editing: a coach for their client, or an individual for themselves. */
+  by?: Habit['createdBy'];
 }
 
 const ICON_KEYS = Object.keys(HABIT_ICONS);
 
 /**
- * The coach's daily checklist for one client: add, rename, re-icon, remove.
+ * One client's daily checklist: add, rename, re-icon, remove. Their coach's
+ * editor, or their own when they train without one.
  *
  * Edits save on blur rather than behind a Save button — there is one field per
  * habit and nothing to validate across them, so a dirty-state machine would be
  * more code than the feature.
  */
-export function HabitEditor({ visible, onClose, clientId, habits }: HabitEditorProps) {
+export function HabitEditor({ visible, onClose, clientId, habits, by = 'trainer' }: HabitEditorProps) {
   const [createHabit, creating] = useCreateHabitMutation();
   const [updateHabit] = useUpdateHabitMutation();
   const [deleteHabit] = useDeleteHabitMutation();
@@ -37,7 +40,7 @@ export function HabitEditor({ visible, onClose, clientId, habits }: HabitEditorP
   const add = () => {
     const title = draft.trim();
     if (!title) return;
-    void createHabit({ clientId, title, icon: ICON_KEYS[0], createdBy: 'trainer' })
+    void createHabit({ clientId, title, icon: ICON_KEYS[0], createdBy: by })
       .unwrap()
       .then(() => setDraft(''));
   };
@@ -49,8 +52,8 @@ export function HabitEditor({ visible, onClose, clientId, habits }: HabitEditorP
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.list}>
         <Text variant="caption" tone="secondary">
-          What your client ticks off each day. Changes save as you go, and renaming one keeps its
-          history.
+          {by === 'trainer' ? 'What your client ticks off each day.' : 'What you tick off each day.'}{' '}
+          Changes save as you go, and renaming one keeps its history.
         </Text>
 
         {/* Add first — it's the most common reason to open this */}

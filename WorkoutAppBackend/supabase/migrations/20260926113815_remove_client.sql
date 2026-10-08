@@ -3,7 +3,7 @@
  *
  * Removing DETACHES, it never deletes: the client row, logs, weigh-ins, habits,
  * routine and chat history all stay, trainer_id goes null, and they carry on as
- * an individual (20260918000001) on a fresh 14-day solo trial -- the same start
+ * an individual (20260919094839) on a fresh 14-day solo trial -- the same start
  * a self-signed-up individual gets, so they are not paywalled the moment their
  * coach lets them go. Pending invites keep using revoke_invite, which deletes,
  * since nobody has anything to keep yet.

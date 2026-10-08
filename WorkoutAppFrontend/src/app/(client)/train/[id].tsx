@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 import { useGetAssignmentQuery } from '@/api/endpoints/routinesApi';
 import { useGetWorkoutLogsQuery, useSaveWorkoutLogMutation } from '@/api/endpoints/workoutsApi';
@@ -17,6 +17,7 @@ import {
   Text,
 } from '@/components/ui';
 import { useSession } from '@/hooks/useSession';
+import { hasCoach } from '@/utils/coach';
 import { CUSTOM_TRAIN_ID, routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
@@ -66,7 +67,8 @@ export default function TrainScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { clientId } = useSession();
+  const { clientId, client } = useSession();
+  const coached = hasCoach(client);
 
   const custom = id === CUSTOM_TRAIN_ID;
   const draft = useAppSelector((s) => s.workoutDraft);
@@ -127,12 +129,13 @@ export default function TrainScreen() {
     };
   }, [draft.exercises]);
 
+  // Alert.alert is a no-op on web: the nudge is inline and discard confirms with a second tap.
+  const [nudge, setNudge] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+
   const finish = () => {
     if (!clientId || (!day && !editing)) return;
-    if (stats.doneSets === 0) {
-      Alert.alert('Nothing logged', 'Tick at least one set before finishing this workout.');
-      return;
-    }
+    if (stats.doneSets === 0) return setNudge(true);
     void saveLog({
       clientId,
       title: custom && !editing ? customTitle(draft.exercises) : draft.title,
@@ -150,21 +153,14 @@ export default function TrainScreen() {
         dispatch(workoutDiscarded());
         router.replace(routes.client.workouts());
       })
-      .catch(() => Alert.alert('Could not save', 'Something went wrong. Try again.'));
+      .catch(() => undefined); // saveState.isError says so under the button
   };
 
-  const discard = () =>
-    Alert.alert('Discard workout?', 'Anything you have logged will be lost.', [
-      { text: 'Keep going', style: 'cancel' },
-      {
-        text: 'Discard',
-        style: 'destructive',
-        onPress: () => {
-          dispatch(workoutDiscarded());
-          router.back();
-        },
-      },
-    ]);
+  const discard = () => {
+    if (!confirmDiscard) return setConfirmDiscard(true);
+    dispatch(workoutDiscarded());
+    router.back();
+  };
 
   if (isLoading || logs.isLoading) {
     return (
@@ -279,7 +275,7 @@ export default function TrainScreen() {
         onPress={() => setPickerOpen(true)}
       />
 
-      <SectionHeader title="Finish up" caption="Notes go to your coach" />
+      <SectionHeader title="Finish up" caption={coached ? 'Notes go to your coach' : undefined} />
 
       <Card>
         <View style={styles.notesHeader}>
@@ -291,7 +287,11 @@ export default function TrainScreen() {
         <TextInput
           value={draft.notes}
           onChangeText={(t) => dispatch(notesChanged(t))}
-          placeholder="Bar speed, niggles, sleep, anything your coach should know…"
+          placeholder={
+            coached
+              ? 'Bar speed, niggles, sleep, anything your coach should know…'
+              : 'Bar speed, niggles, sleep, anything worth remembering…'
+          }
           placeholderTextColor={colors.textTertiary}
           multiline
           style={styles.notes}
@@ -306,9 +306,19 @@ export default function TrainScreen() {
         loading={saveState.isLoading}
         onPress={finish}
       />
+      {nudge && stats.doneSets === 0 ? (
+        <Text variant="caption" tone="danger" align="center">
+          Tick at least one set before finishing this workout.
+        </Text>
+      ) : null}
+      {saveState.isError ? (
+        <Text variant="caption" tone="danger" align="center">
+          Could not save. Something went wrong — try again.
+        </Text>
+      ) : null}
       <Button
-        label={editing ? 'Cancel' : 'Discard'}
-        variant="ghost"
+        label={editing ? 'Cancel' : confirmDiscard ? 'Tap again to discard' : 'Discard'}
+        variant={!editing && confirmDiscard ? 'danger' : 'ghost'}
         fullWidth
         onPress={editing ? () => router.back() : discard}
       />

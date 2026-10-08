@@ -89,7 +89,7 @@ android {
 
     namespace 'com.anonymous.WorkoutAppFrontend'
     defaultConfig {
-        applicationId 'com.anonymous.WorkoutAppFrontend'
+        applicationId 'fit.corda.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

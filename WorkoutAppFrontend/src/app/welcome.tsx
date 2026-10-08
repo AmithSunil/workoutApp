@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Redirect } from 'expo-router';
+import { Link, Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,7 +16,7 @@ import {
 import { DevQuickSignIn } from '@/components/auth/DevQuickSignIn';
 import { TrackingPicker } from '@/components/trainer/TrackingPicker';
 import { Button, Input, Text } from '@/components/ui';
-import { homeFor } from '@/navigation/routes';
+import { homeFor, routes } from '@/navigation/routes';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { signOutReasonDismissed } from '@/store/slices/sessionSlice';
 import { colors, palette, radius, spacing } from '@/theme';
@@ -150,11 +150,11 @@ export default function WelcomeScreen() {
 
   const tagline = asking
     ? coaching
-      ? 'What do you coach? This decides what Apex shows you. You can change it any time from your profile.'
-      : 'One more thing: how will you be using Apex?'
+      ? 'What do you coach? This decides what Corda shows you. You can change it any time from your profile.'
+      : 'One more thing: what should we call you?'
     : sentTo
       ? `We sent a 6-digit code to ${sentTo}.`
-      : 'Coach a roster, or train yourself. Same app, either way.';
+      : "Coaching for your clients' training and nutrition, in one app.";
 
   const banner = message ? (
     <View style={styles.banner} accessibilityRole="alert">
@@ -187,7 +187,7 @@ export default function WelcomeScreen() {
               <Ionicons name="barbell" size={22} color={colors.textOnPrimary} />
             </View>
             <Text variant="display" style={styles.title}>
-              Apex
+              Corda
             </Text>
             <Text variant="body" tone="secondary" align="center" style={styles.tagline}>
               {tagline}
@@ -242,20 +242,13 @@ export default function WelcomeScreen() {
                     disabled={!name.trim() || creating}
                     onPress={() => setCoaching(true)}
                   />
-                  <Button
-                    label="I'm training on my own"
-                    variant="secondary"
-                    size="lg"
-                    fullWidth
-                    disabled={!name.trim() || creating}
-                    onPress={() => void choose('individual')}
-                  />
-
                   {/* Reaching this phase with a coach means the address they used is
-                      not the one on the roster — the invite would have claimed it. */}
+                      not the one on the roster — the invite would have claimed it.
+                      Training on your own is off until after the MVP; choose('individual')
+                      and adopt_client are still there for when it comes back. */}
                   <Text variant="caption" tone="secondary" align="center">
-                    Have a coach? They need to add this exact address to their roster — ask them, then
-                    sign in again. You can train on your own in the meantime.
+                    Have a coach? Ask them to add this exact address to their roster, then sign in
+                    again.
                   </Text>
                 </>
               )}
@@ -361,6 +354,18 @@ export default function WelcomeScreen() {
               {__DEV__ ? <DevQuickSignIn onError={setError} /> : null}
             </View>
           )}
+
+          <Text variant="caption" tone="tertiary" align="center" style={styles.legal}>
+            By continuing you agree to the{' '}
+            <Link href={routes.terms()} style={styles.legalLink}>
+              Terms
+            </Link>{' '}
+            and{' '}
+            <Link href={routes.privacy()} style={styles.legalLink}>
+              Privacy Policy
+            </Link>
+            .
+          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -380,6 +385,12 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: spacing.xl,
+  },
+  legal: {
+    marginTop: spacing.xl,
+  },
+  legalLink: {
+    textDecorationLine: 'underline',
   },
   brand: {
     alignItems: 'center',

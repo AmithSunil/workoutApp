@@ -1,3 +1,28 @@
+# Local Supabase for development: `npx supabase start` from WorkoutAppBackend/
+# (needs Docker). Anything not set here is the CLI default.
+project_id = "corda"
+
+[db.seed]
+# Fixtures, the preset routine library, then a password login for every
+# fixture user (password in auth_dev_users.sql). Local only -- never staging/prod.
+sql_paths = ["../seed/seed.sql", "../seed/preset_routines.sql", "../seed/auth_dev_users.sql"]
+
+[auth]
+# Expo web dev server. Sign-in is by 6-digit code, so this only matters for links.
+site_url = "http://localhost:8081"
+
+[auth.email]
+otp_length = 6
+# Codes land in the local mail viewer (Mailpit), http://127.0.0.1:54324
+
+[auth.email.template.confirmation]
+subject = "Welcome to Corda — your code is {{ .Token }}"
+content_path = "./supabase/templates/confirm-signup.html"
+
+[auth.email.template.magic_link]
+subject = "Your Corda sign-in code: {{ .Token }}"
+content_path = "./supabase/templates/magic-link.html"
+
 # Only the two settings that are not defaults: the webhook has no JWT to verify,
 # because Razorpay signs with an HMAC instead (see razorpay-webhook/index.ts).
 [functions.razorpay]

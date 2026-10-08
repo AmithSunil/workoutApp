@@ -1,8 +1,8 @@
 -- An invite must be able to adopt an auth account that already exists.
 --
--- link_auth_user (20260915000004) only ever ran AFTER INSERT on auth.users, on
+-- link_auth_user (20260915101722) only ever ran AFTER INSERT on auth.users, on
 -- the assumption that the auth row is born when the invitee asks for their
--- first code. Since 20260918000003 dropped hook_require_invite, signup is open,
+-- first code. Since 20260919094909 dropped hook_require_invite, signup is open,
 -- so that assumption no longer holds: anyone who opens the app before their
 -- coach adds them gets an auth row with no public.users row behind it. The
 -- coach then adds the address, the client signs in -- and because nothing is

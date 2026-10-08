@@ -1,4 +1,5 @@
--- Dev sign-in accounts for the nine fixture users. ALREADY APPLIED.
+-- Dev sign-in accounts for every fixture user (eleven since S13). ALREADY APPLIED;
+-- re-run it after seeding new fixtures -- every statement skips what exists.
 --
 -- Password for every account:  apex-dev-2026
 --
@@ -11,6 +12,9 @@
 -- the service_role key is not in this repo; the identities row is what GoTrue
 -- needs for the email provider to recognise the account.
 
+-- Careful on a project with real users: this mints a password account for
+-- EVERY public.users row without one, a real pending invite included. Scope the
+-- where clause to the fixture ids there (S13 did, for t-020 / c-020).
 insert into auth.users (
   instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
   raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
@@ -38,7 +42,7 @@ select a.id::text, a.id,
  where not exists (select 1 from auth.identities i where i.user_id = a.id and i.provider = 'email');
 
 -- ---------------------------------------------------------------------------
--- Plans for the fixtures (20260920000001)
+-- Plans for the fixtures (20260920121309)
 -- ---------------------------------------------------------------------------
 --
 -- The migration backfills everyone who exists *when it is applied*, which

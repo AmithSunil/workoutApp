@@ -18,7 +18,7 @@ export type AuthFailureKind =
   | 'unlinked'
   /**
    * The account is verified but has no profile at all, which since self-signup
-   * (migration 20260918000002) is an ordinary state, not a failure: they have
+   * (migration 20260919094856) is an ordinary state, not a failure: they have
    * simply not said yet whether they are a coach or training on their own.
    */
   | 'needsProfile'
@@ -28,7 +28,10 @@ export type AuthFailureKind =
   | 'rateLimited'
   /** A sign-in code that is wrong or has expired. */
   | 'otpInvalid'
-  /** Nobody has invited this address (the backend's signup hook said no). */
+  /**
+   * The old signup hook refused an uninvited address. Signup is open since
+   * migration 20260919094909, so only an old server can produce this.
+   */
   | 'noInvite'
   /** The backend could not be reached at all. */
   | 'offline'
@@ -47,13 +50,12 @@ export class AuthFailure extends Error {
 
 const MESSAGES: Record<AuthFailureKind, string> = {
   credentials: 'That email and password don’t match an account.',
-  unlinked: 'This account isn’t linked to a profile yet. Ask your coach to finish setting it up.',
+  unlinked: 'This account isn’t fully set up. Sign in again, and if it keeps happening, contact support.',
   needsProfile: 'Tell us how you’ll be using the app to finish setting up your account.',
   unconfirmed: 'Confirm your email address before signing in.',
   rateLimited: 'Too many attempts. Wait a moment and try again.',
   otpInvalid: 'That code is wrong or has expired. Check the latest email, or send a new one.',
-  noInvite:
-    'That email isn’t on a coach’s roster. Use the exact address your coach invited, or ask them to add you.',
+  noInvite: 'Signing up isn’t available right now. Try again later.',
   offline: 'Can’t reach the server. Check your connection and try again.',
   unknown: 'Something went wrong signing in. Try again.',
 };
@@ -71,7 +73,7 @@ const classify = (raw: string): AuthFailureKind => {
   ) {
     return 'rateLimited';
   }
-  // `no_invite` is the message hook_require_invite returns (migration 20260915000004).
+  // `no_invite` is the message hook_require_invite returns (migration 20260915101722).
   if (text.includes('no_invite') || text.includes('signups not allowed')) return 'noInvite';
   // Supabase's one wording for both a wrong and an expired code.
   if (text.includes('token has expired or is invalid')) return 'otpInvalid';

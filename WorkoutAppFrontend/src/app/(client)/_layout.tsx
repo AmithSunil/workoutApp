@@ -6,6 +6,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { routes } from '@/navigation/routes';
 import { useAppSelector } from '@/store/hooks';
 import { colors } from '@/theme';
+import { hasCoach } from '@/utils/coach';
 import { needsIntake } from '@/utils/goal';
 
 /**
@@ -30,11 +31,8 @@ export default function ClientLayout() {
   const profile = useGetClientQuery(userId ?? '', { skip: !isClient });
   // A coached client is covered by the seat their coach pays for and is never
   // asked. Only someone training on their own needs a plan of their own.
-  // ponytail: until S8 widens ClientProfile.trainerId to `string | null` this
-  // is always true, so no client is gated yet -- which is right, because no
-  // coachless client can exist either. S8 turns this on by itself.
   const plan = useSubscription({
-    hasCoach: profile.data ? profile.data.trainerId !== null : true,
+    hasCoach: !profile.data || hasCoach(profile.data),
   });
 
   if (status !== 'signedIn') return <Redirect href={routes.welcome()} />;
@@ -69,9 +67,12 @@ export default function ClientLayout() {
       </Stack.Protected>
       <Stack.Protected guard={!intake}>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="chat" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="train/[id]" />
         <Stack.Screen name="routine/[id]" />
+      </Stack.Protected>
+      {/* Nobody to talk to without a coach, so not reachable by URL either. */}
+      <Stack.Protected guard={!intake && hasCoach(profile.data)}>
+        <Stack.Screen name="chat" options={{ animation: 'slide_from_bottom' }} />
       </Stack.Protected>
     </Stack>
   );

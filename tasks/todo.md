@@ -8,13 +8,13 @@ Backend changes are replayed offline against Postgres 16 in the cloud container 
 ## Status: 2026-09-15
 
 - **Code for T1–T9 is written.** tsc is clean, and the android and web exports succeed. The T12 Google code is not written.
-- **Migrations 20260915000002..05 are applied to the remote** under the names `intake_alert_kind`, `invite_clients`, `claim_on_signup` and `complete_intake`.
+- **Migrations 20260915101634..05 are applied to the remote** under the names `intake_alert_kind`, `invite_clients`, `claim_on_signup` and `complete_intake`.
   - Replayed offline first.
   - The whole flow was dry-run on the remote in a rolled-back transaction: invite, then hook, then link on signup, then `complete_intake`, then alert and note message.
 - **The T2 policies are in the pending file and pass `tests/rls.sql` offline.** They are not applied (T10).
 - **Still manual:**
   - T0 (SMTP and OTP templates)
-  - **enabling the Before User Created hook** (T5)
+  - ~~enabling the Before User Created hook (T5)~~ -- cancelled, see T5
   - the manual checks in Checkpoints A–C
   - T10
 
@@ -40,8 +40,8 @@ expiry is ≤ 1 h.
 
 ### Task 1: Schema and invite RPCs
 **Description:** Make pending clients possible and give trainers a single call to create one.
-- `20260915000002_intake_alert_kind.sql`: `alter type alert_kind add value 'intake-complete'` (its own migration).
-- `20260915000003_invite_clients.sql`:
+- `20260915101634_intake_alert_kind.sql`: `alter type alert_kind add value 'intake-complete'` (its own migration).
+- `20260915101705_invite_clients.sql`:
   - drop NOT NULL on `client_profiles.height_cm`, `start_weight_kg` and `target_weight_kg`
   - defaults: `goal 'recomp'`, `joined_at current_date`, starter macros (2000 / 150 / 200 / 65), with a `ponytail:` comment
   - `invite_client(p_name, p_email, p_profile jsonb default null)`, SECURITY INVOKER: mints `next_id('c')`, inserts `users` (lowercased email, role `client`), `client_profiles` (`trainer_id = app_user_id()`, optional numbers from `p_profile`) and `threads`; returns `client_json`-style output
@@ -56,7 +56,7 @@ expiry is ≤ 1 h.
 - [ ] Offline replay (recipe in memory `verification`)
 - [ ] `list_migrations` checked, then `apply_migration` for each file under the file's name
 **Dependencies:** None
-**Files:** `WorkoutAppBackend/supabase/migrations/20260915000002_*.sql`, `…000003_*.sql`, `WorkoutAppBackend/README.md`
+**Files:** `WorkoutAppBackend/supabase/migrations/20260915101634_*.sql`, `…000003_*.sql`, `WorkoutAppBackend/README.md`
 **Scope:** S
 
 ### Task 2: RLS additions (authored now, applied in T10)
@@ -122,7 +122,12 @@ Extend `tests/rls.sql` with these checks:
 ## Phase 2: Client signs in with a code
 
 ### Task 5: Signup gate hook and link trigger
-**Description:** In `20260915000004_claim_on_signup.sql`:
+> **Struck 2026-10-07 -- do not enable the hook.** Signup is open: `tasks/signup-todo.md` S3 dropped
+> `hook_require_invite` (`20260919094909_open_signup`). `link_auth_user` stays, and since
+> `20260920084114_link_on_signin` it fires on UPDATE too. Configuring a Before User Created hook
+> now would point at a function that no longer exists.
+
+**Description:** In `20260915101722_claim_on_signup.sql`:
 - `hook_require_invite(event jsonb) returns jsonb`: SECURITY DEFINER, `search_path = ''`. Returns `{}` when `users` has a row with `lower(email) = lower(event->'user'->>'email')`, `role = 'client'` and `auth_user_id is null`; otherwise returns `{"error":{"http_code":403,"message":"no_invite"}}`. EXECUTE goes to `supabase_auth_admin` only, and is revoked from anon, authenticated and public.
 - `link_auth_user()`: AFTER INSERT on `auth.users`, DEFINER. Sets `auth_user_id = new.id` on that pending row. For any provider other than `email`, it requires `new.email_confirmed_at is not null`. Wrapped in `exception when others then return new`.
 
@@ -133,7 +138,7 @@ Then enable the hook in Dashboard → Auth → Hooks (manual).
 - [ ] Forcing an error inside the trigger (tested inside `begin`/`rollback`) still lets the insert through
 **Verification:** Offline replay, using a stub `auth.users` insert for the trigger; the hook is called directly with a sample payload
 **Dependencies:** T1
-**Files:** `WorkoutAppBackend/supabase/migrations/20260915000004_claim_on_signup.sql`
+**Files:** `WorkoutAppBackend/supabase/migrations/20260915101722_claim_on_signup.sql`
 **Scope:** S
 
 ### Task 6: OTP sign-in
@@ -164,7 +169,7 @@ Then enable the hook in Dashboard → Auth → Hooks (manual).
 ## Phase 3: Intake and routing
 
 ### Task 7: `complete_intake` RPC
-**Description:** In `20260915000005_complete_intake.sql`, add `complete_intake(p_height, p_weight, p_target, p_goal, p_notes)`, SECURITY DEFINER with a guard (it must be the caller's own row, and only while intake is pending). It:
+**Description:** In `20260915101739_complete_intake.sql`, add `complete_intake(p_height, p_weight, p_target, p_goal, p_notes)`, SECURITY DEFINER with a guard (it must be the caller's own row, and only while intake is pending). It:
 - sets `height_cm` and `start_weight_kg`
 - sets `target_weight_kg` and `goal` only if `target_weight_kg` was null
 - inserts one `body_metrics` weigh-in for today
@@ -274,4 +279,4 @@ Pick these up only after the MVP build ships. Each one needs its own task breakd
 - [ ] Automated welcome email (Edge Function + Resend, with a per-trainer limit); replaces or supplements the share sheet from T4
 - [ ] Sign in with Apple and iOS (bundle id, App Store guideline 4.8)
 - [ ] Moving a client to another trainer
-- [ ] Gmail address normalisation in the signup hook and link trigger (T5)
+- [ ] Gmail address normalisation in the link trigger (T5's hook is gone)

@@ -98,7 +98,8 @@ export default function InviteClientScreen() {
             error={email.trim() && !emailOk ? 'Enter a full email address' : null}
           />
           <Text variant="caption" tone="secondary">
-            They must sign in with exactly this address — the invite you share says so.
+            They must sign in with exactly this address — the invite you share says so. Someone
+            already using the app on their own joins your roster with their history.
           </Text>
         </View>
       </Card>

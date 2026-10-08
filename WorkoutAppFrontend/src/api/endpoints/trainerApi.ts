@@ -18,7 +18,7 @@ import type {
 
 export const trainerApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    getRoles: build.query<{ trainer: TrainerProfile | null; clients: ClientProfile[] }, void>({
+    getRoles: build.query<{ trainers: TrainerProfile[]; clients: ClientProfile[] }, void>({
       query: () => ({ url: '/session/roles' }),
     }),
 

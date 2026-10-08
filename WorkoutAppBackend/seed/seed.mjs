@@ -77,16 +77,18 @@ function dedupe(rows, keyFn, label) {
 
 const usersJson = read('users.json');
 const trainer = usersJson.trainer;
+// Seed-only coaches (the mock has exactly one): t-020 signed up and has no clients yet.
+const coaches = [trainer, ...(usersJson.otherCoaches ?? [])];
 const clients = usersJson.clients;
 
 const users = [
-  {
-    id: trainer.id,
+  ...coaches.map((t) => ({
+    id: t.id,
     role: 'trainer',
-    name: trainer.name,
-    email: trainer.email,
-    avatar_url: trainer.avatarUrl ?? '',
-  },
+    name: t.name,
+    email: t.email,
+    avatar_url: t.avatarUrl ?? '',
+  })),
   ...clients.map((c) => ({
     id: c.id,
     role: 'client',
@@ -96,7 +98,7 @@ const users = [
   })),
 ];
 
-const trainerProfiles = [{ id: trainer.id, headline: trainer.headline ?? '' }];
+const trainerProfiles = coaches.map((t) => ({ id: t.id, headline: t.headline ?? '' }));
 
 const clientProfiles = clients.map((c) => ({
   id: c.id,
@@ -488,14 +490,14 @@ const ID_SEQUENCE_BUMP = `
 --
 -- The seed writes explicit ids (c-001, wl-00144) without touching
 -- id_sequences, so without this the first RPC write after a fresh seed mints
--- an id that already exists. 20260831000006 has the same block, but it runs at
+-- an id that already exists. 20260831102233 has the same block, but it runs at
 -- migration time -- before these rows exist -- so it can only ever advance the
 -- counters past nothing.
 --
 -- Derived rather than mapped: every prefix in id_sequences is checked against
 -- every text \`id\` column in the schema. A new prefix or a new table needs no
 -- edit here, which is the point -- the hardcoded prefix->table list in
--- 20260831000006 is exactly what went stale when 'c' and 't' were added later.
+-- 20260831102233 is exactly what went stale when 'c' and 't' were added later.
 do $$
 declare p record; t record; mx bigint; best bigint;
 begin

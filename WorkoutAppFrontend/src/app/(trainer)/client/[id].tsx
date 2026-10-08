@@ -106,7 +106,10 @@ export default function ClientDetailScreen() {
 
   const summary = overview.data;
   const client = summary?.client;
-  const thread = (threads.data ?? []).find((t) => t.clientId === clientId);
+  // An adopted client may also have an old coach's thread.
+  const thread = (threads.data ?? []).find(
+    (t) => t.clientId === clientId && t.trainerId === client?.trainerId,
+  );
 
   if (!active) return <Paywall />;
 
@@ -225,6 +228,7 @@ function InviteCard({ client }: { client: ClientProfile }) {
   const [revoke, revoking] = useRevokeInviteMutation();
   // Alert.alert is a no-op on web, so the confirm is a second tap.
   const [confirming, setConfirming] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   return (
     <Card style={styles.big}>
@@ -235,11 +239,15 @@ function InviteCard({ client }: { client: ClientProfile }) {
       </Text>
       <View style={styles.actions}>
         <Button
-          label="Share invite"
-          icon="share-outline"
+          label={copied ? 'Invite copied' : 'Share invite'}
+          icon={copied ? 'checkmark' : 'share-outline'}
           size="sm"
           style={styles.action}
-          onPress={() => void shareInvite(client, trainer.data?.name ?? 'Your coach')}
+          onPress={() =>
+            void shareInvite(client, trainer.data?.name ?? 'Your coach').then((r) =>
+              setCopied(r === 'copied')
+            )
+          }
         />
         <Button
           label={confirming ? 'Tap again to remove' : 'Remove'}

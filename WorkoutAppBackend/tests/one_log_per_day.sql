@@ -1,4 +1,4 @@
--- Guard check for 20260913000005_one_log_per_day.sql: saving twice for the same
+-- Guard check for 20260913100735_one_log_per_day.sql: saving twice for the same
 -- day edits the day's log in place instead of adding a second one.
 --
 -- Runs against the project itself (it uses a real client id and a far-future

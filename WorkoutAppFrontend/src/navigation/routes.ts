@@ -32,6 +32,9 @@ export const routes = {
    * `GET /plans` carries the role each rung belongs to, so it filters itself.
    */
   plans: () => href('/plans'),
+  /** Public policy pages, linked from the front door. */
+  privacy: () => href('/privacy'),
+  terms: () => href('/terms'),
 
   client: {
     explore: () => href('/(client)/(tabs)/explore'),

@@ -184,13 +184,12 @@ export const supabaseRoutes: Array<{
     handler: async () => {
       // Dev fixture list for DevQuickSignIn, read signed-out -- deliberately
       // unscoped, and there may be no coach left in the project at all.
-      const [{ data: trainerRow, error }, clientRows] = await Promise.all([
-        supabase.from('v_trainer_profiles').select('*').limit(1).maybeSingle(),
+      const [trainerRows, clientRows] = await Promise.all([
+        rows<TrainerProfileRow>(supabase.from('v_trainer_profiles').select('*').order('id')),
         clients(),
       ]);
-      if (error) throw fromPostgrest(error);
       return {
-        trainer: trainerRow ? toTrainerProfile(trainerRow as TrainerProfileRow) : null,
+        trainers: trainerRows.map(toTrainerProfile),
         clients: clientRows.map(toClientProfile),
       };
     },
@@ -292,7 +291,7 @@ export const supabaseRoutes: Array<{
   },
 
   {
-    // The invite IS the client row (migration 20260915000003): users +
+    // The invite IS the client row (migration 20260915101705): users +
     // client_profiles + thread in one RPC, then read back like any client.
     method: 'POST',
     pattern: '/clients/invite',
@@ -308,7 +307,7 @@ export const supabaseRoutes: Array<{
     },
   },
   {
-    // Self-signup (migration 20260918000002). create_profile reads auth.uid()
+    // Self-signup (migration 20260919094856). create_profile reads auth.uid()
     // and the address from auth.users itself, so the body carries only the two
     // things the server cannot know: which way in, and what to call them.
     method: 'POST',
@@ -319,7 +318,7 @@ export const supabaseRoutes: Array<{
     },
   },
   {
-    // Deleting the account (migration 20260929000001). Lives in the razorpay
+    // Deleting the account (migration 20260929080742). Lives in the razorpay
     // edge function: it has to stop the mandate first and needs the service
     // role to remove the auth user. The caller is read off the token.
     method: 'DELETE',
@@ -341,7 +340,7 @@ export const supabaseRoutes: Array<{
     },
   },
   {
-    // Detach, not delete (migration 20260926000002).
+    // Detach, not delete (migration 20260926113815).
     method: 'DELETE',
     pattern: '/clients/:id',
     handler: async ({ params }) => {

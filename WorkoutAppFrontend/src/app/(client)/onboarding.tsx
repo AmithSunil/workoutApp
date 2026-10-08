@@ -10,6 +10,7 @@ import { routes } from '@/navigation/routes';
 import { useAppSelector } from '@/store/hooks';
 import { spacing } from '@/theme';
 import type { ClientProfile } from '@/types/models';
+import { hasCoach } from '@/utils/coach';
 import { TODAY } from '@/utils/date';
 import { deriveGoal } from '@/utils/goal';
 import { isPhone, normalizePhone } from '@/utils/format';
@@ -67,6 +68,8 @@ function IntakeForm({ client }: { client: ClientProfile }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const askPhone = !client.phone;
+  // Someone training on their own has nobody to send intake notes to.
+  const coached = hasCoach(client);
 
   const value = (key: NumberKey) => client[key] ?? positive(draft[key]);
   const ready = fields.every((f) => positive(draft[f.key]) !== null) && (!client.unnamed || !!name.trim()) && (!askPhone || isPhone(phone));
@@ -86,7 +89,7 @@ function IntakeForm({ client }: { client: ClientProfile }) {
         // Only used when this form supplied the goal weight; the server keeps
         // the coach's goal otherwise.
         goal: deriveGoal(weight, target),
-        notes: notes.trim() || undefined,
+        notes: (coached && notes.trim()) || undefined,
         date: TODAY,
       },
     })
@@ -109,7 +112,7 @@ function IntakeForm({ client }: { client: ClientProfile }) {
                 icon="person-outline"
                 value={name}
                 onChangeText={setName}
-                placeholder="What should your coach call you?"
+                placeholder={coached ? 'What should your coach call you?' : 'What should we call you?'}
                 autoCapitalize="words"
                 autoComplete="name"
               />
@@ -135,7 +138,9 @@ function IntakeForm({ client }: { client: ClientProfile }) {
         <Card>
           <View style={styles.form}>
             <Text variant="caption" tone="secondary">
-              Your coach uses these to set your targets.
+              {coached
+                ? 'Your coach uses these to set your targets.'
+                : 'Your starting point. Set your own targets from your profile.'}
             </Text>
             {fields.map((f) => (
               <Input
@@ -152,24 +157,26 @@ function IntakeForm({ client }: { client: ClientProfile }) {
         </Card>
       ) : null}
 
-      <Card>
-        <View style={styles.form}>
-          <Input
-            label="ANYTHING YOUR COACH SHOULD KNOW? (OPTIONAL)"
-            value={notes}
-            onChangeText={setNotes}
-            placeholder={
-              tracking.nutrition
-                ? 'Injuries, health conditions, foods you avoid, dietary preferences…'
-                : 'Injuries, health conditions, anything that limits training…'
-            }
-            multiline
-          />
-          <Text variant="caption" tone="tertiary">
-            This goes to your coach as a message, not into your profile.
-          </Text>
-        </View>
-      </Card>
+      {coached ? (
+        <Card>
+          <View style={styles.form}>
+            <Input
+              label="ANYTHING YOUR COACH SHOULD KNOW? (OPTIONAL)"
+              value={notes}
+              onChangeText={setNotes}
+              placeholder={
+                tracking.nutrition
+                  ? 'Injuries, health conditions, foods you avoid, dietary preferences…'
+                  : 'Injuries, health conditions, anything that limits training…'
+              }
+              multiline
+            />
+            <Text variant="caption" tone="tertiary">
+              This goes to your coach as a message, not into your profile.
+            </Text>
+          </View>
+        </Card>
+      ) : null}
 
       {state.isError ? (
         <Text variant="caption" tone="danger" accessibilityRole="alert">

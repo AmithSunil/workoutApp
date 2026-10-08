@@ -1,4 +1,4 @@
--- Guard check for 20260920000002_link_on_signin.sql: an invite adopts an auth
+-- Guard check for 20260920084114_link_on_signin.sql: an invite adopts an auth
 -- account that already existed, at the client's next sign-in.
 --
 -- Everything it writes is inside a transaction it rolls back itself.

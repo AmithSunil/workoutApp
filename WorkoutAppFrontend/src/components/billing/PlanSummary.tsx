@@ -7,7 +7,7 @@ import { useGetPlansQuery, useGetSubscriptionQuery } from '@/api/endpoints/billi
 import { Card, SectionHeader, Text } from '@/components/ui';
 import { routes } from '@/navigation/routes';
 import { colors, spacing } from '@/theme';
-import { price, statusLine } from '@/utils/plan';
+import { PLANS_LIVE, price, statusLine } from '@/utils/plan';
 
 /**
  * The plan row on a profile screen: which plan, how it stands, and a tap
@@ -21,11 +21,11 @@ import { price, statusLine } from '@/utils/plan';
  */
 export function PlanSummary({ forRole }: { forRole: 'trainer' | 'client' }) {
   const router = useRouter();
-  const sub = useGetSubscriptionQuery();
-  const plans = useGetPlansQuery();
-  const clients = useGetClientsQuery(undefined, { skip: forRole !== 'trainer' });
+  const sub = useGetSubscriptionQuery(undefined, { skip: !PLANS_LIVE });
+  const plans = useGetPlansQuery(undefined, { skip: !PLANS_LIVE });
+  const clients = useGetClientsQuery(undefined, { skip: !PLANS_LIVE || forRole !== 'trainer' });
 
-  if (!sub.data) return null;
+  if (!PLANS_LIVE || !sub.data) return null;
   const plan = plans.data?.find((p) => p.code === sub.data!.planCode);
 
   return (

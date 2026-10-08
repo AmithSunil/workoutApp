@@ -38,7 +38,8 @@ export interface MacroTargets {
 
 export interface ClientProfile extends User {
   role: 'client';
-  trainerId: string;
+  /** Null for someone training on their own. Read it through `hasCoach()`. */
+  trainerId: string | null;
   goal: 'cut' | 'recomp' | 'bulk' | 'performance';
   /** Null until intake: a coach can add a client before knowing these. */
   heightCm: number | null;
@@ -50,7 +51,7 @@ export interface ClientProfile extends User {
   invited?: true;
   /** Invited by email alone and has not named themselves yet; `name` holds the email until onboarding. */
   unnamed?: true;
-  /** Asked once at onboarding; absent until then (migration 20260929000003). */
+  /** Asked once at onboarding; absent until then (migration 20260929085237). */
   phone?: string;
   /** Rolled up by the backend; drives the roster traffic lights. */
   compliance: {
@@ -230,7 +231,8 @@ export interface RoutineDay {
  */
 export interface Routine {
   id: string;
-  trainerId: string;
+  /** Null for a routine an individual planned for themselves. */
+  trainerId: string | null;
   title: string;
   notes?: string;
   /** At most one day per weekday, returned in Monday-first order. */
@@ -391,7 +393,7 @@ export interface TrainerSummary {
  * meaningless on a client-role plan — an individual has no roster to cap.
  *
  * Amounts are paise, the unit Razorpay charges in, and are PLACEHOLDERS until
- * the real numbers are set (migration 20260920000001).
+ * the real numbers are set (migration 20260920121309).
  */
 export interface Plan {
   code: string;

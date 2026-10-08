@@ -52,5 +52,5 @@ export const restLabel = (seconds: number): string => {
 /** Spaces, dashes, dots and brackets are how people type numbers, not part of them. */
 export const normalizePhone = (text: string): string => text.replace(/[\s().-]/g, '');
 
-/** Mirrors the client_profiles.phone check (migration 20260929000003). */
+/** Mirrors the client_profiles.phone check (migration 20260929085237). */
 export const isPhone = (text: string): boolean => /^\+?[0-9]{7,15}$/.test(normalizePhone(text));

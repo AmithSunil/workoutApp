@@ -76,7 +76,8 @@ export interface TrainerProfileRow extends UserRow {
 
 export interface ClientProfileRow {
   id: string;
-  trainer_id: string;
+  /** Null for someone training on their own (migration 20260919094839). */
+  trainer_id: Nullable<string>;
   goal: ClientProfile['goal'];
   height_cm: Nullable<number>;
   start_weight_kg: Nullable<number>;
@@ -201,7 +202,8 @@ export interface RoutineDayRow {
 
 export interface RoutineRow {
   id: string;
-  trainer_id: string;
+  /** Null for a routine an individual planned for themselves; `author_id` owns it. */
+  trainer_id: Nullable<string>;
   title: string;
   notes: Nullable<string>;
   created_at: string;
@@ -319,7 +321,7 @@ export const toTrainerProfile = (r: TrainerProfileRow): TrainerProfile => ({
 export const toClientProfile = (r: ClientProfileRow): ClientProfile => ({
   id: r.id,
   role: 'client',
-  // '' until the client names themselves at onboarding (migration 20260929000002).
+  // '' until the client names themselves at onboarding (migration 20260929084446).
   name: r.users.name || r.users.email,
   email: r.users.email,
   avatarUrl: r.users.avatar_url,

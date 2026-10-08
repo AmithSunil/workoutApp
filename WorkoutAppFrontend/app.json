@@ -1,21 +1,24 @@
 {
   "expo": {
-    "name": "Apex Coaching",
-    "slug": "WorkoutAppFrontend",
+    "name": "Corda",
+    "slug": "corda",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "workoutappfrontend",
+    "scheme": "corda",
     "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "fit.corda.app"
+    },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#F0F2FE",
+        "backgroundColor": "#DD4410",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.WorkoutAppFrontend"
+      "package": "fit.corda.app"
     },
     "web": {
       "output": "static",

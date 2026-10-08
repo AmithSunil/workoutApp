@@ -1,5 +1,5 @@
--- Applies supabase/future/20260901000001_auth_rls.sql.pending, checks what each
--- role can see, and rolls back. Safe to run against the live project: the final
+-- Checks what each role can see under the live policies (migration
+-- 20261007000001_auth_rls), and rolls back. Safe to run against the live project: the final
 -- RAISE guarantees the transaction cannot commit even if something above it
 -- succeeded unexpectedly.
 --
@@ -14,13 +14,13 @@
 -- trainer_sees_* are 1, client_self_macro_update_rows is 0 (a coached client
 -- cannot move their own macros) and client_self_routine is ok.
 --
--- Self-signup (20260918000002, and the two policy edits below): solo_coachless
+-- Self-signup (20260919094856, and the two policy edits below): solo_coachless
 -- and solo_id_is_client are true, solo_self_macro_update_rows is 1 (an
 -- individual CAN, which is the whole point of client_profiles_self_writes),
 -- solo_writes_other_client_rows is 0, solo_routine is ok and
 -- solo_routine_coachless is 1.
 --
--- hook_require_invite was dropped by 20260918000003 (signup is open), so the
+-- hook_require_invite was dropped by 20260919094909 (signup is open), so the
 -- two hook_* keys are gone.
 --
 -- Role escalation: c1_role_after_self_promote is 'client' (users has no
@@ -29,7 +29,8 @@
 
 begin;
 
-\i ../supabase/future/20260901000001_auth_rls.sql.pending
+-- The policies are live since 2026-10-07 (migration 20261007000001_auth_rls),
+-- so this only measures them now; it no longer applies a pending file.
 
 do $$
 declare
@@ -82,7 +83,7 @@ begin
     'c2_sees_c1_logs', (select count(*) from public.workout_logs where client_id = 'c-001'),
     'c2_threads',      (select count(*) from public.threads));
 
-  -- Onboarding (20260915000002..05): invite, sign up, intake, revoke.
+  -- Onboarding (20260915101634..05): invite, sign up, intake, revoke.
   execute 'set local role authenticated';
   perform set_config('request.jwt.claims', json_build_object('sub', maya, 'role','authenticated')::text, true);
   pending := public.invite_client('Rls Pending', 'Rls.Pending@Example.com');
@@ -118,7 +119,11 @@ begin
   exception when others then r := r || jsonb_build_object('client_self_macro_update_rows', sqlstate);
   end;
   begin
-    perform public.complete_intake(180, 80, 75, 'cut');
+    -- c-001 predates the phone column (20260929085237), so the first call is
+    -- their real setup and only the second must refuse. The exception rolls
+    -- both back with this block.
+    perform public.complete_intake('Test Client', '9800000001', 180, 80, 75, 'cut');
+    perform public.complete_intake('Test Client', '9800000001', 180, 80, 75, 'cut');
     r := r || '{"intake_twice":"ALLOWED"}';
   exception when others then r := r || jsonb_build_object('intake_twice', sqlstate);
   end;
@@ -140,7 +145,7 @@ begin
   execute 'set local role authenticated';
   perform set_config('request.jwt.claims', json_build_object('sub', newbie, 'role','authenticated')::text, true);
   r := r || jsonb_build_object('newbie_app_user_id_is_pending', public.app_user_id() = pending);
-  perform public.complete_intake(165, 70, 62, 'cut', 'No dairy. Bad left knee.', '2026-09-15');
+  perform public.complete_intake('Newbie', '9800000002', 165, 70, 62, 'cut', 'No dairy. Bad left knee.', '2026-09-15');
   r := r || jsonb_build_object(
     'newbie_profile', (select jsonb_build_object('h', height_cm, 'w', start_weight_kg, 't', target_weight_kg, 'goal', goal)
                          from public.client_profiles where id = pending),
@@ -218,7 +223,7 @@ begin
       where title = 'Rls solo plan' and trainer_id is null and author_id = solo_id));
 
   -- ---------------------------------------------------------------------
-  -- Billing (20260920000001): the gate is inside owns_client()
+  -- Billing (20260920121309): the gate is inside owns_client()
   -- ---------------------------------------------------------------------
   execute 'reset role';
   update public.subscriptions set current_period_end = now() - interval '1 day'

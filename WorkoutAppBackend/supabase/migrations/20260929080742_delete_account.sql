@@ -12,7 +12,7 @@
  * check-ins, subscription). Only what the cascade gets wrong is handled here.
  *
  * Coach:
- *  - linked clients are detached exactly as remove_client (20260926000002) does:
+ *  - linked clients are detached exactly as remove_client (20260926113815) does:
  *    trainer_id null + a 14-day solo trial. Their data is theirs, and
  *    client_profiles.trainer_id is ON DELETE RESTRICT anyway.
  *  - pending invites (no auth user yet) are deleted, as revoke_invite would.

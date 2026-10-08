@@ -137,7 +137,7 @@ Admin SDK, no Edge Function, no service_role key.
   Custom SMTP has to be configured before this is testable with more than one or two invites.
   The default template also says "Confirm your signup", which is wrong copy for an invite.
 - **Migration drift.** The folder is not the remote. Check `list_migrations` before adding to it.
-  `20260913000004` is unapplied; `20260913000002` is unverified.
+  `20260913000004` is unapplied; `20260913074353` is unverified.
 
 ---
 

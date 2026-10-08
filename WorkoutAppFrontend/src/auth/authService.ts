@@ -38,7 +38,7 @@ export const signInWithPassword = async (email: string, password: string): Promi
  *
  * `shouldCreateUser` stays at its default (true) on purpose: neither an invited
  * client nor a new signup has an auth account until this call, so `false` would
- * lock both out. Signup is open since migration 20260918000003 — the gate that
+ * lock both out. Signup is open since migration 20260919094909 — the gate that
  * used to refuse strangers is gone.
  *
  * Nothing rides along with the address. Role is never something the caller

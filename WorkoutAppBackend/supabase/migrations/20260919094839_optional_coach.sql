@@ -19,10 +19,10 @@ comment on column public.client_profiles.trainer_id is
   'The coach who owns this client. Null means an individual training on their own.';
 comment on column public.routines.trainer_id is
   'The coach who owns this routine. Null when an individual wrote it for themselves -- '
-  'author_id (20260915000003) is what carries ownership in that case.';
+  'author_id (20260915101705) is what carries ownership in that case.';
 
 /**
- * Same writer as 20260915000001; only the trainer fallback changes.
+ * Same writer as 20260915091229; only the trainer fallback changes.
  *
  * It used to be `(select id from public.trainer_profiles limit 1)` -- which
  * under RLS means "whichever coach this caller can see", and for an individual

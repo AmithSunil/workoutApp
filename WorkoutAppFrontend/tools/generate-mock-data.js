@@ -45,7 +45,7 @@ const trainer = {
   id: 't-001',
   role: 'trainer',
   name: 'Maya Fernandes',
-  email: 'maya@apexcoaching.fit',
+  email: 'maya@corda.fit',
   avatarUrl: 'https://i.pravatar.cc/240?img=47',
   headline: 'Strength & body-composition coach',
   clientIds: [],

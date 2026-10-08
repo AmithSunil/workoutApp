@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 
 import { useGetClientsQuery } from '@/api/endpoints/trainerApi';
@@ -71,16 +71,24 @@ export default function PlansScreen() {
   const buy = async (code: string) => {
     setError(null);
     setConfirming(null);
+    // Web: open the tab now, inside the tap. After the await below the gesture
+    // has expired and the browser blocks window.open as a popup.
+    const paid = (mine.find((p) => p.code === code)?.pricePaise ?? 0) > 0;
+    const tab = Platform.OS === 'web' && paid ? window.open('', '_blank') : null;
+    if (tab) tab.opener = null;
     try {
       const { shortUrl } = await checkout(code).unwrap();
       // No URL means nothing to pay: the free tier, and the mock transport,
       // which activates instantly.
       if (shortUrl) {
         setAwaiting(code);
-        await WebBrowser.openBrowserAsync(shortUrl);
-      }
+        if (Platform.OS !== 'web') await WebBrowser.openBrowserAsync(shortUrl);
+        else if (tab) tab.location.href = shortUrl;
+        else window.location.assign(shortUrl); // blocked anyway: go there in this tab
+      } else tab?.close();
       await sub.refetch();
     } catch (e) {
+      tab?.close();
       // The server's own words when it has some -- "That plan covers 2 clients
       // and you have 8" is worth more than "try again".
       const message = (e as { data?: { message?: string } })?.data?.message;

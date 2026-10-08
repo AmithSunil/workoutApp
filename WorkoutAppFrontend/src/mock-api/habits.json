@@ -958,5 +958,18 @@
       "2026-08-28"
     ],
     "createdBy": "client"
+  },
+  {
+    "id": "h-0901",
+    "clientId": "c-020",
+    "title": "10k steps",
+    "icon": "walk",
+    "cadence": "daily",
+    "completedDates": [
+      "2026-08-26",
+      "2026-08-27",
+      "2026-08-28"
+    ],
+    "createdBy": "client"
   }
 ]

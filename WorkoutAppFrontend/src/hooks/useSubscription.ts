@@ -1,6 +1,6 @@
 import { useGetPlansQuery, useGetSubscriptionQuery } from '@/api/endpoints/billingApi';
 import { useAppSelector } from '@/store/hooks';
-import { planActive } from '@/utils/plan';
+import { PLANS_LIVE, planActive } from '@/utils/plan';
 
 /**
  * Whether the signed-in user may operate, and on what.
@@ -16,7 +16,7 @@ import { planActive } from '@/utils/plan';
  */
 export function useSubscription(opts?: { hasCoach?: boolean }) {
   const role = useAppSelector((s) => s.session.role);
-  const needsPlan = role === 'trainer' || opts?.hasCoach === false;
+  const needsPlan = PLANS_LIVE && (role === 'trainer' || opts?.hasCoach === false);
 
   const sub = useGetSubscriptionQuery(undefined, { skip: !needsPlan });
   const plans = useGetPlansQuery(undefined, { skip: !needsPlan });

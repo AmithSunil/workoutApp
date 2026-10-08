@@ -1,4 +1,4 @@
-# Apex — dual-sided coaching platform
+# Corda — dual-sided coaching platform
 
 A React Native (Expo) app that serves personal trainers and their clients from
 one codebase, with role-based routing deciding which product a signed-in user

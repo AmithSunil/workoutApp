@@ -39,7 +39,11 @@ Extends base user data for clients with fitness context.
 ```
 client_profiles:
   - id: UUID/string (primary key, foreign key → users.id)
-  - trainerId: string (foreign key → trainer_profiles.id)
+  - trainerId: string | null (foreign key → trainer_profiles.id, on delete restrict)
+      null = no coach: an individual who signed up on their own (create_profile),
+      or a client a coach removed (remove_client). They set their own goals,
+      macros and habits and pay for their own plan. A coach's invite to their
+      address adopts them (adopt_client) and sets this back.
   - goal: 'cut' | 'recomp' | 'bulk' | 'performance'
   - heightCm: number
   - startWeightKg: number
@@ -89,7 +93,10 @@ Reusable weekly training templates created by trainers. **Routines contain no da
 ```
 routines:
   - id: UUID/string (primary key)
-  - trainerId: string (foreign key → trainer_profiles.id)
+  - trainerId: string | null (foreign key → trainer_profiles.id)
+      null = a routine written by a client with no coach; authorId carries
+      ownership then (create_routine sets null by intent for an individual)
+  - authorId: string | null (foreign key → users.id, on delete set null; who wrote it)
   - title: string (e.g., "Upper/Lower Split")
   - notes: string | null
   - days: RoutineDay[] (nested structure below)

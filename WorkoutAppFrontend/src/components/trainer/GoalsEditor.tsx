@@ -26,7 +26,7 @@ const FIELDS = [
 type FieldKey = (typeof FIELDS)[number]['key'];
 
 /**
- * The coach setting one client's goals: where the scale should land, what they
+ * One client's goals, set by their coach or by themselves: where the scale should land, what they
  * eat to get there, and which of the two the programme is actually about.
  *
  * Unlike `HabitEditor` this saves behind a button rather than on blur. Macros
